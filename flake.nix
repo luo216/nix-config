@@ -17,7 +17,6 @@
       { nixpkgs.config.allowUnfree = true; }
       { nixpkgs.overlays = [
           (import ./overlays/dwm.nix) # 引入本地 dwm overlay
-          (import ./overlays/st.nix) # 引入本地 st overlay
           nixgl.overlay # 引入 nixGL overlay
           nur.overlay # 引入 NUR overlay
         ];
