@@ -4,7 +4,6 @@
   home.packages = with pkgs; [
     # Utils
     flameshot
-    ueberzugpp
     xdg-user-dirs
     xdg-launch
     fastfetch

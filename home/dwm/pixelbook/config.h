@@ -83,7 +83,7 @@ static const Layout layouts[] = {
 /* commands */
 static const char *roficmd[] = {"rofi", "-mousable", "-show", NULL};
 static const char *browser[] = {"google-chrome-stable", NULL};
-static const char *termcmd[] = {"nixGLIntel", "wezterm", NULL};
+static const char *termcmd[] = {"nixGLIntel", "kitty", NULL};
 static const char *script_menu[] = {"script-menu.sh", NULL};
 static const char *inc_light[] = {"light", "-A", "5", NULL};
 static const char *inc_light_1[] = {"light", "-A", "1", NULL};

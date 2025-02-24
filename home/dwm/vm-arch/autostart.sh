@@ -29,4 +29,4 @@ fcitx5 &
 # keymap
 # caps2super.sh &
 
-nixGLIntel wezterm
+nixGLIntel kitty

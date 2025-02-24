@@ -13,7 +13,7 @@
     ../../home/dotfiles
     ../../home/localBin
     ../../home/dwm
-    ../../home/wezterm
+    ../../home/kitty
     ../../home/yazi
     ../../home/nvim
     ../../home/rofi

@@ -14,7 +14,7 @@
     ../../home/localBin
     ../../home/dwm
     ../../home/lazygit
-    ../../home/wezterm
+    ../../home/kitty
     ../../home/yazi
     ../../home/nvim
     ../../home/rofi
