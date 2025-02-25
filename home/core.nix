@@ -16,6 +16,9 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     stateVersion = "24.11"; # Please read the comment before changing.
+    sessionVariables = {
+      NIXPKGS_ALLOW_UNFREE = 1;
+    };
   };
 
   # Let Home Manager install and manage itself.
