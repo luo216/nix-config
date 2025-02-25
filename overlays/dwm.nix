@@ -4,7 +4,7 @@ self: super: {
       owner = "luo216";
       repo = "dwm";
       rev = "master";
-      sha256 = "sha256-EMC6D+v6iqRuz7gTB33YbDuLiLhx+p/aAwFtk75fXwY==";
+      sha256 = "sha256-gMLAueXbEbbimTASpf0tipG+zy6yHgAs88LLnauf+HY==";
     };
   });
 }
