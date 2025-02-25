@@ -70,12 +70,12 @@ nix profile install github:guibou/nixGL --impure
 
 > 可以直接应用github仓库配置
 ```sell
-home-manager switch --no-write-lock-file --flake  github:luo216/nix-config#vm-kali --impure 
+home-manager switch --no-write-lock-file --flake  github:luo216/nix-config#vm-kali
 ```
 > 也可以clone到本地
 ```shell
 git clone https://github.com/luo216/nix-config
-home-manager switch --flake .nix-config#vm-kali --impure
+home-manager switch --flake .nix-config#vm-kali
 ```
 
 ## 杂项
