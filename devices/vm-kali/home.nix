@@ -11,18 +11,12 @@
     ../../home/programs/zsh.nix
 
     ../../home/dotfiles
-    ../../home/localBin
-    ../../home/dwm
     ../../home/lazygit
-    ../../home/kitty
     ../../home/yazi
     ../../home/nvim
-    ../../home/rofi
     ../../home/rainbarf
-    ../../home/thunar
     ../../home/dunst
     ../../home/tmux
-    ../../home/picom
     ../../home/fcitx5
   ];
 }
