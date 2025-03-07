@@ -17,5 +17,8 @@
     ".local/share/wallpaper/001.png" = {
       source = ./wallpaper/001.png;
     };
+    ".config/dwm/dwm.desktop" = {
+      source = ./dwm.desktop;
+    };
   };
 }

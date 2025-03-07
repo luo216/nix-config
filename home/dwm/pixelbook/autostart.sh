@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DP=Virtual-1
+DP=eDP-1
 
 xrandr --output $DP --mode 1920x1080 --pos 0x0
 
