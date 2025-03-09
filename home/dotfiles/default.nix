@@ -12,5 +12,9 @@
       source = ./config/elementary;
       recursive = true;
     };
+    ".config/wechat-universal" = {
+      source = ./config/wechat-universal;
+      recursive = true;
+    };
   };
 }

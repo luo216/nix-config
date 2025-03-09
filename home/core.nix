@@ -18,6 +18,7 @@
     stateVersion = "24.11"; # Please read the comment before changing.
     sessionVariables = {
       NIXPKGS_ALLOW_UNFREE = 1;
+      NIXPKGS_ALLOW_INSECURE = 1;
     };
   };
 

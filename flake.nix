@@ -15,6 +15,10 @@
     # 公共基础配置（所有设备共享）
     commonModules = [
       { nixpkgs.config.allowUnfree = true; }
+      { nixpkgs.config.permittedInsecurePackages = [
+          "openssl-1.1.1w"
+        ];
+      }
       { nixpkgs.overlays = [
           (import ./overlays/dwm.nix) # 引入本地 dwm overlay
           nixgl.overlay # 引入 nixGL overlay
