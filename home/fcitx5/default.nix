@@ -1,16 +1,11 @@
 { config, pkgs, ... }:
 
 {
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx5 = {
-      addons = [
-        pkgs.fcitx5-chinese-addons
-        pkgs.fcitx5-configtool
-        pkgs.fcitx5-pinyin-zhwiki
-      ];
-    };
-  };
+  home.packages = with pkgs; [
+    fcitx5-chinese-addons
+    fcitx5-configtool
+    fcitx5-pinyin-zhwiki
+  ];
 
   home.file = {
     ".local/share/fcitx5/themes/macOS-dark" = {

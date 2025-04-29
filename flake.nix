@@ -22,7 +22,7 @@
       { nixpkgs.overlays = [
           (import ./overlays/dwm.nix) # 引入本地 dwm overlay
           nixgl.overlay # 引入 nixGL overlay
-          nur.overlay # 引入 NUR overlay
+          nur.overlays.default # 引入 NUR overlay
         ];
       }
     ];

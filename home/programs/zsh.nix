@@ -24,7 +24,7 @@
       proxyUnSet = "unset http_proxy&&unset https_proxy";
     };
 
-    initExtra = ''
+    initContent = ''
       # 配置oh-my-zsh
       export ZSH=$HOME/.nix-profile/share/oh-my-zsh
       ZSH_THEME="bira"
