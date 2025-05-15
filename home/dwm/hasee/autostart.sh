@@ -12,11 +12,12 @@ if [ "$MODE" == "nvidia" ]; then
   DP=eDP-1-1
 fi
 
-# xrandr --output $DP --mode 1920x1080 --pos 0x0
-xrandr --output $DP --off
-xrandr --output $HDMI --mode 2160x1440 --pos 0x-1440
-# xrandr --output $HDMI --brightness 0.6
-# xrandr --output $HDMI --scale 1.2x1.2
+xrandr --output $DP --mode 1920x1080 --pos 0x0
+xrandr --output $DP --scale 1.5x1.5
+# xrandr --output $DP --off
+xrandr --output $HDMI --mode 1920x1080 --pos 0x0
+xrandr --output $HDMI --brightness 0.6
+xrandr --output $HDMI --scale 1.5x1.5
 # xrandr --output $DP --scale 1.2x1.2
 xrandr --output $HDMI --primary
 xinput map-to-output $TOUCHMAPID "$HDMI"

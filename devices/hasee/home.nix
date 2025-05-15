@@ -5,6 +5,7 @@
     ../../home/core.nix
 
     ../../home/programs/common.nix
+    ../../home/programs/arch.nix
     ../../home/programs/applet.nix
     ../../home/programs/theme.nix
     ../../home/programs/fonts.nix
