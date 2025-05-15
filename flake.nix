@@ -12,6 +12,9 @@
   };
 
   outputs = { nixpkgs, home-manager, nixgl, nur, ... }: let
+    # 定义 overlays
+    picomOverlay = import ./overlays/picom.nix;
+    dwmOverlay = import ./overlays/dwm.nix;
     # 公共基础配置（所有设备共享）
     commonModules = [
       { nixpkgs.config.allowUnfree = true; }
@@ -20,7 +23,8 @@
         ];
       }
       { nixpkgs.overlays = [
-          (import ./overlays/dwm.nix) # 引入本地 dwm overlay
+          dwmOverlay # 引入本地 dwm overlay
+          picomOverlay # 引入 picom overlay
           nixgl.overlay # 引入 nixGL overlay
           nur.overlays.default # 引入 NUR overlay
         ];

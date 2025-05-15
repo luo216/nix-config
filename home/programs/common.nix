@@ -25,7 +25,7 @@
     yarn # install markdown
 
     # browser
-    google-chrome
+    # google-chrome
 
     # openGL
     # nixgl.auto.nixGLDefault
