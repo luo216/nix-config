@@ -1,0 +1,71 @@
+# NixOS Configuration .gitignore
+
+# Ignore example directory
+example/
+
+# Nix build results
+result
+result-*
+
+# Nix development shells
+.direnv/
+.envrc
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Vendor packages fetched by hash in pkgs/, not tracked in git
+# (GitHub rejects files over 100 MB; kdraw's deb is 255 MB)
+*.deb
+
+# Large font files hosted on GitHub Releases, not tracked in git
+modules/templates/fonts/
+
+# Local configuration overrides (if any)
+local.nix
+secrets.nix
+
+# Hardware configuration backups
+hardware-configuration.nix.bak
+
+# Deploy logs
+deploy.log
+
+# Codex local workspace data
+.codex/
+
+# Claude Code local data
+.claude/
+
+# Local build and VM runtime output
+out/
+
+# Local VM disk images
+*.qcow2
+.omx/
+
+# Agent local workspace data
+.omo/

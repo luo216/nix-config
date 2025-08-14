@@ -1,0 +1,302 @@
+# This is your home-manager configuration file
+# Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
+{
+  outputs,
+  pkgs,
+  user,
+  ...
+}: {
+  # Import modular configurations
+  imports = [
+    outputs.homeManagerModules.customCpa # CLI Proxy API
+    outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
+    outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
+    outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
+    outputs.homeManagerModules.customZsh # Shell (zsh)
+    outputs.homeManagerModules.customTemplates # Template files mapping
+    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
+    outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
+    outputs.homeManagerModules.customLftp # FTP client (GBK)
+  ];
+
+  # Set your username and home directory from the flake
+  home = {
+    inherit (user) username;
+    homeDirectory = "/home/${user.username}";
+    sessionVariables = {
+      GOOGLE_CLOUD_PROJECT = "generactive-language-client";
+    };
+  };
+
+  stylix = {
+    enable = true;
+    autoEnable = false;
+    polarity = "dark";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+    cursor = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Ice";
+      size = 48;
+    };
+    icons = {
+      enable = true;
+      package = pkgs.adwaita-icon-theme;
+      dark = "Adwaita";
+      light = "Adwaita";
+    };
+    targets = {
+      gnome.enable = true;
+      gtk.enable = true;
+      qt = {
+        enable = true;
+        platform = "qtct";
+        standardDialogs = "xdgdesktopportal";
+      };
+    };
+  };
+
+  dconf.settings = {
+    "org/gnome/desktop/background" = {
+      picture-uri = "file:///home/${user.username}/.local/share/wallpaper/default.png";
+      picture-uri-dark = "file:///home/${user.username}/.local/share/wallpaper/default.png";
+    };
+    "org/gnome/desktop/peripherals/touchpad" = {
+      tap-to-click = false;
+      natural-scroll = true;
+      click-method = "fingers";
+    };
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-type = "suspend";
+      sleep-inactive-battery-type = "suspend";
+    };
+    "org/gnome/shell/extensions/kimpanel" = {
+      font = "Sans 16";
+    };
+    "org/gnome/shell" = {
+      enabled-extensions = [
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "kimpanel@kde.org"
+        "gsconnect@andyholmes.github.io"
+        "syncthing-indicator@mkljczk.pl"
+        "Vitals@CoreCoding.com"
+      ];
+    };
+    "org/gnome/shell/extensions/vitals" = {
+      hot-sensors = [
+        "_processor_usage_"
+        "_memory_usage_"
+        "__network-rx_max__"
+        "__network-tx_max__"
+      ];
+      show-temperature = false;
+      show-voltage = false;
+      show-fan = false;
+      show-storage = false;
+      show-system = false;
+      include-public-ip = false;
+      fixed-widths = true;
+      hide-icons = false;
+      update-time = 3;
+    };
+  };
+
+  # XDG 用户目录配置 - 使用英文目录名
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+    desktop = "$HOME/Desktop";
+    documents = "$HOME/Documents";
+    download = "$HOME/Downloads";
+    music = "$HOME/Music";
+    pictures = "$HOME/Pictures";
+    publicShare = "$HOME/Public";
+    templates = "$HOME/Templates";
+    videos = "$HOME/Videos";
+  };
+
+  # User packages
+  home.packages = with pkgs; [
+    # === 编辑器 ===
+    neovim
+
+    # === 终端工具 ===
+    # === 现代 CLI 工具 ===
+    ripgrep # Better grep (rg)
+    bat # Better cat with syntax highlighting
+    fd # Better find
+    eza # Better ls (modern replacement for exa)
+    zoxide # Smart cd command
+    starship # Cross-shell prompt
+    fzf # Fuzzy finder
+    btop # System monitor
+    tree # Directory tree
+    ncdu # Disk usage analyzer
+
+    # === 开发工具 ===
+    lazygit # Git GUI
+    gh # GitHub CLI
+    gcc # C compiler（nvim-treesitter 编译 parser 所需，提供 cc）
+    nodejs_24 # Node.js 24 (global default; fnm below is for per-project overrides)
+    fnm # Fast Node version manager (per-project Node versions)
+    tree-sitter # Tree-sitter CLI
+    uv # Python package installer (uvx for running tools)
+
+    # === LSP 服务器 ===
+    clang-tools # clangd for C/C++
+    lua-language-server
+    marksman # Markdown LSP
+    nil # Nix LSP
+    statix # Nix 代码静态分析和格式化工具
+    python3 # Python（某些插件需要）
+    lua # Lua（某些插件需要）
+
+    # === 网络工具 ===
+    httpie # User-friendly HTTP client
+    mkcert # Local certificate manager for HTTPS development
+    nssTools # certutil for managing browser certificate databases
+    freerdp # xfreerdp CLI client for RDP
+    mitmproxy # 拦截/修改/重放 HTTP(S) 流量（系统已信任其 CA 证书）
+
+    # === 媒体工具 ===
+    ffmpeg
+    mpv
+
+    # === 图像和预览 ===
+    loupe
+    imagemagick
+    resvg
+    poppler-utils # PDF tools: pdfinfo, pdftotext, pdftoppm, pdfimages, pdffonts
+
+    # === 数据处理 ===
+    file # File type detection (Yazi prerequisite)
+    jq # JSON processor
+    markdownlint-cli2 # Markdown linting tool
+
+    # === 压缩工具 ===
+    p7zip
+    unrar
+
+    # === 桌面应用 ===
+    moonlight-qt # Video player
+    google-chrome-stable # Web browser
+    obsidian # Markdown knowledge base
+    wpsoffice-cn # WPS Office 中文版（官方）
+    qq # QQ
+    wechat # 微信
+    wemeet # 腾讯会议
+    cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
+    claude-desktop # Claude Desktop（Electron GUI，不含 Cowork VM 栈）
+    codex-desktop # Codex Desktop（Electron GUI）
+
+    # === 系统工具 ===
+    xdg-user-dirs
+    xdg-launch
+    fastfetch # System information
+
+    # === 文件管理和文档渲染 ===
+    trash-cli # 文件回收站功能
+    sqlite # SQLite3 数据库
+
+    # === 剪贴板 ===
+    wl-clipboard
+  ];
+
+  services = {
+    udiskie = {
+      enable = true;
+      automount = true;
+      notify = true;
+      tray = "auto";
+    };
+
+    # Syncthing 文件同步
+    syncthing = {
+      enable = true;
+      guiAddress = "127.0.0.1:8384";
+      tray.enable = false;
+    };
+
+    customCpa = {
+      enable = true;
+      apiKeys = [ "passwd" ];
+      managementSecretKey = "passwd";
+    };
+  };
+
+  programs = {
+    customLftp.enable = true;
+
+    git = {
+      enable = true;
+      lfs.enable = true;
+      settings = {
+        user = {
+          name = "hjzhang";
+          email = "hjzhang216@gmail.com";
+        };
+      };
+    };
+
+    customTemplates = {
+      enable = true;
+      mappings = [
+        {
+          source = "wallpaper/default.png";
+          target = ".local/share/wallpaper/default.png";
+        }
+      ];
+    };
+
+    customFcitx5 = {
+      enable = true;
+      theme = "gruvbox-material";
+    };
+
+    # Enable rainbarf CPU load monitor
+    customRainbarf = {
+      enable = true;
+      settings = {
+        width = 30;
+        rgb = true;
+        nobattery = true;
+      };
+    };
+
+    # Enable tmux terminal multiplexer
+    customTmux.enable = true;
+
+    # Enable shared fonts
+    customFonts.enable = true;
+
+    # Enable Ghostty terminal
+    customGhostty.enable = true;
+
+    # Enable yazi file manager
+    customYazi.enable = true;
+
+    # Enable zsh shell
+    customZsh.enable = true;
+
+    gnome-shell = {
+      enable = true;
+      extensions = [
+        {
+          package = pkgs.gnomeExtensions.appindicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.kimpanel;
+        }
+        {
+          package = pkgs.gnomeExtensions.gsconnect;
+        }
+        {
+          package = pkgs.gnomeExtensions.syncthing-indicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.vitals;
+        }
+      ];
+    };
+  };
+}
