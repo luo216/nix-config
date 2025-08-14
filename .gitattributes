@@ -1,0 +1,45 @@
+# NixOS Configuration Git Attributes
+# Ensure consistent line endings for all text files
+* text=auto
+# Nix files should always use LF line endings
+*.nix text eol=lf
+# Shell scripts should use LF line endings
+*.sh text eol=lf
+# JSON files should use LF line endings
+*.json text eol=lf
+# Markdown files should use LF line endings
+*.md text eol=lf
+# Binary files should not be processed and should not show diffs
+*.png binary -diff
+*.jpg binary -diff
+*.jpeg binary -diff
+*.gif binary -diff
+*.bmp binary -diff
+*.tiff binary -diff
+*.tif binary -diff
+*.webp binary -diff
+*.svg binary -diff
+*.ico binary -diff
+*.icns binary -diff
+*.pdf binary -diff
+*.zip binary -diff
+*.tar.gz binary -diff
+*.tar.xz binary -diff
+# Audio/Video files - no diff
+*.mp3 binary -diff
+*.mp4 binary -diff
+*.avi binary -diff
+*.mov binary -diff
+*.wav binary -diff
+*.flac binary -diff
+*.ogg binary -diff
+# Lock files should not show diffs (they're auto-generated)
+flake.lock linguist-generated
+*.lock linguist-generated
+# Template files are vendored/generated content
+modules/templates/** linguist-vendored
+# Hardware reports are generated content
+nixos/factors/*.json linguist-generated
+# Git attributes for better language detection
+*.nix linguist-language=Nix
+modules/templates/**/* !text !filter !merge !diff

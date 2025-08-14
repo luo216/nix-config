@@ -1,0 +1,6 @@
+<svg height="10" width="15" xmlns="http://www.w3.org/2000/svg">
+  <!-- 外圈 -->
+  <circle cx="5" cy="5" r="4" stroke="white" stroke-width="1" fill="none" />
+  <!-- 内圈 -->
+  <circle cx="5" cy="5" r="2" fill="white" />
+</svg>
