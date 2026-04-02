@@ -108,6 +108,16 @@
             }
           ];
         }
+        {
+          hostname = "vm-kali";
+          system = "x86_64-linux";
+          users = [
+            {
+              username = "kali";
+              # user-specific attributes can go here
+            }
+          ];
+        }
       ];
 
     in
