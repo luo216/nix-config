@@ -4,4 +4,5 @@ pkgs: {
   # example = pkgs.callPackage ./example { };
   cpa = pkgs.callPackage ./cpa.nix { };
   google-chrome-canary = pkgs.callPackage ./google-chrome-canary.nix { };
+  wechat = pkgs.callPackage ./wechat.nix { };
 }
