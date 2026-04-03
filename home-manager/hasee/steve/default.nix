@@ -15,6 +15,7 @@
     outputs.homeManagerModules.dunst # Notification daemon (dunst)
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)
+    outputs.homeManagerModules.customKitty # Terminal (kitty)
     outputs.homeManagerModules.rofi # Application launcher (rofi)
     outputs.homeManagerModules.fcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.cpa # CLI Proxy API
@@ -145,34 +146,6 @@
     };
   };
 
-  # Kitty terminal configuration
-  programs.kitty = {
-    enable = true;
-    themeFile = "GruvboxMaterialDarkSoft";
-    font = {
-      name = "Hack Nerd Font";
-      size = 18;
-    };
-    settings = {
-      # Cursor and display
-      cursor_shape = "block";
-      scrollback_lines = 10000;
-
-      # Shell configuration
-      shell = "${pkgs.zsh}/bin/zsh";
-      shell_integration = "enabled";
-
-      # Font rendering
-      bold_font = "auto";
-      italic_font = "auto";
-      bold_italic_font = "auto";
-    };
-    keybindings = {
-      "ctrl+shift+enter" = "new_window_with_cwd";
-      "ctrl+shift+n" = "new_os_window_with_cwd";
-    };
-  };
-
   # User packages
   home.packages = with pkgs; [
     # === 编辑器 ===
@@ -180,8 +153,6 @@
     vim
 
     # === 终端工具 ===
-    kitty
-
     # === 现代 CLI 工具 ===
     ripgrep # Better grep (rg)
     bat # Better cat with syntax highlighting
@@ -316,6 +287,9 @@
 
     # Enable tmux terminal multiplexer
     customTmux.enable = true;
+
+    # Enable kitty terminal
+    customKitty.enable = true;
 
     # Enable yazi file manager
     customYazi.enable = true;

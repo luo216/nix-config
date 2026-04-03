@@ -8,6 +8,7 @@
   dwm = import ./dwm.nix;
   rainbarf = import ./rainbarf.nix;
   tmux = import ./tmux.nix;
+  customKitty = import ./kitty.nix;
   cpa = import ./cpa.nix;
   customYazi = import ./yazi.nix;
   customZsh = import ./zsh.nix;

@@ -10,6 +10,7 @@
   imports = [
     outputs.homeManagerModules.cpa
     outputs.homeManagerModules.fcitx5
+    outputs.homeManagerModules.customKitty
     outputs.homeManagerModules.customYazi
     outputs.homeManagerModules.customZsh
     outputs.homeManagerModules.tmux
@@ -43,6 +44,7 @@
   programs = {
     home-manager.enable = true;
     customTmux.enable = true;
+    customKitty.enable = true;
     customYazi.enable = true;
     customZsh.enable = true;
     git = {
@@ -70,7 +72,6 @@
     neovim
     git
     lazygit
-    kitty
     curl
     wget
     ripgrep
