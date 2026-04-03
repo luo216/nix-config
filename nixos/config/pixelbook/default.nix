@@ -149,6 +149,11 @@
     };
   };
 
+  systemd.services.todeskd.serviceConfig = {
+    LogsDirectory = "todesk";
+    LogsDirectoryMode = "0777";
+  };
+
   services.network-printers = {
     enable = true;
     printers = [
