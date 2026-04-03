@@ -97,8 +97,10 @@
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack
-      wqy_zenhei
-      wqy_microhei
+      source-han-sans
+      source-han-serif
+      source-han-mono
+      noto-fonts-color-emoji
     ];
     fontconfig.enable = true;
   };

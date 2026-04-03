@@ -9,6 +9,7 @@
 {
   imports = [
     outputs.homeManagerModules.cpa
+    outputs.homeManagerModules.customFonts
     outputs.homeManagerModules.fcitx5
     outputs.homeManagerModules.customKitty
     outputs.homeManagerModules.customYazi
@@ -43,6 +44,7 @@
 
   programs = {
     home-manager.enable = true;
+    customFonts.enable = true;
     customTmux.enable = true;
     customKitty.enable = true;
     customYazi.enable = true;
@@ -58,8 +60,6 @@
       };
     };
   };
-
-  fonts.fontconfig.enable = true;
 
   home-manager.fcitx5 = {
     enable = true;
@@ -88,11 +88,6 @@
     gnumake
     python3
     tree-sitter
-    nerd-fonts.hack
-    noto-fonts-color-emoji
-    source-han-sans
-    source-han-serif
-    source-han-mono
   ];
 
   systemd.user.startServices = "sd-switch";

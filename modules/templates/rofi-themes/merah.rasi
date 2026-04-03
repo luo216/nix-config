@@ -5,7 +5,7 @@
 // ================================================ */
 
 * {
-    font: "Ubuntu Mono Reguler 11";
+    font: "Hack Nerd Font 11";
     foreground: #f8f8f2;
     background-color: #282a36;
     active-background: #b00000;

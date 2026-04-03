@@ -39,7 +39,7 @@ static const char supericon[]         = "   ";
 static const char logotext[]          = "NixOS-linux";
 static const char *fonts[]            = {
 	"Hack Nerd Font:size=13",
-	"WenQuanYi Zen Hei:size=9"
+	"Source Han Sans SC:size=9"
 };
 
 static const char *interface_name[] = {

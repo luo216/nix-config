@@ -1,5 +1,5 @@
 * {
-  font: "Roboto 10";
+  font: "Source Han Sans SC 10";
 
   bg0    : #1f1f1f80;
   bg1    : #202020bf;
@@ -58,7 +58,7 @@ icon-search {
 }
 
 entry {
-  font              : "Roboto 12";
+  font              : "Source Han Sans SC 12";
   placeholder       : "Type here to search";
   placeholder-color : @fg1;
 }

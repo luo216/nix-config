@@ -39,7 +39,7 @@
     normal-foreground:           var(foreground);
     alternate-urgent-foreground: var(red);
     selected-normal-background:  var(lightbg);
-    font:                        "DejaVu Sans 12";
+    font:                        "Source Han Sans SC 12";
     blackText:			 rgba(0, 0, 0, 100 %);
 }
 window {

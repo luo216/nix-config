@@ -66,7 +66,7 @@ configuration {
     highlight:     underline bold #ffffff;
 
     transparent: rgba(0,0,0,0);
-    font: "Source Code Pro 10";
+    font: "Hack Nerd Font 10";
 }
 #window {
     location: center;
@@ -95,7 +95,7 @@ configuration {
     background-color: @tcyan;
 }
 #message {
-    font: "Source Code Pro 8";
+    font: "Hack Nerd Font 8";
     color: @black;
 }
 
@@ -106,7 +106,7 @@ configuration {
     border: 2px 2px 2px 2px;
     border-radius:  15px 15px 0px 0px;
     border-color: @foreground;
-    font: "Source Code Pro 18";
+    font: "Hack Nerd Font 18";
 }
 #entry,prompt,case-indicator {
     text-font: inherit;
@@ -177,7 +177,7 @@ configuration {
     border: 0px 0px 0px 0px;
 }
 #button {
-    font: "FontAwesome 22";
+    font: "Hack Nerd Font 22";
     padding: 6px;
     border: 2px 0px 2px 2px;
     border-radius: 4px 0px 0px 4px;
@@ -192,4 +192,3 @@ configuration {
     background-color: @backlight;
     border-color: @foreground;
 }
-

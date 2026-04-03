@@ -47,7 +47,7 @@ in
         type = types.str;
         default = "Hack Nerd Font 16";
         description = "Font to use in rofi";
-        example = "JetBrains Mono 14";
+        example = "Hack Nerd Font 14";
       };
 
       terminal = mkOption {

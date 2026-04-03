@@ -30,7 +30,7 @@
 	spacing: 0;
 	background-color: transparent;
 
-	font: "Roboto Mono 13";
+	font: "Hack Nerd Font 13";
 }
 
 window {

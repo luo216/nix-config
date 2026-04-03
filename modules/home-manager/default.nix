@@ -4,6 +4,7 @@
   # List your module files here
   rofi = import ./rofi.nix;
   fcitx5 = import ./fcitx5.nix;
+  customFonts = import ./fonts.nix;
   dunst = import ./dunst.nix;
   dwm = import ./dwm.nix;
   rainbarf = import ./rainbarf.nix;

@@ -35,8 +35,8 @@
     alternate-active-foreground: @active-foreground;
     active-background:           rgba ( 245, 245, 245, 100 % );
     selected-active-background:  #2B591C;
-    font: "Bitstream Vera Sans 8";
-    monospace: "Bitstream Vera Sans Mono 8";
+    font: "Source Han Sans SC 8";
+    monospace: "Hack Nerd Font 8";
 }
 
 #window {

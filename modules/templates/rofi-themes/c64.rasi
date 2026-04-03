@@ -36,7 +36,7 @@
     selected-active-background:  rgba ( 79, 128, 255, 100 % );
 }
 #window {
-	font: "Topaz-8 10";
+	font: "Hack Nerd Font 10";
     background-color: #4E7FFF;
     border:           1;
     padding:          5;

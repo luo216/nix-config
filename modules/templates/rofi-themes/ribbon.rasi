@@ -11,7 +11,7 @@
   border-color: #00000066;
   transparent: #00000000;
   text-color: @base-color;
-  font: "Times New Roman 20";
+  font: "Source Han Sans SC 20";
 }
 #window {
   anchor: south;

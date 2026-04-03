@@ -7,7 +7,7 @@
     background-color:      Black;
     border-color:          White;
     text-color:           White;
-    font:            "Times New Roman 12";
+    font:            "Source Han Sans SC 12";
 }
 
 #window {

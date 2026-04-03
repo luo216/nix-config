@@ -21,7 +21,7 @@
     active:      #005F87;
     transparent: #000000aa;
     spacing: 0em;
-    font: "Iosevka Term Regular 14";
+    font: "Hack Nerd Font 14";
     padding: 0px;
     background-color: @white;
     line-style: "none";
@@ -157,4 +157,3 @@ prompt-colon {
     spacing:    0;
     enabled: false;
 }
-

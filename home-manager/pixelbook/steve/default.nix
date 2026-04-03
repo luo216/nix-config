@@ -12,6 +12,7 @@
   imports = [
     inputs.stylix.homeModules.stylix # Stylix theme system
     outputs.homeManagerModules.dunst # Notification daemon (dunst)
+    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customKitty # Terminal (kitty)
@@ -103,9 +104,6 @@
       };
     };
   };
-
-  # Enable fontconfig to discover fonts from home.packages
-  fonts.fontconfig.enable = true;
 
   # XDG 用户目录配置 - 使用英文目录名
   xdg.userDirs = {
@@ -219,28 +217,6 @@
     moonlight-qt # Video player
     google-chrome-canary # Web browser
     wpsoffice-cn # WPS Office 中文版（官方）
-    # === 字体 ===
-    # Emoji 和符号字体
-    noto-fonts-color-emoji # Google Noto Color Emoji
-    noto-fonts # Noto 字体集（包含额外符号）
-    symbola # Unicode 符号字体
-    # 思源字体系列
-    source-han-sans # 思源黑体
-    source-han-serif # 思源宋体
-    source-han-mono # 思源等宽
-    source-han-code-jp # 思源等宽（日文变体）
-    noto-fonts-cjk-sans # Noto CJK Sans
-    noto-fonts-cjk-serif # Noto Serif CJK SC
-    # 数学公式字体
-    stix-two # STIX 数学字体
-    cm_unicode # Computer Modern Unicode 数学字体
-    fira-code # Fira Code（带连字符的等宽字体）
-    fira-mono # Fira Mono 等宽字体
-    jetbrains-mono # JetBrains Mono 等宽字体
-    # Nerd Fonts（图标补丁）- 系统已有 nerd-fonts.hack
-    nerd-fonts.fira-code # Fira Code Nerd Font
-    nerd-fonts.fira-mono # Fira Mono Nerd Font
-    nerd-fonts.jetbrains-mono # JetBrains Mono Nerd Font
     qq # QQ
     wechat # 微信
     wemeet # 腾讯会议
@@ -317,6 +293,9 @@
 
     # Enable tmux terminal multiplexer
     customTmux.enable = true;
+
+    # Enable shared fonts
+    customFonts.enable = true;
 
     # Enable kitty terminal
     customKitty.enable = true;
