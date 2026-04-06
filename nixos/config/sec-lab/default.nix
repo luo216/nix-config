@@ -75,12 +75,15 @@
 
   environment.systemPackages = with pkgs; [
     # NixOS layer: desktop/runtime/global tools verified before Home Manager.
+    arc-theme
+    bibata-cursors
     burpsuite
     curl
     firefox
     git
     metasploit
     nmap
+    papirus-icon-theme
     python3
     tcpdump
     wget
@@ -118,6 +121,23 @@
       displayManager.lightdm = {
         enable = true;
         greeters.gtk.enable = true;
+        background = pkgs.nixos-artwork.wallpapers.catppuccin-macchiato.gnomeFilePath;
+        greeters.gtk = {
+          theme = {
+            package = pkgs.arc-theme;
+            name = "Arc-Dark";
+          };
+          iconTheme = {
+            package = pkgs.papirus-icon-theme;
+            name = "Papirus-Dark";
+          };
+          cursorTheme = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Ice";
+            size = 24;
+          };
+          clock-format = "%a %F %H:%M";
+        };
       };
 
       desktopManager.xfce.enable = true;
@@ -135,8 +155,9 @@
   virtualisation = {
     vmVariant = {
       virtualisation = {
-        memorySize = 4096;
-        cores = 2;
+        memorySize = 8192;
+        cores = 4;
+        diskSize = 131072;
         graphics = true;
         resolution = {
           x = 1440;

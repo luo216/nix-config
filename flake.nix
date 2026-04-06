@@ -120,13 +120,51 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          secLabVm = self.nixosConfigurations.sec-lab.config.system.build.vm;
         in
         {
+          build-vm-sec-lab = {
+            type = "app";
+            program =
+              "${pkgs.writeShellApplication {
+                name = "build-vm-sec-lab";
+                runtimeInputs = with pkgs; [
+                  coreutils
+                  gitMinimal
+                  nix
+                ];
+                text = ''
+                  set -euo pipefail
+
+                  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+                  out_dir="''${SEC_LAB_OUT_DIR:-$repo_root/out}"
+
+                  mkdir -p "$out_dir"
+                  exec nix build --out-link "$out_dir/result-vm-sec-lab" ".#nixosConfigurations.sec-lab.config.system.build.vm" "$@"
+                '';
+              }}/bin/build-vm-sec-lab";
+          };
           vm-sec-lab = {
             type = "app";
-            program = "${pkgs.writeShellScript "run-vm-sec-lab" ''
-              exec ${self.nixosConfigurations.sec-lab.config.system.build.vm}/bin/run-sec-lab-vm "$@"
-            ''}";
+            program =
+              "${pkgs.writeShellApplication {
+                name = "run-vm-sec-lab";
+                runtimeInputs = with pkgs; [
+                  coreutils
+                  gitMinimal
+                ];
+                text = ''
+                  set -euo pipefail
+
+                  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+                  out_dir="''${SEC_LAB_OUT_DIR:-$repo_root/out}"
+
+                  mkdir -p "$out_dir"
+                  cd "$out_dir"
+
+                  exec ${secLabVm}/bin/run-sec-lab-vm "$@"
+                '';
+              }}/bin/run-vm-sec-lab";
           };
         }
       );
