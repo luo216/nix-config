@@ -68,6 +68,12 @@ Home Manager naming:
 - NixOS-integrated Home Manager still uses the real username internally, for example `home-manager.users.steve`
 - This lets the same host support both standalone Home Manager updates and NixOS-integrated updates
 
+Shared Home Manager base module:
+
+- `modules/home-manager/base.nix` provides common Home Manager defaults shared by user profiles
+- It centralizes `nix.gc`, `programs.home-manager.enable`, and standalone-vs-integrated `nixpkgs` handling
+- New user profiles should usually import `outputs.homeManagerModules.base` first, then add host- or user-specific modules
+
 ### 2. Configure Disk Layout
 
 Create a disk layout for the new host in `nixos/disko/your-hostname.nix`.

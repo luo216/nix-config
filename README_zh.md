@@ -68,6 +68,12 @@ Home Manager 命名规则：
 - NixOS 集成的 Home Manager 内部仍然使用真实用户名，例如 `home-manager.users.steve`
 - 这样同一台主机既可以单独更新 Home Manager，也可以在 NixOS 更新时一并更新
 
+公共 Home Manager 基础模块：
+
+- `modules/home-manager/base.nix` 提供用户配置共享的 Home Manager 公共默认层
+- 它统一处理 `nix.gc`、`programs.home-manager.enable`，以及独立 HM 与集成 HM 下的 `nixpkgs` 兼容逻辑
+- 新增用户配置时，一般先导入 `outputs.homeManagerModules.base`，再叠加主机或用户自己的模块
+
 ### 2. 配置磁盘布局
 
 在 `nixos/disko/your-hostname.nix` 中为新主机创建一个磁盘布局。

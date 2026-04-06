@@ -2,6 +2,7 @@
 # These should be stuff you would like to share with others, not your personal configurations.
 {
   # List your module files here
+  base = import ./base.nix;
   rofi = import ./rofi.nix;
   fcitx5 = import ./fcitx5.nix;
   customFonts = import ./fonts.nix;

@@ -2,15 +2,14 @@
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   outputs,
-  lib,
   pkgs,
   user,
-  integratedHomeManager,
   ...
 }:
 {
   # Import modular configurations
   imports = [
+    outputs.homeManagerModules.base
     outputs.homeManagerModules.dunst # Notification daemon (dunst)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
@@ -24,40 +23,6 @@
     outputs.homeManagerModules.templates # Template files mapping
   ];
 
-  nixpkgs = lib.mkIf (!integratedHomeManager) {
-    # You can add overlays here
-    overlays = [
-      # Add overlays your own flake exports (from overlays and pkgs dir):
-      outputs.overlays.additions
-      outputs.overlays.modifications
-      outputs.overlays.unstable-packages
-
-      # You can also add overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
-    ];
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-    };
-  };
-
-  # Nix 垃圾回收配置
-  nix = {
-    gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 7d";
-    };
-  };
-
   # Set your username and home directory from the flake
   home = {
     inherit (user) username;
@@ -67,9 +32,8 @@
     };
   };
 
-  # Enable home-manager and git
+  # Enable git
   programs = {
-    home-manager.enable = true;
     git = {
       enable = true;
       lfs.enable = true;

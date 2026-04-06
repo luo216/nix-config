@@ -6,15 +6,10 @@
 }:
 {
   imports = [
+    outputs.homeManagerModules.base
     outputs.homeManagerModules.customKitty
     outputs.homeManagerModules.customZsh
   ];
-
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 7d";
-  };
 
   home = {
     inherit (user) username;
@@ -47,7 +42,6 @@
     };
   };
 
-  programs.home-manager.enable = true;
   programs.git = {
     enable = true;
     lfs.enable = true;
