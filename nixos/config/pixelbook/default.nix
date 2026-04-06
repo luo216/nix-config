@@ -257,6 +257,15 @@
     };
   };
 
+  home-manager.users.steve.stylix.targets = {
+    dunst.enable = false;
+    fcitx5.enable = false;
+    kitty.enable = false;
+    rofi.enable = false;
+    tmux.enable = false;
+    yazi.enable = false;
+  };
+
   services.udisks2.enable = true;
 
   # ============ Locale 配置 ============

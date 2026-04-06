@@ -9,11 +9,15 @@
   ...
 }:
 let
+  standaloneHomeName = user: "${user.username}@${host.hostname}";
+
   homeManagerUsers = builtins.listToAttrs (
     map (user: {
       name = user.username;
       value = {
         _module.args.user = user;
+        _module.args.homeConfigurationName = standaloneHomeName user;
+        _module.args.integratedHomeManager = true;
         imports = [ (../home-manager + "/${host.hostname}/${user.username}") ];
       };
     }) host.users
@@ -151,7 +155,10 @@ in
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs outputs host;
+      integratedHomeManager = true;
     };
+    # `home-manager.users` must be keyed by the real system account name, while
+    # standalone flake outputs keep the `<user>@<host>` naming convention.
     users = homeManagerUsers;
   };
 

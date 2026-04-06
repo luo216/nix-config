@@ -49,11 +49,24 @@ hosts = [
   {
     hostname = "your-hostname";
     system = "x86_64-linux";
+    deploy = true; # 可选：将此主机纳入 deploy-rs
+    withHomeManager = true; # 可选：在 NixOS 构建时集成 Home Manager
     ip = "192.168.1.100"; # 用于 deploy-rs
     users = [ { username = "your-user"; } ];
   }
 ];
 ```
+
+主机级开关说明：
+
+- `deploy = true`：把该主机加入 `deploy.nodes`，供 `deploy-rs` 使用
+- `withHomeManager = true`：在 NixOS 构建时，把该主机下所有用户集成到 `home-manager.users`
+
+Home Manager 命名规则：
+
+- 独立 Home Manager 输出使用 `user@host`，例如 `steve@pixelbook`
+- NixOS 集成的 Home Manager 内部仍然使用真实用户名，例如 `home-manager.users.steve`
+- 这样同一台主机既可以单独更新 Home Manager，也可以在 NixOS 更新时一并更新
 
 ### 2. 配置磁盘布局
 
@@ -112,6 +125,12 @@ nix run github:serokell/deploy-rs -- .#your-hostname
 # 在目标设备上执行
 home-manager switch --flake .#your-user@your-hostname
 ```
+
+NixOS 主机补充说明：
+
+- 如果设置了 `withHomeManager = true`，那么 `nixos-rebuild` 和 `deploy-rs` 会在更新系统时一并更新该主机集成的 Home Manager 配置
+- 同时你仍然可以使用 `homeConfigurations."your-user@your-hostname"` 这种独立输出做仅用户层更新
+- 在 `pixelbook` 上，Stylix 现在由 system 级配置统一管理，用户 Home Manager 不再单独定义 Stylix
 
 ## 🐧 在 Non-NixOS 系统上使用 Home Manager
 

@@ -74,9 +74,20 @@
       # Generate attributes for each system
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
+      pkgsFor =
+        system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+
       isNixosHost =
         host:
         builtins.pathExists (./nixos/config + "/${host.hostname}/default.nix");
+
+      homeModulePath = host: user: ./home-manager + "/${host.hostname}/${user.username}";
+
+      standaloneHomeName = host: user: "${user.username}@${host.hostname}";
 
       # Hosts and users configuration
       hosts = [
@@ -119,12 +130,12 @@
     in
     {
       # Custom packages
-      packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+      packages = forAllSystems (system: import ./pkgs (pkgsFor system));
 
       apps = forAllSystems (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = pkgsFor system;
           secLabVm = self.nixosConfigurations.sec-lab.config.system.build.vm;
         in
         {
@@ -175,7 +186,7 @@
       );
 
       # Formatter for Nix files
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+      formatter = forAllSystems (system: (pkgsFor system).alejandra);
 
       # Overlays
       overlays = import ./overlays { inherit inputs; };
@@ -208,9 +219,9 @@
           map (
             host:
             map (user: {
-              name = "${user.username}@${host.hostname}";
+              name = standaloneHomeName host user;
               value = home-manager.lib.homeManagerConfiguration {
-                pkgs = nixpkgs.legacyPackages.${host.system};
+                pkgs = pkgsFor host.system;
                 extraSpecialArgs = {
                   inherit
                     inputs
@@ -218,9 +229,11 @@
                     user
                     host
                     ;
+                  homeConfigurationName = standaloneHomeName host user;
+                  integratedHomeManager = false;
                 };
                 modules = [
-                  ./home-manager/${host.hostname}/${user.username}
+                  (homeModulePath host user)
                 ];
               };
             }) host.users

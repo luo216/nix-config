@@ -1,9 +1,15 @@
 {
+  outputs,
   pkgs,
   user,
   ...
 }:
 {
+  imports = [
+    outputs.homeManagerModules.customKitty
+    outputs.homeManagerModules.customZsh
+  ];
+
   nix.gc = {
     automatic = true;
     dates = "daily";
@@ -51,8 +57,12 @@
     };
   };
 
+  programs.customZsh.enable = true;
+  programs.customKitty.enable = true;
+
   # Home Manager layer: user workflow and day-to-day Web tools validated after NixOS.
   home.packages = with pkgs; [
+    fastfetch
     ffuf
     gobuster
     httpx

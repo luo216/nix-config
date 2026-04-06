@@ -49,11 +49,24 @@ hosts = [
   {
     hostname = "your-hostname";
     system = "x86_64-linux";
+    deploy = true; # Optional: include this host in deploy-rs
+    withHomeManager = true; # Optional: integrate Home Manager into NixOS builds
     ip = "192.168.1.100"; # For deploy-rs
     users = [ { username = "your-user"; } ];
   }
 ];
 ```
+
+Host flags:
+
+- `deploy = true`: include the host in `deploy.nodes` for `deploy-rs`
+- `withHomeManager = true`: include all users for that host in `home-manager.users` during NixOS builds
+
+Home Manager naming:
+
+- Standalone Home Manager outputs use `user@host`, for example `steve@pixelbook`
+- NixOS-integrated Home Manager still uses the real username internally, for example `home-manager.users.steve`
+- This lets the same host support both standalone Home Manager updates and NixOS-integrated updates
 
 ### 2. Configure Disk Layout
 
@@ -112,6 +125,12 @@ For user-specific settings, apply them with Home Manager directly on the target 
 # On the target machine
 home-manager switch --flake .#your-user@your-hostname
 ```
+
+Notes for NixOS hosts:
+
+- If `withHomeManager = true`, `nixos-rebuild` and `deploy-rs` will update the host's integrated Home Manager profiles together with the system
+- You can still use standalone Home Manager outputs such as `homeConfigurations."your-user@your-hostname"` for user-only updates
+- On `pixelbook`, Stylix is managed at the system level; the user Home Manager profile does not define Stylix separately
 
 ## 🐧 Using Home Manager on Non-NixOS Systems
 

@@ -2,15 +2,15 @@
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   outputs,
-  inputs,
+  lib,
   pkgs,
   user,
+  integratedHomeManager,
   ...
 }:
 {
   # Import modular configurations
   imports = [
-    inputs.stylix.homeModules.stylix # Stylix theme system
     outputs.homeManagerModules.dunst # Notification daemon (dunst)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
@@ -24,30 +24,7 @@
     outputs.homeManagerModules.templates # Template files mapping
   ];
 
-  # Stylix theme configuration
-  stylix = {
-    enable = true;
-    autoEnable = false;
-    polarity = "dark";
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
-    cursor = {
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Ice";
-      size = 48;
-    };
-    icons = {
-      enable = true;
-      package = pkgs.papirus-icon-theme;
-      dark = "Papirus-Dark";
-      light = "Papirus-Light";
-    };
-    targets = {
-      gtk.enable = true;
-      qt.enable = true;
-    };
-  };
-
-  nixpkgs = {
+  nixpkgs = lib.mkIf (!integratedHomeManager) {
     # You can add overlays here
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
