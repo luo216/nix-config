@@ -74,12 +74,17 @@
       # Generate attributes for each system
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
+      isNixosHost =
+        host:
+        builtins.pathExists (./nixos/config + "/${host.hostname}/default.nix");
+
       # Hosts and users configuration
       hosts = [
         {
           hostname = "pixelbook";
           system = "x86_64-linux";
-          nixos = true;
+          deploy = true;
+          withHomeManager = true;
           ip = "192.168.31.76";
           users = [
             {
@@ -101,7 +106,7 @@
         {
           hostname = "sec-lab";
           system = "x86_64-linux";
-          nixos = true;
+          withHomeManager = true;
           users = [
             {
               username = "sec";
@@ -181,7 +186,7 @@
       # Reusable home-manager modules
       homeManagerModules = import ./modules/home-manager;
 
-      # NixOS configurations for hosts that define a NixOS system
+      # NixOS configurations for hosts that have a NixOS host directory
       nixosConfigurations = builtins.listToAttrs (
         map (host: {
           name = host.hostname;
@@ -194,7 +199,7 @@
               ./nixos/configuration.nix
             ];
           };
-        }) (builtins.filter (host: host ? nixos && host.nixos) hosts)
+        }) (builtins.filter isNixosHost hosts)
       );
 
       # Home-manager configurations for all users
@@ -223,7 +228,7 @@
         )
       );
 
-      # Deploy-rs configuration for hosts with IP
+      # Deploy-rs configuration for hosts explicitly marked for deployment
       deploy = {
         nodes = builtins.listToAttrs (
           map (host: {
@@ -237,7 +242,7 @@
                 path = deploy-rs.lib.${host.system}.activate.nixos self.nixosConfigurations.${host.hostname};
               };
             };
-          }) (builtins.filter (host: host ? ip) hosts)
+          }) (builtins.filter (host: host ? ip && host ? deploy && host.deploy && isNixosHost host) hosts)
         );
       };
 

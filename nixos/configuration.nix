@@ -8,6 +8,17 @@
   host,
   ...
 }:
+let
+  homeManagerUsers = builtins.listToAttrs (
+    map (user: {
+      name = user.username;
+      value = {
+        _module.args.user = user;
+        imports = [ (../home-manager + "/${host.hostname}/${user.username}") ];
+      };
+    }) host.users
+  );
+in
 {
   # You can import other NixOS modules here
   imports = [
@@ -20,7 +31,6 @@
     outputs.nixosModules.dwm
     outputs.nixosModules.network-printers
     outputs.nixosModules.pixelbook-go-audio
-    inputs.home-manager.nixosModules.home-manager
     # Stylix theme system
     inputs.stylix.nixosModules.stylix
 
@@ -30,6 +40,8 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
+  ] ++ lib.optionals (host.withHomeManager or false) [
+    inputs.home-manager.nixosModules.home-manager
   ];
 
   # Configure facter to use the report for the current host
@@ -128,6 +140,15 @@
 
   # Ensure zsh is fully configured when used as a login shell
   programs.zsh.enable = true;
+
+  home-manager = lib.mkIf (host.withHomeManager or false) {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {
+      inherit inputs outputs host;
+    };
+    users = homeManagerUsers;
+  };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.11";

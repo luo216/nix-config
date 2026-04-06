@@ -1,7 +1,6 @@
 # sec-lab VM base for a local Kali-like lab
 {
   host,
-  outputs,
   pkgs,
   ...
 }:
@@ -97,17 +96,6 @@
   programs.git = {
     enable = true;
     lfs.enable = true;
-  };
-
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit outputs;
-      inherit host;
-      user = builtins.elemAt host.users 0;
-    };
-    users.sec = import ../../../home-manager/sec-lab/sec;
   };
 
   services = {
