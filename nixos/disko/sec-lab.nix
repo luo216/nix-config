@@ -1,4 +1,8 @@
 {
+  # Placeholder disko layout for the local sec-lab VM.
+  # This file exists to keep the repository's host structure uniform.
+  # The local build-vm workflow is VM-oriented and does not treat this as a
+  # carefully modeled physical disk plan.
   disko.devices = {
     disk.primary = {
       type = "disk";

@@ -22,7 +22,10 @@ in
 {
   # You can import other NixOS modules here
   imports = [
-    # Import the disko configuration for the current host
+    # Import the disko configuration for the current host.
+    # Some VM-oriented hosts keep a minimal placeholder file here so the
+    # multi-host repository layout stays consistent even when disko is not
+    # central to their local workflow.
     ./disko/${host.hostname}.nix
     # Import host-specific configuration
     ./config/${host.hostname}/default.nix
@@ -44,7 +47,9 @@ in
     inputs.home-manager.nixosModules.home-manager
   ];
 
-  # Configure facter to use the report for the current host
+  # Configure facter to use the report for the current host.
+  # Some VM-oriented hosts keep a minimal placeholder report for structural
+  # consistency rather than detailed hardware modeling.
   facter.reportPath = ./factors/${host.hostname}.json;
 
   nixpkgs = {
