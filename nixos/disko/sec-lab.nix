@@ -2,7 +2,7 @@
   disko.devices = {
     disk.primary = {
       type = "disk";
-      device = "/dev/vda";  # KVM/QEMU 虚拟机使用 /dev/vda 作为主磁盘
+      device = "/dev/vda";
       content = {
         type = "gpt";
         partitions = {
@@ -17,7 +17,7 @@
           };
 
           swap = {
-            size = "4G";  # VM 使用较小的交换分区
+            size = "4G";
             content.type = "swap";
           };
 

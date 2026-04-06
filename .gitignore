@@ -49,3 +49,6 @@ deploy.log
 
 # Codex local workspace data
 .codex/
+
+# Local VM disk images
+*.qcow2

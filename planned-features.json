@@ -1,0 +1,170 @@
+{
+  "name": "Project Features",
+  "readme": {
+    "schema": {
+      "root": [
+        "name",
+        "readme",
+        "features"
+      ],
+      "featureFields": [
+        "id",
+        "title",
+        "description",
+        "acceptance",
+        "dependsOn",
+        "status"
+      ],
+      "statusEnum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed",
+        "blocked",
+        "skipped"
+      ],
+      "dependsOn": "Use feature ids only.",
+      "acceptance": "Use a string array.",
+      "testingAndDeployment": "Record the agreed testing strategy and deployment arrangement in readme.projectSummary. If testing, rollout, or deployment needs explicit execution sequencing, add dedicated features for them."
+    },
+    "projectSummary": {
+      "goal": "Plan a Kali-like NixOS VM for local Web-security learning within this existing flake repository, validate it locally first, then add a flake app for fast launch.",
+      "scope": [
+        "Define the VM host direction, Web-security tooling scope, Kali-like X11/Xfce desktop direction, local test path, and app-wrapper path.",
+        "Produce implementation-ready planning artifacts after clarification.",
+        "Split suitable user-facing tools into Home Manager while keeping system-critical runtime pieces in NixOS."
+      ],
+      "constraints": [
+        "Planner role only; no implementation or machine configuration in this stage.",
+        "Implementation should prefer Kali-like defaults where practical.",
+        "Validation must check both system-level and Home Manager-installed software.",
+        "Acceptance must run in two explicit phases: NixOS acceptance first, then Home Manager acceptance."
+      ],
+      "testingStrategy": [
+        "Build the local VM with `nix build .#nixosConfigurations.sec-lab.config.system.build.vm`.",
+        "Run the generated launcher locally and verify that the guest reaches an X11 + Xfce session.",
+        "First-pass NixOS acceptance: verify the expected system packages are installed and executable before relying on Home Manager-delivered tools.",
+        "Second-pass Home Manager acceptance: verify the Home Manager profile for user `sec` is present and its packages are installed and executable.",
+        "Verify the flake app `nix run .#vm-sec-lab` launches the same VM path after app wrapping is added."
+      ],
+      "deploymentPlan": [
+        "No remote deployment target is requested in the current phase.",
+        "Implementation should focus on a local-only VM workflow.",
+        "After the VM build path works, expose a local quick-start app entrypoint in flake outputs under `vm-sec-lab`."
+      ],
+      "notes": [
+        "The repository should keep the VM host identity aligned on `sec-lab` with user `sec`.",
+        "User prefers Kali-like defaults where practical.",
+        "Desktop direction is X11 + Xfce.",
+        "Default tooling scope is Web security.",
+        "User wants the default set to include `hydra`.",
+        "User also wants a Metasploit suite package in the default image.",
+        "Current default Web-tool direction includes Burp Suite, ZAP, sqlmap, ffuf, httpx, nuclei, whatweb, nikto, gobuster, dirsearch, hydra, Metasploit, and related support tools.",
+        "Tool placement should be interleaved into two layers: NixOS base tools first, then Home Manager user tools.",
+        "Initial NixOS-layer recommendation: X11/Xfce stack, Firefox, Wireshark, tcpdump, curl, wget, nmap, python3, git, Burp Suite, ZAP, Metasploit.",
+        "Initial Home Manager-layer recommendation: jq, pipx, tmux, neovim, sqlmap, ffuf, httpx, nuclei, whatweb, nikto, gobuster, dirsearch, hydra."
+      ]
+    }
+  },
+  "features": [
+    {
+      "id": "host-sec-lab-layout",
+      "title": "Define sec-lab host layout",
+      "description": "Add or migrate the repository host definitions so the VM target is represented as host `sec-lab` with user `sec`, including the corresponding NixOS, disko, factor, and Home Manager paths.",
+      "acceptance": [
+        "`flake.nix` exposes `nixosConfigurations.sec-lab` and `homeConfigurations.sec@sec-lab`.",
+        "The repository contains host-specific paths for `sec-lab` as the final VM identity.",
+        "The host remains compatible with the repository's existing multi-host flake structure."
+      ],
+      "dependsOn": [],
+      "status": "completed"
+    },
+    {
+      "id": "desktop-xfce-vm-base",
+      "title": "Create Kali-like X11 and Xfce VM base",
+      "description": "Define the VM-oriented NixOS base for `sec-lab`, including X11, Xfce, suitable VM defaults, networking, and Kali-like usability choices where practical on NixOS.",
+      "acceptance": [
+        "The `sec-lab` NixOS configuration builds a VM derivation successfully.",
+        "The VM can boot to a usable X11 + Xfce session.",
+        "The user `sec` exists and can log into the desktop session."
+      ],
+      "dependsOn": [
+        "host-sec-lab-layout"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "web-tooling-split",
+      "title": "Install the Web-security toolkit with system and Home Manager split",
+      "description": "Add the agreed default toolkit: Burp Suite, ZAP, sqlmap, ffuf, httpx, nuclei, whatweb, nikto, gobuster, dirsearch, hydra, Metasploit, wireshark, tcpdump, curl, wget, jq, python3, pipx, git, tmux, and neovim. Keep system-critical runtime pieces in NixOS and place suitable user-facing tools in Home Manager where that improves manageability.",
+      "acceptance": [
+        "The final package split between NixOS and Home Manager is documented in code comments or module structure clearly enough for maintenance.",
+        "The guest system contains the agreed default Web-security toolkit after activation.",
+        "At least some user-facing tools are managed through `home-manager/sec-lab/sec/` instead of placing the entire toolkit in the system profile.",
+        "The tool split is arranged to support separate NixOS acceptance and Home Manager acceptance.",
+        "Unless package constraints force a change, the initial split should follow: NixOS for Firefox, Burp Suite, ZAP, Metasploit, Wireshark, tcpdump, curl, wget, nmap, python3, git, and desktop/runtime components; Home Manager for jq, pipx, tmux, neovim, sqlmap, ffuf, httpx, nuclei, whatweb, nikto, gobuster, dirsearch, and hydra."
+      ],
+      "dependsOn": [
+        "desktop-xfce-vm-base"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "nixos-acceptance",
+      "title": "Run NixOS-layer acceptance",
+      "description": "Verify the built `sec-lab` VM at the NixOS layer first: boot, desktop/session, networking basics, and the base tool subset that must exist before Home Manager validation.",
+      "acceptance": [
+        "The VM boots successfully into the expected X11 + Xfce environment.",
+        "Representative NixOS-layer tools are present and executable, such as `wireshark`, `tcpdump`, `curl`, `wget`, `nmap`, and any other tools intentionally assigned to the system profile.",
+        "The NixOS acceptance result is recorded before Home Manager acceptance begins."
+      ],
+      "dependsOn": [
+        "web-tooling-split"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "home-manager-acceptance",
+      "title": "Run Home Manager-layer acceptance",
+      "description": "After the NixOS layer passes, verify the `sec` user's Home Manager profile and the user-scoped Web tools assigned there.",
+      "acceptance": [
+        "The Home Manager profile for `sec@sec-lab` is present and activated in the guest.",
+        "Representative Home Manager-layer tools are present and executable, such as user-scoped terminal tooling and any Web tools intentionally assigned to the home profile.",
+        "Home Manager acceptance only runs after the NixOS acceptance feature passes."
+      ],
+      "dependsOn": [
+        "nixos-acceptance"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "vm-launch-app",
+      "title": "Expose quick-start app vm-sec-lab",
+      "description": "Add a flake app named `vm-sec-lab` that launches the locally built `sec-lab` VM through a stable command path.",
+      "acceptance": [
+        "`nix run .#vm-sec-lab` starts the `sec-lab` VM launch path.",
+        "The app implementation reuses the same VM target as `.#nixosConfigurations.sec-lab.config.system.build.vm` rather than a divergent code path."
+      ],
+      "dependsOn": [
+        "desktop-xfce-vm-base"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "local-validation",
+      "title": "Verify local build, launch, and installed tools",
+      "description": "Run the agreed local validation flow end to end: build the VM, launch it, complete NixOS acceptance, complete Home Manager acceptance, and confirm the `vm-sec-lab` app works.",
+      "acceptance": [
+        "The VM build command completes successfully for `sec-lab`.",
+        "The generated VM launcher starts successfully and reaches the expected guest environment.",
+        "Package verification is explicitly split into a NixOS acceptance pass and a Home Manager acceptance pass.",
+        "`nix run .#vm-sec-lab` is verified after the app wrapper is added."
+      ],
+      "dependsOn": [
+        "home-manager-acceptance",
+        "vm-launch-app"
+      ],
+      "status": "completed"
+    }
+  ]
+}

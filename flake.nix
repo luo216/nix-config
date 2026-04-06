@@ -79,6 +79,7 @@
         {
           hostname = "pixelbook";
           system = "x86_64-linux";
+          nixos = true;
           ip = "192.168.31.76";
           users = [
             {
@@ -98,22 +99,12 @@
           ];
         }
         {
-          hostname = "vm-test";
+          hostname = "sec-lab";
           system = "x86_64-linux";
-          ip = "192.168.122.76";
+          nixos = true;
           users = [
             {
-              username = "steve";
-              # user-specific attributes can go here
-            }
-          ];
-        }
-        {
-          hostname = "vm-kali";
-          system = "x86_64-linux";
-          users = [
-            {
-              username = "kali";
+              username = "sec";
               # user-specific attributes can go here
             }
           ];
@@ -124,6 +115,21 @@
     {
       # Custom packages
       packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+
+      apps = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          vm-sec-lab = {
+            type = "app";
+            program = "${pkgs.writeShellScript "run-vm-sec-lab" ''
+              exec ${self.nixosConfigurations.sec-lab.config.system.build.vm}/bin/run-sec-lab-vm "$@"
+            ''}";
+          };
+        }
+      );
 
       # Formatter for Nix files
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -137,7 +143,7 @@
       # Reusable home-manager modules
       homeManagerModules = import ./modules/home-manager;
 
-      # NixOS configurations for hosts with IP (deploy targets)
+      # NixOS configurations for hosts that define a NixOS system
       nixosConfigurations = builtins.listToAttrs (
         map (host: {
           name = host.hostname;
@@ -150,7 +156,7 @@
               ./nixos/configuration.nix
             ];
           };
-        }) (builtins.filter (host: host ? ip) hosts)
+        }) (builtins.filter (host: host ? nixos && host.nixos) hosts)
       );
 
       # Home-manager configurations for all users

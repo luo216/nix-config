@@ -20,6 +20,7 @@
     outputs.nixosModules.dwm
     outputs.nixosModules.network-printers
     outputs.nixosModules.pixelbook-go-audio
+    inputs.home-manager.nixosModules.home-manager
     # Stylix theme system
     inputs.stylix.nixosModules.stylix
 

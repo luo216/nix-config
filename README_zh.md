@@ -20,8 +20,8 @@
 │   │   └── steve
 │   ├── pixelbook
 │   │   └── steve
-│   └── vm-test
-│       └── steve
+│   └── sec-lab
+│       └── sec
 ├── modules
 │   ├── home-manager
 │   ├── nixos
@@ -29,7 +29,7 @@
 ├── nixos
 │   ├── config
 │   │   ├── pixelbook
-│   │   └── vm-test
+│   │   └── sec-lab
 │   ├── configuration.nix
 │   ├── disko
 │   └── factors
@@ -80,7 +80,7 @@ hosts = [
 
 ### 3. 添加主机和用户配置
 
-为新主机和用户创建必要的目录和配置文件。你可以从现有的主机（如 `vm-test`）复制和修改。
+为新主机和用户创建必要的目录和配置文件。你可以从结构接近的现有主机目录复制并修改。
 
 - **NixOS 配置:** `nixos/config/your-hostname/`
 - **Home Manager 配置:** `home-manager/your-hostname/your-user/`

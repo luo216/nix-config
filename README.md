@@ -20,8 +20,8 @@ A modular and scalable NixOS configuration system using Nix Flakes.
 │   │   └── steve
 │   ├── pixelbook
 │   │   └── steve
-│   └── vm-test
-│       └── steve
+│   ├── sec-lab
+│   │   └── sec
 ├── modules
 │   ├── home-manager
 │   ├── nixos
@@ -29,7 +29,7 @@ A modular and scalable NixOS configuration system using Nix Flakes.
 ├── nixos
 │   ├── config
 │   │   ├── pixelbook
-│   │   └── vm-test
+│   │   └── sec-lab
 │   ├── configuration.nix
 │   ├── disko
 │   └── factors
@@ -80,7 +80,7 @@ Create a disk layout for the new host in `nixos/disko/your-hostname.nix`.
 
 ### 3. Add Host and User Configurations
 
-Create the necessary directories and configuration files for the new host and user. You can copy and adapt them from an existing host (like `vm-test`).
+Create the necessary directories and configuration files for the new host and user. You can copy and adapt them from an existing host directory that matches your target layout.
 
 - **NixOS Configuration:** `nixos/config/your-hostname/`
 - **Home Manager Configuration:** `home-manager/your-hostname/your-user/`
