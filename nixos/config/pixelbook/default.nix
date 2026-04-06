@@ -136,7 +136,6 @@
   };
 
   services = {
-    todesk.enable = true;
     dbus.enable = true;
     printing = {
       enable = true;
@@ -147,11 +146,6 @@
     logind = {
       settings.Login.HandlePowerKey = "ignore";
     };
-  };
-
-  systemd.services.todeskd.serviceConfig = {
-    LogsDirectory = "todesk";
-    LogsDirectoryMode = "0777";
   };
 
   services.network-printers = {
