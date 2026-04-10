@@ -115,6 +115,16 @@
           ];
         }
         {
+          hostname = "tencent-cvm";
+          system = "x86_64-linux";
+          users = [
+            {
+              username = "steve";
+              # user-specific attributes can go here
+            }
+          ];
+        }
+        {
           hostname = "sec-lab";
           system = "x86_64-linux";
           withHomeManager = true;

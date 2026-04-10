@@ -13,7 +13,7 @@ let
         if cfg.managementSecretKey == null then
           [
             "remote-management:"
-            "  allow-remote: false"
+            "  allow-remote: ${if cfg.allowRemoteManagement then "true" else "false"}"
             "  secret-key: \"\""
             "  disable-control-panel: false"
             "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
@@ -21,7 +21,7 @@ let
         else
           [
             "remote-management:"
-            "  allow-remote: false"
+            "  allow-remote: ${if cfg.allowRemoteManagement then "true" else "false"}"
             "  secret-key: ${builtins.toJSON cfg.managementSecretKey}"
             "  disable-control-panel: false"
             "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
@@ -78,6 +78,12 @@ in
       type = types.nullOr types.str;
       default = null;
       description = "Optional management API secret. Null disables management routes.";
+    };
+
+    allowRemoteManagement = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether CPA management endpoints may be accessed from non-localhost clients.";
     };
 
     authDir = mkOption {
