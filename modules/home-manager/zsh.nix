@@ -44,7 +44,8 @@ in
       };
       initContent =
         let
-          zshEarly = lib.mkOrder 500 ''
+          zshEarly = lib.mkBefore ''
+            export ZSH_DISABLE_COMPFIX="true"
             export EDITOR="nvim"
             export VISUAL="nvim"
             export RAINBARF="$HOME/.config/rainbarf/rainbarf.conf"
@@ -53,7 +54,7 @@ in
             export FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf"
             KEYTIMEOUT=25
           '';
-          zshLate = lib.mkOrder 1000 ''
+          zshLate = lib.mkAfter ''
             # History navigation with up/down arrows
             bindkey '^[[A' history-beginning-search-backward
             bindkey '^[[B' history-beginning-search-forward
