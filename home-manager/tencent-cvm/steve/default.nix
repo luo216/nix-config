@@ -16,6 +16,7 @@
     inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
+      TERM = "xterm-256color";
       TERMINFO_DIRS = "$HOME/.nix-profile/share/terminfo:/nix/var/nix/profiles/default/share/terminfo:/usr/share/terminfo";
     };
   };
@@ -33,11 +34,6 @@
     };
 
     customZsh.enable = true;
-    zsh.initContent = ''
-      if [ "''${TERM:-}" = "xterm-kitty" ] && ! infocmp xterm-kitty >/dev/null 2>&1; then
-        export TERM="xterm-256color"
-      fi
-    '';
   };
 
   home.packages = with pkgs; [
