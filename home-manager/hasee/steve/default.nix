@@ -131,6 +131,7 @@
     btop # System monitor
     tree # Directory tree
     ncdu # Disk usage analyzer
+    rsync
     bubblewrap # Provides bwrap sandbox helper
 
     # === 开发工具 ===

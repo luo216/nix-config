@@ -54,6 +54,7 @@
     vim
     wget
     curl
+    rsync
     networkmanager
     brightnessctl
     zsh

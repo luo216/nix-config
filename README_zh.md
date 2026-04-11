@@ -207,6 +207,20 @@ nix run home-manager/master -- switch --flake .#steve@hasee
 home-manager switch --flake .#your-user@your-hostname
 ```
 
+如果目标机器是远端的 Non-NixOS 主机，推荐从本地仓库直接推送并远程执行：
+
+```bash
+# 在本地机器执行
+rsync -az --delete ./ your-user@your-host:/path/to/nix-config/
+ssh your-user@your-host 'zsh -lic "cd /path/to/nix-config && home-manager switch --flake .#your-user@your-hostname"'
+```
+
+说明：
+
+- 推荐用 `rsync` 同步 flake 仓库到远端，适合快速推送 Home Manager 变更
+- 远端建议用 `zsh -lic` 执行 `home-manager switch`，这样会加载登录 shell 环境，避免非交互 SSH 场景下 `nix` 不在 `PATH` 中
+- 如果远端主机名和 flake 中的 `hostname` 不同，`.#your-user@your-hostname` 里的 `your-hostname` 仍然要写 flake 中定义的主机名
+
 ### 注意事项
 
 - 在 Non-NixOS 系统上，你只能使用 Home Manager 管理用户环境，无法使用 NixOS 系统级配置

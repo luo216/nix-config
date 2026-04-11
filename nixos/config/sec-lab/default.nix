@@ -84,6 +84,7 @@
     nmap
     papirus-icon-theme
     python3
+    rsync
     tcpdump
     wget
     wireshark

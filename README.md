@@ -207,6 +207,20 @@ To update your configuration in the future, simply run:
 home-manager switch --flake .#your-user@your-hostname
 ```
 
+For a remote Non-NixOS host, the recommended workflow is to push the repo from your local machine and run Home Manager remotely:
+
+```bash
+# Run on your local machine
+rsync -az --delete ./ your-user@your-host:/path/to/nix-config/
+ssh your-user@your-host 'zsh -lic "cd /path/to/nix-config && home-manager switch --flake .#your-user@your-hostname"'
+```
+
+Notes:
+
+- Use `rsync` to keep the flake repository on the remote host in sync quickly
+- Run `home-manager switch` via `zsh -lic` on the remote host so the login shell loads the Nix environment; this avoids `nix: command not found` in non-interactive SSH sessions
+- If the remote SSH hostname differs from the hostname defined in the flake, keep using the flake hostname in `.#your-user@your-hostname`
+
 ### Notes
 
 - On Non-NixOS systems, you can only manage your user environment with Home Manager. NixOS system-level configurations are not available.

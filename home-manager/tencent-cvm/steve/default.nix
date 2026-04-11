@@ -41,6 +41,7 @@
     git
     jq
     p7zip
+    rsync
     uv
     wget
   ];
