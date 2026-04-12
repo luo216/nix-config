@@ -20,9 +20,6 @@ in
       enable = true;
       defaultFonts = {
         serif = [
-          "Times New Roman"
-          "SimSun"
-          "宋体"
           "Source Han Serif SC"
           "Noto Serif"
           "Noto Color Emoji"
