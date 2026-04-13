@@ -62,6 +62,7 @@
     bubblewrap
     intel-media-driver
     ventoy
+    scrcpy
   ];
 
   systemd.tmpfiles.rules = [
@@ -74,6 +75,8 @@
   };
 
   virtualisation.docker.enable = true;
+
+  programs.adb.enable = true;
 
   services.docker-easyconnect = {
     enable = false;
@@ -287,6 +290,7 @@
       "docker"
       "networkmanager"
       "video"
+      "adbusers"
     ];
     shell = pkgs.zsh;
 
