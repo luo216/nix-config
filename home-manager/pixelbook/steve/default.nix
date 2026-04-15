@@ -109,7 +109,6 @@
     gcc # C compiler
     gnumake # Build automation tool
     nodejs_24 # Node.js 24
-    yarn # Node.js package manager
     tree-sitter # Tree-sitter CLI
     uv # Python package installer (uvx for running tools)
 
