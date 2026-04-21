@@ -8,7 +8,15 @@
 - **💾 声明式磁盘分区:** 使用 `disko` 对磁盘布局进行声明式管理。
 - **🚀 远程部署:** 支持使用 `nixos-anywhere` 进行远程安装，并使用 `deploy-rs` 进行更新。
 - **🧩 模块化设计:** 结构清晰，为 NixOS 和 Home Manager 提供了可复用的模块。
-- **🖥️ 预配置模块:** 包含 `dwm`, `rofi`, `fcitx5`, `yazi` 等即用型模块。
+- **🖥️ 预配置模块:** 包含 `GNOME（Wayland）`、`fcitx5`、`yazi` 等即用型模块。
+
+## 🖥️ 当前桌面栈
+
+当前 NixOS 桌面主机先统一过渡到 GNOME Wayland，配置入口是
+`services.desktopManager.gnome.enable` 和 `services.displayManager.gdm.enable`。
+
+独立 Home Manager 配置现在只管理用户态应用和会话相关配置，不再直接提供
+窗口管理器或合成器。
 
 ## 📁 目录结构
 
@@ -19,6 +27,8 @@
 │   ├── hasee
 │   │   └── steve
 │   ├── pixelbook
+│   │   └── steve
+│   ├── tencent-cvm
 │   │   └── steve
 │   └── sec-lab
 │       └── sec

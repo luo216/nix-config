@@ -21,21 +21,6 @@
         };
       }
     );
-
-    dwm = prev.dwm.overrideAttrs (oldAttrs: {
-      buildInputs = oldAttrs.buildInputs ++ [
-        prev.xorg.libXcomposite
-        prev.xorg.libXext
-        prev.xorg.libXcursor
-      ];
-      src = prev.fetchFromGitHub {
-        owner = "luo216";
-        repo = "dwm";
-        rev = "master";
-        sha256 = "sha256-ZSbujHvXK2roNSKVlkUTzfG2VhgDQKFBdmfjpeQ2H7o=";
-      };
-    });
-
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will

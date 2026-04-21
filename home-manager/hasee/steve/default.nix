@@ -13,15 +13,12 @@
   imports = [
     outputs.homeManagerModules.base
     inputs.stylix.homeModules.stylix # Stylix theme system
-    outputs.homeManagerModules.dunst # Notification daemon (dunst)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customKitty # Terminal (kitty)
-    outputs.homeManagerModules.rofi # Application launcher (rofi)
     outputs.homeManagerModules.fcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.cpa # CLI Proxy API
-    outputs.homeManagerModules.dwm # dwm with custom config.h
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customZsh # Shell (zsh)
     outputs.homeManagerModules.templates # Template files mapping
@@ -46,7 +43,11 @@
     };
     targets = {
       gtk.enable = true;
-      qt.enable = true;
+      qt = {
+        enable = true;
+        platform = "qtct";
+        standardDialogs = "xdgdesktopportal";
+      };
     };
   };
 
@@ -75,16 +76,6 @@
 
   # Desktop applications
   home-manager = {
-    # Rofi application launcher
-    rofi = {
-      enable = true;
-      enableWrapper = true; # Enable wrapper to unset QT_PLUGIN_PATH for non-Nix Qt apps
-      theme = "gruvbox-material"; # Use the custom theme from templates
-      font = "Hack Nerd Font 16";
-      terminal = "kitty";
-      iconTheme = "Papirus-Dark";
-    };
-
     # Fcitx5 Chinese input method
     fcitx5 = {
       enable = true;
@@ -95,21 +86,6 @@
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
       managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
-    };
-
-    # dwm with custom config.h
-    dwm = {
-      enable = true;
-      configName = "hasee";
-      extraSessionCommands = ''
-        export PATH="$HOME/.local/bin:$PATH"
-        export GTK_IM_MODULE=fcitx
-        export QT_IM_MODULE=fcitx
-        export XMODIFIERS=@im=fcitx
-        export INPUT_METHOD=fcitx
-        export SDL_IM_MODULE=fcitx
-        export GLFW_IM_MODULE=ibus
-      '';
     };
   };
 
@@ -163,7 +139,6 @@
     imagemagick
     resvg
     poppler # PDF preview
-    feh
 
     # === 数据处理 ===
     jq # JSON processor
@@ -176,25 +151,17 @@
     unrar
 
     # === 桌面应用 ===
-    rofi # Application launcher
     google-chrome-canary # Web browser
-    flameshot # Screenshot tool
-    arandr # Display settings
-    networkmanagerapplet
-    pasystray
     input-leap # KVM switch (Barrier replacement)
     qq # QQ
     wechat # 微信
     wemeet # 腾讯会议
     wpsoffice-cn # WPS Office 中文版（官方）
-    # === 文件管理器 ===
-    xfce.thunar
 
     # === 系统工具 ===
     xdg-user-dirs
     xdg-launch
     fastfetch # System information
-    xdotool # X11 automation tool
 
     # === 文件管理和文档渲染 ===
     trash-cli # 文件回收站功能
@@ -207,14 +174,9 @@
     papirus-icon-theme
 
     # === 剪贴板 ===
-    xclip
     wl-clipboard
   ];
-
-  # Enable dunst notification daemon
   programs = {
-    dunst.enable = true;
-
     # Enable rainbarf CPU load monitor
     rainbarf = {
       enable = true;
@@ -243,23 +205,16 @@
 
   # kdeconnect - End-to-end encrypted file sharing and notification sync
   services = {
-    kdeconnect = {
-      enable = true;
-      indicator = true;
-    };
-
-    # udiskie - U 盘自动挂载服务
     udiskie = {
       enable = true;
       automount = true;
       notify = true;
       tray = "auto";
-      settings = {
-        program_options = {
-          # 设置文件管理器，挂载后自动打开
-          file_manager = "${pkgs.xfce.thunar}/bin/thunar";
-        };
-      };
+    };
+
+    kdeconnect = {
+      enable = true;
+      indicator = true;
     };
 
     # Syncthing 文件同步
@@ -277,11 +232,6 @@
       {
         source = "wallpaper/default.png";
         target = ".local/share/wallpaper/default.png";
-      }
-      {
-        source = "scripts";
-        target = ".local/bin";
-        recursive = true;
       }
     ];
   };

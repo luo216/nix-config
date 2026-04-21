@@ -8,7 +8,15 @@ A modular and scalable NixOS configuration system using Nix Flakes.
 - **💾 Declarative Disk Partitioning:** Manages disk layouts declaratively with `disko`.
 - **🚀 Remote Deployment:** Supports remote installation with `nixos-anywhere` and updates with `deploy-rs`.
 - **🧩 Modular Design:** Features a clean structure with reusable modules for NixOS and Home Manager.
-- **🖥️ Pre-configured Modules:** Includes ready-to-use modules for `dwm`, `rofi`, `fcitx5`, `yazi`, and more.
+- **🖥️ Pre-configured Modules:** Includes ready-to-use modules for `GNOME (Wayland)`, `fcitx5`, `yazi`, and more.
+
+## 🖥️ Desktop Stack
+
+NixOS desktop hosts currently use GNOME on Wayland via `services.desktopManager.gnome.enable`
+and `services.displayManager.gdm.enable`.
+
+Standalone Home Manager profiles manage user-space applications and session
+configuration, but no longer provide a window manager/compositor directly.
 
 ## 📁 Directory Structure
 
@@ -20,8 +28,10 @@ A modular and scalable NixOS configuration system using Nix Flakes.
 │   │   └── steve
 │   ├── pixelbook
 │   │   └── steve
-│   ├── sec-lab
-│   │   └── sec
+│   ├── tencent-cvm
+│   │   └── steve
+│   └── sec-lab
+│       └── sec
 ├── modules
 │   ├── home-manager
 │   ├── nixos

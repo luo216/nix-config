@@ -35,7 +35,6 @@ in
     ./config/${host.hostname}/default.nix
     # If you want to use modules your own flake exports (from modules/nixos):
     outputs.nixosModules.docker-easyconnect
-    outputs.nixosModules.dwm
     outputs.nixosModules.network-printers
     outputs.nixosModules.pixelbook-go-audio
     # Stylix theme system

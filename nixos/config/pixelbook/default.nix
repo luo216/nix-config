@@ -147,6 +147,7 @@
         brlaser
       ];
     };
+    gnome.gnome-remote-desktop.enable = false;
     logind = {
       settings.Login.HandlePowerKey = "ignore";
     };
@@ -178,35 +179,15 @@
   };
 
   # ============ Desktop 配置 ============
-  services.xserver = {
+  services.desktopManager.gnome.enable = true;
+
+  services.displayManager.gdm = {
     enable = true;
-
-    windowManager.mydwm = {
-      enable = true;
-      useCustomConfig = true;
-      configName = "pixelbook";
-      extraSessionCommands = ''
-        export PATH="$HOME/.local/bin:$PATH"
-        export GTK_IM_MODULE=fcitx
-        export QT_IM_MODULE=fcitx
-        export XMODIFIERS=@im=fcitx
-        export INPUT_METHOD=fcitx
-        export SDL_IM_MODULE=fcitx
-        export GLFW_IM_MODULE=ibus
-
-        nm-applet &
-        blueman-applet &
-      '';
-    };
-
-    displayManager.lightdm = {
-      enable = true;
-      greeters.gtk.enable = true;
-    };
+    wayland = true;
   };
 
   services.displayManager = {
-    defaultSession = "none+mydwm";
+    defaultSession = "gnome";
     autoLogin = {
       enable = true;
       user = "steve";
@@ -232,8 +213,6 @@
     };
   };
 
-  services.blueman.enable = true;
-
   stylix = {
     enable = true;
     polarity = "dark";
@@ -256,12 +235,14 @@
   };
 
   home-manager.users.steve.stylix.targets = {
-    dunst.enable = false;
     fcitx5.enable = false;
     kitty.enable = false;
-    rofi.enable = false;
     tmux.enable = false;
     yazi.enable = false;
+    qt = {
+      platform = "qtct";
+      standardDialogs = "xdgdesktopportal";
+    };
   };
 
   services.udisks2.enable = true;

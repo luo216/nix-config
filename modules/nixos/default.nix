@@ -3,7 +3,6 @@
 {
   # List your module files here
   docker-easyconnect = import ./docker-easyconnect.nix;
-  dwm = import ./dwm.nix;
   network-printers = import ./network-printers.nix;
   pixelbook-go-audio = import ./pixelbook-go-audio.nix;
 }

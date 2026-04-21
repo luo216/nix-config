@@ -3,11 +3,8 @@
 {
   # List your module files here
   base = import ./base.nix;
-  rofi = import ./rofi.nix;
   fcitx5 = import ./fcitx5.nix;
   customFonts = import ./fonts.nix;
-  dunst = import ./dunst.nix;
-  dwm = import ./dwm.nix;
   rainbarf = import ./rainbarf.nix;
   tmux = import ./tmux.nix;
   customKitty = import ./kitty.nix;

@@ -46,13 +46,13 @@ in
               source = mkOption {
                 type = types.str;
                 description = "Source path relative to modules/templates directory";
-                example = "rofi-themes/macos/rounded-nord-dark.rasi";
+                example = "wallpaper/default.png";
               };
 
               target = mkOption {
                 type = types.str;
                 description = "Target path in home directory (relative to home)";
-                example = ".config/rofi/themes/custom.rasi";
+                example = ".local/share/wallpaper/default.png";
               };
 
               recursive = mkOption {
@@ -75,12 +75,6 @@ in
             {
               source = "wallpaper/default.png";
               target = ".config/wallpaper.png";
-            }
-            # Recursive directory mapping
-            {
-              source = "rofi-themes/macos";
-              target = ".config/rofi/themes";
-              recursive = true;
             }
             # Another single file
             {
