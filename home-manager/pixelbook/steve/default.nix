@@ -1,11 +1,15 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
+  config,
   outputs,
   pkgs,
   user,
   ...
 }:
+let
+  wallpaperUri = "file://${config.home.homeDirectory}/.local/share/wallpaper/default.png";
+in
 {
   # Import modular configurations
   imports = [
@@ -21,12 +25,54 @@
     outputs.homeManagerModules.templates # Template files mapping
   ];
 
+  stylix = {
+    enable = true;
+    autoEnable = false;
+    polarity = "dark";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+    cursor = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Ice";
+      size = 48;
+    };
+    icons = {
+      enable = true;
+      package = pkgs.adwaita-icon-theme;
+      dark = "Adwaita";
+      light = "Adwaita";
+    };
+    targets = {
+      gnome.enable = true;
+      gtk.enable = true;
+      qt = {
+        enable = true;
+        platform = "qtct";
+        standardDialogs = "xdgdesktopportal";
+      };
+    };
+  };
+
   # Set your username and home directory from the flake
   home = {
     inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       GOOGLE_CLOUD_PROJECT = "generactive-language-client";
+    };
+  };
+
+  dconf.settings = {
+    "org/gnome/desktop/background" = {
+      picture-uri = wallpaperUri;
+      picture-uri-dark = wallpaperUri;
+    };
+    "org/gnome/desktop/peripherals/touchpad" = {
+      tap-to-click = false;
+      natural-scroll = true;
+      click-method = "fingers";
+    };
+    "org/gnome/shell/extensions/kimpanel" = {
+      font = "Sans 16";
     };
   };
 
@@ -90,7 +136,6 @@
     btop # System monitor
     tree # Directory tree
     ncdu # Disk usage analyzer
-    bubblewrap # Provides bwrap sandbox helper
 
     # === 开发工具 ===
     lazygit # Git GUI
@@ -115,7 +160,6 @@
     mitmproxy # Intercepting HTTP/HTTPS proxy
     httpie # User-friendly HTTP client
     sqlmap
-    remmina # GUI RDP/VNC/SPICE client
     freerdp # xfreerdp CLI client for RDP
 
     # === 媒体工具 ===
@@ -157,9 +201,6 @@
     mermaid-cli # Mermaid 图表渲染
     sqlite # SQLite3 数据库
 
-    # === 图标主题 ===
-    papirus-icon-theme
-
     # === 剪贴板 ===
     wl-clipboard
   ];
@@ -171,20 +212,32 @@
       tray = "auto";
     };
 
-    # kdeconnect - End-to-end encrypted file sharing and notification sync
-    kdeconnect = {
-      enable = true;
-      indicator = true;
-    };
-
     # Syncthing 文件同步
     syncthing = {
       enable = true;
       guiAddress = "127.0.0.1:8384";
-      tray.enable = true;
+      tray.enable = false;
     };
   };
   programs = {
+    gnome-shell = {
+      enable = true;
+      extensions = [
+        {
+          package = pkgs.gnomeExtensions.appindicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.kimpanel;
+        }
+        {
+          package = pkgs.gnomeExtensions.gsconnect;
+        }
+        {
+          package = pkgs.gnomeExtensions.syncthing-indicator;
+        }
+      ];
+    };
+
     # Enable rainbarf CPU load monitor
     rainbarf = {
       enable = true;

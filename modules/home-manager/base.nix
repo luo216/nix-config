@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   outputs,
   integratedHomeManager ? false,
@@ -12,6 +13,10 @@ let
   cfg = config.homeManagerBase;
 in
 {
+  imports = lib.optionals (!integratedHomeManager) [
+    inputs.stylix.homeModules.stylix
+  ];
+
   options.homeManagerBase = {
     enableLocalNixpkgs = mkOption {
       type = types.bool;

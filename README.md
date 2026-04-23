@@ -146,7 +146,7 @@ Notes for NixOS hosts:
 
 - If `withHomeManager = true`, `nixos-rebuild` and `deploy-rs` will update the host's integrated Home Manager profiles together with the system
 - You can still use standalone Home Manager outputs such as `homeConfigurations."your-user@your-hostname"` for user-only updates
-- On `pixelbook`, Stylix is managed at the system level; the user Home Manager profile does not define Stylix separately
+- On `pixelbook`, GNOME appearance preferences are managed through the integrated Home Manager profile
 
 ## 🐧 Using Home Manager on Non-NixOS Systems
 

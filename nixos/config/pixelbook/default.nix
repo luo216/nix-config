@@ -14,8 +14,18 @@
         efiSysMountPoint = "/boot";
       };
     };
+    plymouth.enable = true;
 
     kernelModules = [ "i2c-dev" ];
+    initrd.systemd.enable = true;
+    kernelParams = [
+      "quiet"
+      "splash"
+      "boot.shell_on_fail"
+      "loglevel=3"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
 
     resumeDevice = "/dev/mmcblk0p2";
   };
@@ -110,7 +120,7 @@
   };
 
   programs = {
-    kdeconnect.enable = true;
+    dconf.enable = true;
 
     nix-ld = {
       enable = true;
@@ -215,6 +225,7 @@
 
   stylix = {
     enable = true;
+    autoEnable = false;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
     cursor = {
@@ -224,24 +235,16 @@
     };
     icons = {
       enable = true;
-      package = pkgs.papirus-icon-theme;
-      dark = "Papirus-Dark";
-      light = "Papirus-Light";
+      package = pkgs.adwaita-icon-theme;
+      dark = "Adwaita";
+      light = "Adwaita";
     };
     targets = {
+      console.enable = true;
+      gnome.enable = true;
       gtk.enable = true;
+      plymouth.enable = true;
       qt.enable = true;
-    };
-  };
-
-  home-manager.users.steve.stylix.targets = {
-    fcitx5.enable = false;
-    kitty.enable = false;
-    tmux.enable = false;
-    yazi.enable = false;
-    qt = {
-      platform = "qtct";
-      standardDialogs = "xdgdesktopportal";
     };
   };
 

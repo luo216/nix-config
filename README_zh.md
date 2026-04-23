@@ -146,7 +146,7 @@ NixOS 主机补充说明：
 
 - 如果设置了 `withHomeManager = true`，那么 `nixos-rebuild` 和 `deploy-rs` 会在更新系统时一并更新该主机集成的 Home Manager 配置
 - 同时你仍然可以使用 `homeConfigurations."your-user@your-hostname"` 这种独立输出做仅用户层更新
-- 在 `pixelbook` 上，Stylix 现在由 system 级配置统一管理，用户 Home Manager 不再单独定义 Stylix
+- 在 `pixelbook` 上，GNOME 外观偏好由集成的 Home Manager 配置统一管理
 
 ## 🐧 在 Non-NixOS 系统上使用 Home Manager
 

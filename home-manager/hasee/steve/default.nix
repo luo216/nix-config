@@ -2,7 +2,6 @@
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   outputs,
-  inputs,
   pkgs,
   config,
   user,
@@ -12,7 +11,6 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.base
-    inputs.stylix.homeModules.stylix # Stylix theme system
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)

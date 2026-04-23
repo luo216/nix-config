@@ -20,17 +20,18 @@ in
       enable = true;
       defaultFonts = {
         serif = [
-          "Source Han Serif SC"
           "Noto Serif"
+          "Source Han Serif SC"
           "Noto Color Emoji"
         ];
         sansSerif = [
-          "Source Han Sans SC"
           "Noto Sans"
+          "Source Han Sans SC"
           "Noto Color Emoji"
         ];
         monospace = [
-          "Hack Nerd Font"
+          "Hack Nerd Font Mono"
+          "Noto Sans Mono"
           "Source Han Mono SC"
           "Noto Color Emoji"
         ];
