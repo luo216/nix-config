@@ -98,9 +98,12 @@ in
     videos = "$HOME/Videos";
   };
 
-  # Desktop applications
-  home-manager = {
-    # Template files mapping
+  programs = {
+    fcitx5 = {
+      enable = true;
+      theme = "gruvbox-material";
+    };
+
     templates = {
       enable = true;
       mappings = [
@@ -110,14 +113,9 @@ in
         }
       ];
     };
+  };
 
-    # Fcitx5 Chinese input method
-    fcitx5 = {
-      enable = true;
-      theme = "gruvbox-material";
-    };
-
-    # CLI Proxy API
+  services = {
     cpa = {
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];

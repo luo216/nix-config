@@ -72,14 +72,24 @@
     };
   };
 
-  # Desktop applications
-  home-manager = {
-    # Fcitx5 Chinese input method
+  programs = {
     fcitx5 = {
       enable = true;
       theme = "gruvbox-material";
     };
 
+    templates = {
+      enable = true;
+      mappings = [
+        {
+          source = "wallpaper/default.png";
+          target = ".local/share/wallpaper/default.png";
+        }
+      ];
+    };
+  };
+
+  services = {
     cpa = {
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];

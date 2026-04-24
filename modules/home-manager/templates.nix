@@ -7,7 +7,7 @@
 with lib;
 
 let
-  cfg = config.home-manager.templates;
+  cfg = config.programs.templates;
 
   # Function to create file mappings from templates directory
   createFileMappings =
@@ -36,7 +36,7 @@ let
 in
 {
   options = {
-    home-manager.templates = {
+    programs.templates = {
       enable = mkEnableOption "Enable template files mapping";
 
       mappings = mkOption {

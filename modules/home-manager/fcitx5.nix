@@ -8,12 +8,12 @@
 with lib;
 
 let
-  cfg = config.home-manager.fcitx5;
+  cfg = config.programs.fcitx5;
 
 in
 {
   options = {
-    home-manager.fcitx5 = {
+    programs.fcitx5 = {
       enable = mkEnableOption "Enable Fcitx5 Chinese input method";
 
       theme = mkOption {
