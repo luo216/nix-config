@@ -23,6 +23,7 @@
 
   # Set your username and home directory from the flake
   home = {
+    inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       GOOGLE_CLOUD_PROJECT = "generactive-language-client";

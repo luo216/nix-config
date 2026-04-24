@@ -13,6 +13,7 @@
   ];
 
   home = {
+    inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       TERM = "xterm-256color";
@@ -55,27 +56,6 @@
 
     customZsh.enable = true;
     customYazi.enable = true;
-  };
-
-  targets.genericLinux = {
-    enable = true;
-    nixGL = {
-      defaultWrapper = "mesa";
-      installScripts = [ "mesa" ];
-      vulkan.enable = true;
-    };
-  };
-
-  nix = {
-    package = pkgs.nix;
-    settings = {
-      substituters = [
-        "https://cache.nixos.org"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      ];
-    };
   };
 
   systemd.user.startServices = "sd-switch";

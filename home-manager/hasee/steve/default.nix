@@ -1,3 +1,5 @@
+# This is your home-manager configuration file
+# Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   outputs,
   pkgs,
@@ -5,6 +7,7 @@
   ...
 }:
 {
+  # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
     outputs.homeManagerModules.customCpa # CLI Proxy API
@@ -18,7 +21,9 @@
     outputs.homeManagerModules.customKitty # Terminal (kitty)
   ];
 
+  # Set your username and home directory from the flake
   home = {
+    inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       GOOGLE_CLOUD_PROJECT = "generactive-language-client";
@@ -37,11 +42,12 @@
     };
     icons = {
       enable = true;
-      package = pkgs.papirus-icon-theme;
-      dark = "Papirus-Dark";
-      light = "Papirus-Light";
+      package = pkgs.adwaita-icon-theme;
+      dark = "Adwaita";
+      light = "Adwaita";
     };
     targets = {
+      gnome.enable = true;
       gtk.enable = true;
       qt = {
         enable = true;
@@ -51,6 +57,30 @@
     };
   };
 
+  dconf.settings = {
+    "org/gnome/desktop/background" = {
+      picture-uri = "file:///home/${user.username}/.local/share/wallpaper/default.png";
+      picture-uri-dark = "file:///home/${user.username}/.local/share/wallpaper/default.png";
+    };
+    "org/gnome/desktop/peripherals/touchpad" = {
+      tap-to-click = false;
+      natural-scroll = true;
+      click-method = "fingers";
+    };
+    "org/gnome/shell/extensions/kimpanel" = {
+      font = "Sans 16";
+    };
+    "org/gnome/shell" = {
+      enabled-extensions = [
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "kimpanel@kde.org"
+        "gsconnect@andyholmes.github.io"
+        "syncthing-indicator@mkljczk.pl"
+      ];
+    };
+  };
+
+  # XDG 用户目录配置 - 使用英文目录名
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
@@ -64,43 +94,48 @@
     videos = "$HOME/Videos";
   };
 
+  # User packages
   home.packages = with pkgs; [
     # === 编辑器 ===
     neovim
 
     # === 终端工具 ===
-    ripgrep
-    bat
-    fd
-    eza
-    zoxide
-    starship
-    fzf
-    btop
-    tree
-    ncdu
+    # === 现代 CLI 工具 ===
+    ripgrep # Better grep (rg)
+    bat # Better cat with syntax highlighting
+    fd # Better find
+    eza # Better ls (modern replacement for exa)
+    zoxide # Smart cd command
+    starship # Cross-shell prompt
+    fzf # Fuzzy finder
+    btop # System monitor
+    tree # Directory tree
+    ncdu # Disk usage analyzer
 
     # === 开发工具 ===
-    lazygit
-    cargo
-    gcc
-    gnumake
-    nodejs_24
-    tree-sitter
-    uv
+    lazygit # Git GUI
+    cargo # Rust package manager and build tool
+    gcc # C compiler
+    gnumake # Build automation tool
+    nodejs_24 # Node.js 24
+    tree-sitter # Tree-sitter CLI
+    uv # Python package installer (uvx for running tools)
 
     # === LSP 服务器 ===
-    clang-tools
+    clang-tools # clangd for C/C++
     lua-language-server
-    marksman
-    nil
-    statix
-    python3
-    lua
+    marksman # Markdown LSP
+    nil # Nix LSP
+    statix # Nix 代码静态分析和格式化工具
+    python3 # Python（某些插件需要）
+    lua # Lua（某些插件需要）
 
     # === 网络工具 ===
-    httpie
-    jq
+    nuclei # Vulnerability scanner
+    mitmproxy # Intercepting HTTP/HTTPS proxy
+    httpie # User-friendly HTTP client
+    sqlmap
+    freerdp # xfreerdp CLI client for RDP
 
     # === 媒体工具 ===
     ffmpeg
@@ -109,36 +144,41 @@
     # === 图像和预览 ===
     imagemagick
     resvg
-    poppler
+    poppler # PDF preview
 
     # === 数据处理 ===
-    pandoc
-    markdownlint-cli2
+    jq # JSON processor
+    pandoc # Universal document converter
+    markdownlint-cli2 # Markdown linting tool
 
     # === 压缩工具 ===
     p7zip
     unrar
 
     # === 桌面应用 ===
-    input-leap
-    google-chrome-canary
-    wpsoffice-cn
-    qq
-    wechat
-    wemeet
-    cc-switch-cli
+    input-leap # KVM switch (Barrier replacement)
+    moonlight-qt # Video player
+    google-chrome-canary # Web browser
+    wpsoffice-cn # WPS Office 中文版（官方）
+    qq # QQ
+    wechat # 微信
+    wemeet # 腾讯会议
+    cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
 
     # === 系统工具 ===
     xdg-user-dirs
     xdg-launch
-    fastfetch
-    trash-cli
-    ghostscript
-    tectonic
-    mermaid-cli
-    sqlite
+    fastfetch # System information
+
+    # === 文件管理和文档渲染 ===
+    trash-cli # 文件回收站功能
+    ghostscript # PDF 渲染 (gs)
+    tectonic # LaTeX 渲染（比 texlive 更轻量）
+    mermaid-cli # Mermaid 图表渲染
+    sqlite # SQLite3 数据库
+
+    # === 剪贴板 ===
     wl-clipboard
-    bubblewrap
   ];
 
   services = {
@@ -149,15 +189,11 @@
       tray = "auto";
     };
 
+    # Syncthing 文件同步
     syncthing = {
       enable = true;
       guiAddress = "127.0.0.1:8384";
-      tray.enable = true;
-    };
-
-    kdeconnect = {
-      enable = true;
-      indicator = true;
+      tray.enable = false;
     };
 
     customCpa = {
@@ -179,11 +215,6 @@
       };
     };
 
-    customFcitx5 = {
-      enable = true;
-      theme = "gruvbox-material";
-    };
-
     customTemplates = {
       enable = true;
       mappings = [
@@ -194,6 +225,12 @@
       ];
     };
 
+    customFcitx5 = {
+      enable = true;
+      theme = "gruvbox-material";
+    };
+
+    # Enable rainbarf CPU load monitor
     customRainbarf = {
       enable = true;
       settings = {
@@ -203,22 +240,43 @@
       };
     };
 
+    # Enable tmux terminal multiplexer
     customTmux.enable = true;
-    customFonts.enable = true;
-    customKitty.enable = true;
-    customYazi.enable = true;
-    customZsh.enable = true;
-  };
 
-  targets.genericLinux = {
-    enable = true;
-    nixGL = {
-      defaultWrapper = "mesa";
-      installScripts = [ "mesa" ];
-      vulkan.enable = true;
+    # Enable shared fonts
+    customFonts.enable = true;
+
+    # Enable kitty terminal
+    customKitty.enable = true;
+
+    # Enable yazi file manager
+    customYazi.enable = true;
+
+    # Enable zsh shell
+    customZsh.enable = true;
+
+    gnome-shell = {
+      enable = true;
+      extensions = [
+        {
+          package = pkgs.gnomeExtensions.appindicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.kimpanel;
+        }
+        {
+          package = pkgs.gnomeExtensions.gsconnect;
+        }
+        {
+          package = pkgs.gnomeExtensions.syncthing-indicator;
+        }
+      ];
     };
   };
 
+  # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
+
+  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "25.11";
 }

@@ -20,7 +20,7 @@ in
         type = types.str;
         default = "gruvbox-material";
         description = "Fcitx5 theme to use";
-        example = "macOS-dark";
+        example = "gruvbox-material";
       };
     };
   };
