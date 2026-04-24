@@ -6,10 +6,10 @@
 }:
 {
   imports = [
-    outputs.homeManagerModules.base
-    outputs.homeManagerModules.cpa
-    outputs.homeManagerModules.customYazi
-    outputs.homeManagerModules.customZsh
+    outputs.homeManagerModules.customBase
+    outputs.homeManagerModules.customCpa # CLI Proxy API
+    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customZsh # Shell (zsh)
   ];
 
   home = {

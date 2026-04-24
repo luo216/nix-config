@@ -1,33 +1,28 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
-  config,
   outputs,
   pkgs,
   user,
   ...
 }:
-let
-  wallpaperUri = "file://${config.home.homeDirectory}/.local/share/wallpaper/default.png";
-in
 {
   # Import modular configurations
   imports = [
-    outputs.homeManagerModules.base
-    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
-    outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
-    outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)
-    outputs.homeManagerModules.customKitty # Terminal (kitty)
-    outputs.homeManagerModules.fcitx5 # Chinese input method (fcitx5)
-    outputs.homeManagerModules.cpa # CLI Proxy API
-    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customBase
+    outputs.homeManagerModules.customCpa # CLI Proxy API
+    outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
+    outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
+    outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.customZsh # Shell (zsh)
-    outputs.homeManagerModules.templates # Template files mapping
+    outputs.homeManagerModules.customTemplates # Template files mapping
+    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
+    outputs.homeManagerModules.customKitty # Terminal (kitty)
   ];
 
   # Set your username and home directory from the flake
   home = {
-    inherit (user) username;
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       GOOGLE_CLOUD_PROJECT = "generactive-language-client";
@@ -63,8 +58,8 @@ in
 
   dconf.settings = {
     "org/gnome/desktop/background" = {
-      picture-uri = wallpaperUri;
-      picture-uri-dark = wallpaperUri;
+      picture-uri = "file:///home/${user.username}/.local/share/wallpaper/default.png";
+      picture-uri-dark = "file:///home/${user.username}/.local/share/wallpaper/default.png";
     };
     "org/gnome/desktop/peripherals/touchpad" = {
       tap-to-click = false;
@@ -96,31 +91,6 @@ in
     publicShare = "$HOME/Public";
     templates = "$HOME/Templates";
     videos = "$HOME/Videos";
-  };
-
-  programs = {
-    customFcitx5 = {
-      enable = true;
-      theme = "gruvbox-material";
-    };
-
-    customTemplates = {
-      enable = true;
-      mappings = [
-        {
-          source = "wallpaper/default.png";
-          target = ".local/share/wallpaper/default.png";
-        }
-      ];
-    };
-  };
-
-  services = {
-    customCpa = {
-      enable = true;
-      apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
-      managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
-    };
   };
 
   # User packages
@@ -209,6 +179,7 @@ in
     # === 剪贴板 ===
     wl-clipboard
   ];
+
   services = {
     udiskie = {
       enable = true;
@@ -223,7 +194,14 @@ in
       guiAddress = "127.0.0.1:8384";
       tray.enable = false;
     };
+
+    customCpa = {
+      enable = true;
+      apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
+      managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
+    };
   };
+
   programs = {
     git = {
       enable = true;
@@ -234,6 +212,21 @@ in
           email = "hjzhang216@gmail.com";
         };
       };
+    };
+
+    customTemplates = {
+      enable = true;
+      mappings = [
+        {
+          source = "wallpaper/default.png";
+          target = ".local/share/wallpaper/default.png";
+        }
+      ];
+    };
+
+    customFcitx5 = {
+      enable = true;
+      theme = "gruvbox-material";
     };
 
     # Enable rainbarf CPU load monitor

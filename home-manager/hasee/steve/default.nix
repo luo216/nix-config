@@ -3,23 +3,22 @@
 {
   outputs,
   pkgs,
-  config,
   user,
   ...
 }:
 {
   # Import modular configurations
   imports = [
-    outputs.homeManagerModules.base
-    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
-    outputs.homeManagerModules.rainbarf # CPU load monitor (rainbarf)
-    outputs.homeManagerModules.tmux # Terminal multiplexer (tmux)
-    outputs.homeManagerModules.customKitty # Terminal (kitty)
-    outputs.homeManagerModules.fcitx5 # Chinese input method (fcitx5)
-    outputs.homeManagerModules.cpa # CLI Proxy API
-    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customBase
+    outputs.homeManagerModules.customCpa # CLI Proxy API
+    outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
+    outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
+    outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
     outputs.homeManagerModules.customZsh # Shell (zsh)
-    outputs.homeManagerModules.templates # Template files mapping
+    outputs.homeManagerModules.customTemplates # Template files mapping
+    outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
+    outputs.homeManagerModules.customKitty # Terminal (kitty)
   ];
 
   # Stylix theme configuration

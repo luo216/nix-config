@@ -1,15 +1,12 @@
-# Add your reusable home-manager modules to this directory, on their own file (https://nixos.wiki/wiki/Module).
-# These should be stuff you would like to share with others, not your personal configurations.
 {
-  # List your module files here
-  base = import ./base.nix;
-  fcitx5 = import ./fcitx5.nix;
-  customFonts = import ./fonts.nix;
-  rainbarf = import ./rainbarf.nix;
-  tmux = import ./tmux.nix;
-  customKitty = import ./kitty.nix;
-  cpa = import ./cpa.nix;
-  customYazi = import ./yazi.nix;
-  customZsh = import ./zsh.nix;
-  templates = import ./templates.nix;
+  customBase = import ./customBase.nix;
+  customCpa = import ./customCpa.nix;
+  customFcitx5 = import ./customFcitx5.nix;
+  customFonts = import ./customFonts.nix;
+  customKitty = import ./customKitty.nix;
+  customRainbarf = import ./customRainbarf.nix;
+  customTemplates = import ./customTemplates.nix;
+  customTmux = import ./customTmux.nix;
+  customYazi = import ./customYazi.nix;
+  customZsh = import ./customZsh.nix;
 }
