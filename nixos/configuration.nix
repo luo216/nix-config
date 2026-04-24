@@ -1,154 +1,117 @@
-# This is your system's configuration file.
-# Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
+# Shared NixOS configuration applied to all hosts
 {
+  config,
   inputs,
   outputs,
   lib,
-  config,
   host,
   ...
 }:
+
 let
-  standaloneHomeName = user: "${user.username}@${host.hostname}";
+  sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com";
 
   homeManagerUsers = builtins.listToAttrs (
     map (user: {
       name = user.username;
       value = {
         _module.args.user = user;
-        _module.args.homeConfigurationName = standaloneHomeName user;
+        _module.args.homeConfigurationName = "${user.username}@${host.hostname}";
         _module.args.integratedHomeManager = true;
         imports = [ (../home-manager + "/${host.hostname}/${user.username}") ];
       };
     }) host.users
   );
+
 in
 {
-  # You can import other NixOS modules here
   imports = [
-    # Import the disko configuration for the current host.
-    # Some VM-oriented hosts keep a minimal placeholder file here so the
-    # multi-host repository layout stays consistent even when disko is not
-    # central to their local workflow.
     ./disko/${host.hostname}.nix
-    # Import host-specific configuration
     ./config/${host.hostname}/default.nix
-    # If you want to use modules your own flake exports (from modules/nixos):
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.network-printers
     outputs.nixosModules.pixelbook-go-audio
-    # Stylix theme system
     inputs.stylix.nixosModules.stylix
-
-    # Or modules from other flakes (such as nixos-hardware):
-    # inputs.hardware.nixosModules.common-cpu-amd
-    # inputs.hardware.nixosModules.common-ssd
-
-    # You can also split up your configuration and import pieces of it here:
-    # ./users.nix
   ] ++ lib.optionals (host.withHomeManager or false) [
     inputs.home-manager.nixosModules.home-manager
   ];
 
-  # Configure facter to use the report for the current host.
-  # Some VM-oriented hosts keep a minimal placeholder report for structural
-  # consistency rather than detailed hardware modeling.
+  # ── Facter ────────────────────────────────────────────
   facter.reportPath = ./factors/${host.hostname}.json;
 
+  # ── Nixpkgs ───────────────────────────────────────────
   nixpkgs = {
-    # You can add overlays here
     overlays = [
-      # Add overlays your own flake exports (from overlays and pkgs dir):
       outputs.overlays.additions
-      outputs.overlays.modifications
       outputs.overlays.unstable-packages
-
-      # You can also add overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
     ];
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-    };
+    config.allowUnfree = true;
   };
 
+  # ── Nix ───────────────────────────────────────────────
   nix =
     let
       flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
     in
     {
       settings = {
-        # Enable flakes and new 'nix' command
         experimental-features = "nix-command flakes";
-        # Opinionated: disable global registry
         flake-registry = "";
-        # Workaround for https://github.com/NixOS/nix/issues/9574
         nix-path = config.nix.nixPath;
-
-        # Give users in this list the right to specify additional substituters via:
-        #    1. `nixConfig.substituters` in `flake.nix`
-        #    2. command line args `--options substituters http://xxx`
         trusted-users = map (user: user.username) host.users;
-
-        # Cache server configuration
         substituters = [
-          # cache mirror located in China
-          # status: https://mirror.sjtu.edu.cn/
           "https://mirror.sjtu.edu.cn/nix-channels/store"
-          # status: https://mirrors.ustc.edu.cn/status/
-          # "https://mirrors.ustc.edu.cn/nix-channels/store"
-
           "https://cache.nixos.org"
         ];
-
         trusted-public-keys = [
-          # SJTU mirror public key (same as cache.nixos.org)
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         ];
+        auto-optimise-store = true;
       };
-      # Opinionated: disable channels
       channel.enable = false;
-
-      # Opinionated: make flake registry and nix path match flake inputs
       registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
       nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+
+      gc = {
+        automatic = true;
+        dates = "daily";
+        options = "--delete-older-than 7d";
+      };
     };
 
-  # Set your hostname from the flake
+  # ── 网络 ──────────────────────────────────────────────
   networking.hostName = host.hostname;
 
-  # Configure root user for deploy-rs
-  users.users.root = {
-    # Set initial password for root user
-    initialPassword = "root";
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
-    ];
-  };
+  # ── 时区与语言 ────────────────────────────────────────
+  time.timeZone = "Asia/Shanghai";
 
-  # This setups a SSH server. Very important if you're setting up a headless system.
-  # Feel free to remove if you don't need it.
+  i18n.supportedLocales = [
+    "en_US.UTF-8/UTF-8"
+    "zh_CN.UTF-8/UTF-8"
+  ];
+
+  console.keyMap = "us";
+
+  # ── SSH ───────────────────────────────────────────────
   services.openssh = {
     enable = true;
     settings = {
-      # Allow root login for deploy-rs (you can change this to "prohibit-password" if using keys)
       PermitRootLogin = "yes";
-      # Use keys only for security
       PasswordAuthentication = false;
     };
   };
 
-  # Ensure zsh is fully configured when used as a login shell
+  # ── 用户 ──────────────────────────────────────────────
+  users.users.root.openssh.authorizedKeys.keys = [ sshKey ];
+
   programs.zsh.enable = true;
 
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+  };
+
+  # ── Home Manager ──────────────────────────────────────
   home-manager = lib.mkIf (host.withHomeManager or false) {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -156,11 +119,8 @@ in
       inherit inputs outputs host;
       integratedHomeManager = true;
     };
-    # `home-manager.users` must be keyed by the real system account name, while
-    # standalone flake outputs keep the `<user>@<host>` naming convention.
     users = homeManagerUsers;
   };
 
-  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.11";
 }

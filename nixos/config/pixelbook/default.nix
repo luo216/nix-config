@@ -1,11 +1,11 @@
-# Pixelbook specific configuration
-{
-  pkgs,
-  ...
-}:
+# Pixelbook Go — Chromebook 刷 NixOS
+{ config, lib, pkgs, ... }:
 
+let
+  sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com";
+in
 {
-  # ============ Boot 配置 ============
+  # ── 引导 ──────────────────────────────────────────────
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -15,7 +15,6 @@
       };
     };
     plymouth.enable = true;
-
     kernelModules = [ "i2c-dev" ];
     initrd.systemd.enable = true;
     kernelParams = [
@@ -26,13 +25,13 @@
       "rd.udev.log_level=3"
       "udev.log_priority=3"
     ];
-
     resumeDevice = "/dev/mmcblk0p2";
   };
 
+  # ── 电源管理 ──────────────────────────────────────────
   powerManagement.enable = true;
 
-  # ============ Networking 配置 ============
+  # ── 网络 ──────────────────────────────────────────────
   networking = {
     firewall.enable = false;
     networkmanager = {
@@ -43,64 +42,40 @@
     dhcpcd.enable = false;
   };
 
-  # ============ System 配置 ============
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-    };
-    gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 7d";
-    };
-  };
-
+  # ── Nix（仅本机特有） ─────────────────────────────────
   nixpkgs.config.permittedInsecurePackages = [
     "ventoy-1.1.07"
   ];
 
-  environment.systemPackages = with pkgs; [
-    sparkle
-    vim
-    wget
-    curl
-    rsync
-    networkmanager
-    brightnessctl
-    zsh
-    unzip
-    bubblewrap
-    intel-media-driver
-    ventoy
-    scrcpy
-  ];
+  # ── 语言（本机默认中文） ──────────────────────────────
+  i18n.defaultLocale = "zh_CN.UTF-8";
+  console.font = "Lat2-Terminus16";
 
-  systemd.tmpfiles.rules = [
-    # Codex looks for bubblewrap at /usr/bin/bwrap on Linux systems.
-    "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
-  ];
-
-  hardware.pixelbook-go-audio = {
-    enable = true;
+  # ── 硬件 ──────────────────────────────────────────────
+  hardware = {
+    pixelbook-go-audio.enable = true;
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+      settings.General.Enable = "Source,Sink,Media,Socket";
+    };
   };
 
-  virtualisation.docker.enable = true;
-
-  programs.adb.enable = true;
-
-  services.docker-easyconnect = {
-    enable = false;
-    socksPort = 1080;
-    httpPort = 8888;
-    vncPort = 5901;
-    mode = "proxy";
-    # Connect VNC to 127.0.0.1:5901 to log in to EasyConnect.
-    # After login, set browser/app proxy to:
-    # SOCKS5 127.0.0.1:1080
-    # HTTP   127.0.0.1:8888
-    vncPassword = "change-me";
+  # ── 用户 ──────────────────────────────────────────────
+  users.users.steve = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "docker"
+      "networkmanager"
+      "video"
+      "adbusers"
+    ];
+    shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = [ sshKey ];
   };
 
+  # ── 安全 ──────────────────────────────────────────────
   security.wrappers.sparkle = {
     owner = "root";
     group = "root";
@@ -108,6 +83,35 @@
     source = "${pkgs.sparkle}/bin/sparkle";
   };
 
+  # ── 系统包 ────────────────────────────────────────────
+  environment = {
+    systemPackages = with pkgs; [
+      sparkle
+      vim
+      wget
+      curl
+      rsync
+      networkmanager
+      brightnessctl
+      zsh
+      unzip
+      bubblewrap
+      intel-media-driver
+      ventoy
+      scrcpy
+    ];
+
+    sessionVariables = {
+      LIBVA_DRIVER_NAME = "iHD";
+      LIBVA_DRIVERS_PATH = "/run/current-system/sw/lib/dri";
+    };
+  };
+
+  systemd.tmpfiles.rules = [
+    "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
+  ];
+
+  # ── 字体 ──────────────────────────────────────────────
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack
@@ -119,8 +123,10 @@
     fontconfig.enable = true;
   };
 
+  # ── 程序 ──────────────────────────────────────────────
   programs = {
     dconf.enable = true;
+    adb.enable = true;
 
     nix-ld = {
       enable = true;
@@ -142,87 +148,76 @@
         libva
       ];
     };
-
-    git = {
-      enable = true;
-      lfs.enable = true;
-    };
   };
 
+  # ── 服务 ──────────────────────────────────────────────
   services = {
     dbus.enable = true;
+    udisks2.enable = true;
+
     printing = {
       enable = true;
-      drivers = with pkgs; [
-        brlaser
+      drivers = with pkgs; [ brlaser ];
+    };
+
+    network-printers = {
+      enable = true;
+      printers = [
+        {
+          name = "pantum-m6760";
+          description = "Pantum M6760";
+          location = "Wi-Fi Direct";
+          deviceUri = "ipp://192.168.223.1/ipp/print";
+          model = "everywhere";
+          testHosts = [ "192.168.223.1" ];
+          ppdOptions = {
+            PageSize = "A4";
+            Duplex = "None";
+          };
+        }
       ];
     };
+
     gnome.gnome-remote-desktop.enable = false;
-    logind = {
-      settings.Login.HandlePowerKey = "ignore";
-    };
-  };
+    logind.settings.Login.HandlePowerKey = "ignore";
 
-  services.network-printers = {
-    enable = true;
-    printers = [
-      {
-        name = "pantum-m6760";
-        description = "Pantum M6760";
-        location = "Wi-Fi Direct";
-        deviceUri = "ipp://192.168.223.1/ipp/print";
-        model = "everywhere";
-        testHosts = [
-          "192.168.223.1"
-        ];
-        ppdOptions = {
-          PageSize = "A4";
-          Duplex = "None";
-        };
-      }
-    ];
-  };
+    desktopManager.gnome.enable = true;
 
-  environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "iHD";
-    LIBVA_DRIVERS_PATH = "/run/current-system/sw/lib/dri";
-  };
-
-  # ============ Desktop 配置 ============
-  services.desktopManager.gnome.enable = true;
-
-  services.displayManager.gdm = {
-    enable = true;
-    wayland = true;
-  };
-
-  services.displayManager = {
-    defaultSession = "gnome";
-    autoLogin = {
-      enable = true;
-      user = "steve";
-    };
-  };
-
-  services.libinput = {
-    enable = true;
-    touchpad = {
-      naturalScrolling = false;
-      tapping = false;
-      clickMethod = "clickfinger";
-    };
-  };
-
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-    settings = {
-      General = {
-        Enable = "Source,Sink,Media,Socket";
+    displayManager = {
+      gdm = {
+        enable = true;
+        wayland = true;
+      };
+      defaultSession = "gnome";
+      autoLogin = {
+        enable = true;
+        user = "steve";
       };
     };
+
+    libinput = {
+      enable = true;
+      touchpad = {
+        naturalScrolling = false;
+        tapping = false;
+        clickMethod = "clickfinger";
+      };
+    };
+
+    docker-easyconnect = {
+      enable = false;
+      socksPort = 1080;
+      httpPort = 8888;
+      vncPort = 5901;
+      mode = "proxy";
+      vncPassword = "change-me";
+    };
   };
 
+  # ── 虚拟化 ────────────────────────────────────────────
+  virtualisation.docker.enable = true;
+
+  # ── 主题 ──────────────────────────────────────────────
   stylix = {
     enable = true;
     autoEnable = false;
@@ -247,40 +242,4 @@
       qt.enable = true;
     };
   };
-
-  services.udisks2.enable = true;
-
-  # ============ Locale 配置 ============
-  time.timeZone = "Asia/Shanghai";
-
-  i18n = {
-    defaultLocale = "zh_CN.UTF-8";
-    supportedLocales = [
-      "en_US.UTF-8/UTF-8"
-      "zh_CN.UTF-8/UTF-8"
-    ];
-  };
-
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "us";
-  };
-
-  # ============ Users 配置 ============
-  users.users.steve = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "docker"
-      "networkmanager"
-      "video"
-      "adbusers"
-    ];
-    shell = pkgs.zsh;
-
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
-    ];
-  };
-
 }
