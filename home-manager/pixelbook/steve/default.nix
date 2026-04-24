@@ -25,6 +25,15 @@ in
     outputs.homeManagerModules.templates # Template files mapping
   ];
 
+  # Set your username and home directory from the flake
+  home = {
+    inherit (user) username;
+    homeDirectory = "/home/${user.username}";
+    sessionVariables = {
+      GOOGLE_CLOUD_PROJECT = "generactive-language-client";
+    };
+  };
+
   stylix = {
     enable = true;
     autoEnable = false;
@@ -52,15 +61,6 @@ in
     };
   };
 
-  # Set your username and home directory from the flake
-  home = {
-    inherit (user) username;
-    homeDirectory = "/home/${user.username}";
-    sessionVariables = {
-      GOOGLE_CLOUD_PROJECT = "generactive-language-client";
-    };
-  };
-
   dconf.settings = {
     "org/gnome/desktop/background" = {
       picture-uri = wallpaperUri;
@@ -84,20 +84,6 @@ in
     };
   };
 
-  # Enable git
-  programs = {
-    git = {
-      enable = true;
-      lfs.enable = true;
-      settings = {
-        user = {
-          name = "hjzhang";
-          email = "hjzhang216@gmail.com";
-        };
-      };
-    };
-  };
-
   # XDG 用户目录配置 - 使用英文目录名
   xdg.userDirs = {
     enable = true;
@@ -114,12 +100,24 @@ in
 
   # Desktop applications
   home-manager = {
+    # Template files mapping
+    templates = {
+      enable = true;
+      mappings = [
+        {
+          source = "wallpaper/default.png";
+          target = ".local/share/wallpaper/default.png";
+        }
+      ];
+    };
+
     # Fcitx5 Chinese input method
     fcitx5 = {
       enable = true;
       theme = "gruvbox-material";
     };
 
+    # CLI Proxy API
     cpa = {
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
@@ -229,22 +227,15 @@ in
     };
   };
   programs = {
-    gnome-shell = {
+    git = {
       enable = true;
-      extensions = [
-        {
-          package = pkgs.gnomeExtensions.appindicator;
-        }
-        {
-          package = pkgs.gnomeExtensions.kimpanel;
-        }
-        {
-          package = pkgs.gnomeExtensions.gsconnect;
-        }
-        {
-          package = pkgs.gnomeExtensions.syncthing-indicator;
-        }
-      ];
+      lfs.enable = true;
+      settings = {
+        user = {
+          name = "hjzhang";
+          email = "hjzhang216@gmail.com";
+        };
+      };
     };
 
     # Enable rainbarf CPU load monitor
@@ -271,17 +262,24 @@ in
 
     # Enable zsh shell
     customZsh.enable = true;
-  };
 
-  # Template files mapping
-  home-manager.templates = {
-    enable = true;
-    mappings = [
-      {
-        source = "wallpaper/default.png";
-        target = ".local/share/wallpaper/default.png";
-      }
-    ];
+    gnome-shell = {
+      enable = true;
+      extensions = [
+        {
+          package = pkgs.gnomeExtensions.appindicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.kimpanel;
+        }
+        {
+          package = pkgs.gnomeExtensions.gsconnect;
+        }
+        {
+          package = pkgs.gnomeExtensions.syncthing-indicator;
+        }
+      ];
+    };
   };
 
   # Nicely reload system units when changing configs

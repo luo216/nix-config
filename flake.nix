@@ -125,13 +125,12 @@
           ];
         }
         {
-          hostname = "sec-lab";
+          hostname = "pentest";
           system = "x86_64-linux";
           withHomeManager = true;
           users = [
             {
-              username = "sec";
-              # user-specific attributes can go here
+              username = "pentest";
             }
           ];
         }
@@ -146,14 +145,14 @@
         system:
         let
           pkgs = pkgsFor system;
-          secLabVm = self.nixosConfigurations.sec-lab.config.system.build.vm;
+          pentestVm = self.nixosConfigurations.pentest.config.system.build.vm;
         in
         {
-          build-vm-sec-lab = {
+          build-vm-pentest = {
             type = "app";
             program =
               "${pkgs.writeShellApplication {
-                name = "build-vm-sec-lab";
+                name = "build-vm-pentest";
                 runtimeInputs = with pkgs; [
                   coreutils
                   gitMinimal
@@ -163,18 +162,18 @@
                   set -euo pipefail
 
                   repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-                  out_dir="''${SEC_LAB_OUT_DIR:-$repo_root/out}"
+                  out_dir="''${PENTEST_OUT_DIR:-$repo_root/out}"
 
                   mkdir -p "$out_dir"
-                  exec nix build --out-link "$out_dir/result-vm-sec-lab" ".#nixosConfigurations.sec-lab.config.system.build.vm" "$@"
+                  exec nix build --out-link "$out_dir/result-vm-pentest" ".#nixosConfigurations.pentest.config.system.build.vm" "$@"
                 '';
-              }}/bin/build-vm-sec-lab";
+              }}/bin/build-vm-pentest";
           };
-          vm-sec-lab = {
+          vm-pentest = {
             type = "app";
             program =
               "${pkgs.writeShellApplication {
-                name = "run-vm-sec-lab";
+                name = "run-vm-pentest";
                 runtimeInputs = with pkgs; [
                   coreutils
                   gitMinimal
@@ -183,14 +182,14 @@
                   set -euo pipefail
 
                   repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-                  out_dir="''${SEC_LAB_OUT_DIR:-$repo_root/out}"
+                  out_dir="''${PENTEST_OUT_DIR:-$repo_root/out}"
 
                   mkdir -p "$out_dir"
                   cd "$out_dir"
 
-                  exec ${secLabVm}/bin/run-sec-lab-vm "$@"
+                  exec ${pentestVm}/bin/run-pentest-vm "$@"
                 '';
-              }}/bin/run-vm-sec-lab";
+              }}/bin/run-vm-pentest";
           };
         }
       );
