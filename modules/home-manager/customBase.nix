@@ -7,8 +7,6 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.customBase;
 in
@@ -18,25 +16,25 @@ in
   ];
 
   options.customBase = {
-    enableLocalNixpkgs = mkOption {
-      type = types.bool;
+    enableLocalNixpkgs = lib.mkOption {
+      type = lib.types.bool;
       default = !integratedHomeManager;
       description = "Whether this Home Manager profile should manage its own nixpkgs settings.";
     };
   };
 
-  config = mkMerge [
+  config = lib.mkMerge [
     {
       nix.gc = {
-        automatic = mkDefault true;
-        dates = mkDefault "daily";
-        options = mkDefault "--delete-older-than 7d";
+        automatic = lib.mkDefault true;
+        dates = lib.mkDefault "daily";
+        options = lib.mkDefault "--delete-older-than 7d";
       };
 
-      programs.home-manager.enable = mkDefault true;
+      programs.home-manager.enable = lib.mkDefault true;
     }
 
-    (mkIf cfg.enableLocalNixpkgs {
+    (lib.mkIf cfg.enableLocalNixpkgs {
       nixpkgs = {
         overlays = [
           outputs.overlays.additions
