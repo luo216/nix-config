@@ -68,7 +68,10 @@
 
   # ── 硬件 ──────────────────────────────────────────────
   hardware = {
-    pixelbook-go-audio.enable = true;
+    pixelbook-go-audio = {
+      enable = true;
+      driver = "avs";
+    };
     bluetooth = {
       enable = true;
       powerOnBoot = true;
