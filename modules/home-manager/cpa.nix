@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.services.cpa;
+  cfg = config.services.customCpa;
   configFile = "${config.xdg.configHome}/cpa/config.yaml";
   initialConfig =
     let
@@ -46,7 +46,7 @@ let
     );
 in
 {
-  options.services.cpa = with lib; {
+  options.services.customCpa = with lib; {
     enable = mkEnableOption "CLIProxyAPI user service";
 
     package = mkOption {

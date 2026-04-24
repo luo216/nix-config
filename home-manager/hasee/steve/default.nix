@@ -73,12 +73,12 @@
   };
 
   programs = {
-    fcitx5 = {
+    customFcitx5 = {
       enable = true;
       theme = "gruvbox-material";
     };
 
-    templates = {
+    customTemplates = {
       enable = true;
       mappings = [
         {
@@ -90,7 +90,7 @@
   };
 
   services = {
-    cpa = {
+    customCpa = {
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
       managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
@@ -186,7 +186,7 @@
   ];
   programs = {
     # Enable rainbarf CPU load monitor
-    rainbarf = {
+    customRainbarf = {
       enable = true;
       settings = {
         width = 30;
@@ -231,17 +231,6 @@
       guiAddress = "127.0.0.1:8384";
       tray.enable = true;
     };
-  };
-
-  # Template files mapping
-  home-manager.templates = {
-    enable = true;
-    mappings = [
-      {
-        source = "wallpaper/default.png";
-        target = ".local/share/wallpaper/default.png";
-      }
-    ];
   };
 
   # Enable generic Linux settings for non-NixOS

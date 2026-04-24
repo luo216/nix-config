@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.programs.rainbarf;
+  cfg = config.programs.customRainbarf;
 in
 {
-  options.programs.rainbarf = {
+  options.programs.customRainbarf = {
     enable = mkEnableOption "rainbarf CPU load monitor for tmux";
 
     package = mkOption {

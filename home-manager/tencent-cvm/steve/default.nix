@@ -48,14 +48,16 @@
 
   programs.customYazi.enable = true;
 
-  home-manager.cpa = {
-    enable = true;
-    host = "0.0.0.0";
-    port = 8317;
-    apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
-    managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
-    allowRemoteManagement = true;
-    usageStatisticsEnabled = true;
+  services = {
+    customCpa = {
+      enable = true;
+      host = "0.0.0.0";
+      port = 8317;
+      apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
+      managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
+      allowRemoteManagement = true;
+      usageStatisticsEnabled = true;
+    };
   };
 
   targets.genericLinux.enable = true;

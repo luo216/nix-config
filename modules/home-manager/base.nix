@@ -10,14 +10,14 @@
 with lib;
 
 let
-  cfg = config.homeManagerBase;
+  cfg = config.customBase;
 in
 {
   imports = lib.optionals (!integratedHomeManager) [
     inputs.stylix.homeModules.stylix
   ];
 
-  options.homeManagerBase = {
+  options.customBase = {
     enableLocalNixpkgs = mkOption {
       type = types.bool;
       default = !integratedHomeManager;

@@ -99,12 +99,12 @@ in
   };
 
   programs = {
-    fcitx5 = {
+    customFcitx5 = {
       enable = true;
       theme = "gruvbox-material";
     };
 
-    templates = {
+    customTemplates = {
       enable = true;
       mappings = [
         {
@@ -116,7 +116,7 @@ in
   };
 
   services = {
-    cpa = {
+    customCpa = {
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
       managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
@@ -237,7 +237,7 @@ in
     };
 
     # Enable rainbarf CPU load monitor
-    rainbarf = {
+    customRainbarf = {
       enable = true;
       settings = {
         width = 30;

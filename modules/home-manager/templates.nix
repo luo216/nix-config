@@ -7,7 +7,7 @@
 with lib;
 
 let
-  cfg = config.programs.templates;
+  cfg = config.programs.customTemplates;
 
   # Function to create file mappings from templates directory
   createFileMappings =
@@ -36,7 +36,7 @@ let
 in
 {
   options = {
-    programs.templates = {
+    programs.customTemplates = {
       enable = mkEnableOption "Enable template files mapping";
 
       mappings = mkOption {
