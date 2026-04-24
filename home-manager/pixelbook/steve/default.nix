@@ -74,6 +74,14 @@ in
     "org/gnome/shell/extensions/kimpanel" = {
       font = "Sans 16";
     };
+    "org/gnome/shell" = {
+      enabled-extensions = [
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "kimpanel@kde.org"
+        "gsconnect@andyholmes.github.io"
+        "syncthing-indicator@mkljczk.pl"
+      ];
+    };
   };
 
   # Enable git
@@ -188,6 +196,7 @@ in
     qq # QQ
     wechat # 微信
     wemeet # 腾讯会议
+    cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
 
     # === 系统工具 ===
     xdg-user-dirs

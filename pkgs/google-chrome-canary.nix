@@ -99,8 +99,8 @@ let
   opusWithCustomModes = libopus.override { withCustomModes = true; };
 
   # Canary version info
-  version = "146.0.7679.0";
-  hash_deb_amd64 = "sha256-5OHcUtVnlP5XrcBLyKT+3AZJ60+epgK3f7yMyQnBrrg=";
+  version = "149.0.7809.0";
+  hash_deb_amd64 = "sha256-ma2XlY9kaTg5/QAXYhawXYmxBqdUbldRVfWkmKTenAA=";
 
   deps =
     [
