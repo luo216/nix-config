@@ -46,10 +46,7 @@ in
     };
 
     # AVS 固件支持
-    hardware = {
-      firmware = [ avs-topology ];
-      alsa.enable = true;
-    };
+    hardware.firmware = [ avs-topology ];
 
     # 内核配置
     boot = {

@@ -1,7 +1,13 @@
 # Pixelbook Go — Chromebook 刷 NixOS
-{ pkgs, ... }:
+{ pkgs, outputs, ... }:
 
 {
+  imports = [
+    outputs.nixosModules.pixelbook-go-audio
+    outputs.nixosModules.network-printers
+    outputs.nixosModules.docker-easyconnect
+  ];
+
   # ── 引导 ──────────────────────────────────────────────
   boot = {
     loader = {

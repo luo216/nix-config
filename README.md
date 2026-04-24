@@ -1,124 +1,76 @@
 # Modular NixOS Configuration
 
-A modular and scalable NixOS configuration system using Nix Flakes.
+A modular NixOS configuration system using Nix Flakes, deployed with deploy-rs.
 
-## ✨ Features
+## Features
 
-- **🦾 Automatic Hardware Detection:** Uses `nixos-facter` to generate hardware-specific configurations.
-- **💾 Declarative Disk Partitioning:** Manages disk layouts declaratively with `disko`.
-- **🚀 Remote Deployment:** Supports remote installation with `nixos-anywhere` and updates with `deploy-rs`.
-- **🧩 Modular Design:** Features a clean structure with reusable modules for NixOS and Home Manager.
-- **🖥️ Pre-configured Modules:** Includes ready-to-use modules for `GNOME (Wayland)`, `fcitx5`, `yazi`, and more.
+- **Hardware Detection**: Uses `nixos-facter` for hardware-specific configurations
+- **Declarative Disk Partitioning**: Manages disk layouts with `disko`
+- **Remote Deployment**: Supports `nixos-anywhere` for installation and `deploy-rs` for updates
+- **Modular Design**: Reusable modules for NixOS and Home Manager with `custom*` naming convention
+- **Multi-host**: Single flake manages all hosts — NixOS machines, VMs, and non-NixOS systems
 
-## 🖥️ Desktop Stack
+## Hosts
 
-NixOS desktop hosts currently use GNOME on Wayland via `services.desktopManager.gnome.enable`
-and `services.displayManager.gdm.enable`.
+| Host | System | Type | Home Manager | Deploy |
+|------|--------|------|-------------|--------|
+| pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | deploy-rs |
+| hasee | x86_64-linux | Non-NixOS (Arch) | Standalone | - |
+| tencent-cvm | x86_64-linux | NixOS (headless) | Standalone | - |
+| pentest | x86_64-linux | NixOS VM (headless CLI) | Integrated | - |
 
-Standalone Home Manager profiles manage user-space applications and session
-configuration, but no longer provide a window manager/compositor directly.
-
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 .
-├── flake.nix
-├── home-manager
-│   ├── hasee
-│   │   └── steve
-│   ├── pixelbook
-│   │   └── steve
-│   ├── tencent-cvm
-│   │   └── steve
-│   └── sec-lab
-│       └── sec
-├── modules
-│   ├── home-manager
-│   ├── nixos
-│   └── templates
-├── nixos
-│   ├── config
-│   │   ├── pixelbook
-│   │   └── sec-lab
-│   ├── configuration.nix
-│   ├── disko
-│   └── factors
-├── overlays
-└── pkgs
+├── flake.nix              # Flake entry: hosts, apps, deploy
+├── home-manager/          # Per-host user configs
+│   ├── pixelbook/steve/   # GNOME desktop, all custom modules
+│   ├── hasee/steve/       # Full desktop, genericLinux + nixGL
+│   ├── pentest/pentest/   # CLI-only, pentest tools
+│   └── tencent-cvm/steve/ # Minimal server
+├── modules/
+│   ├── home-manager/      # Custom HM modules (custom* prefix)
+│   ├── nixos/             # Custom NixOS modules
+│   └── templates/         # Static assets (audio firmware, themes, etc.)
+├── nixos/
+│   ├── configuration.nix  # Shared NixOS config (nix, SSH, HM integration)
+│   ├── config/            # Per-host NixOS configs
+│   ├── disko/             # Per-host disk layouts
+│   └── factors/           # Per-host facter reports
+├── overlays/              # Custom packages overlay + unstable nixpkgs
+└── pkgs/                  # Custom package definitions
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Define the New Host
 
-Add your new machine to the `hosts` list in `flake.nix`.
+Add your machine to the `hosts` list in `flake.nix`:
 
 ```nix
-# flake.nix
 hosts = [
   {
     hostname = "your-hostname";
     system = "x86_64-linux";
-    deploy = true; # Optional: include this host in deploy-rs
-    withHomeManager = true; # Optional: integrate Home Manager into NixOS builds
-    ip = "192.168.1.100"; # For deploy-rs
-    users = [ { username = "your-user"; } ];
+    deploy = true;           # Optional: include in deploy-rs
+    withHomeManager = true;  # Optional: integrate HM into NixOS builds
+    ip = "192.168.1.100";    # Required if deploy = true
+    users = [{ username = "your-user"; }];
   }
 ];
 ```
 
-Host flags:
-
-- `deploy = true`: include the host in `deploy.nodes` for `deploy-rs`
-- `withHomeManager = true`: include all users for that host in `home-manager.users` during NixOS builds
-
-Home Manager naming:
-
-- Standalone Home Manager outputs use `user@host`, for example `steve@pixelbook`
-- NixOS-integrated Home Manager still uses the real username internally, for example `home-manager.users.steve`
-- This lets the same host support both standalone Home Manager updates and NixOS-integrated updates
-
-Shared Home Manager base module:
-
-- `modules/home-manager/base.nix` provides common Home Manager defaults shared by user profiles
-- It centralizes `nix.gc`, `programs.home-manager.enable`, and standalone-vs-integrated `nixpkgs` handling
-- New user profiles should usually import `outputs.homeManagerModules.base` first, then add host- or user-specific modules
-
 ### 2. Configure Disk Layout
 
-Create a disk layout for the new host in `nixos/disko/your-hostname.nix`.
-
-```nix
-# nixos/disko/your-hostname.nix
-{
-  disko.devices = {
-    disk.primary = {
-      type = "disk";
-      device = "/dev/vda"; # Change this to your disk device
-      content = {
-        type = "gpt";
-        partitions = {
-          ESP = { size = "512M"; type = "EF00"; content = { type = "filesystem"; format = "vfat"; mountpoint = "/boot"; }; };
-          root = { size = "100%"; content = { type = "filesystem"; format = "ext4"; mountpoint = "/"; }; };
-        };
-      };
-    };
-  };
-}
-```
+Create `nixos/disko/your-hostname.nix` — see existing hosts for examples.
 
 ### 3. Add Host and User Configurations
 
-Create the necessary directories and configuration files for the new host and user. You can copy and adapt them from an existing host directory that matches your target layout.
-
-- **NixOS Configuration:** `nixos/config/your-hostname/`
-- **Home Manager Configuration:** `home-manager/your-hostname/your-user/`
+- **NixOS Configuration**: `nixos/config/your-hostname/default.nix`
+- **Home Manager Configuration**: `home-manager/your-hostname/your-user/default.nix`
 
 ### 4. Install NixOS
-
-Install NixOS on the target machine using `nixos-anywhere`. This command will automatically detect the hardware, generate a configuration file, and install the system.
-
-**⚠️ This is a destructive operation and will wipe the target disk. ⚠️**
 
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
@@ -126,113 +78,39 @@ nix run github:nix-community/nixos-anywhere -- \
   --target-host root@<target-ip>
 ```
 
-### 5. Deploy Configuration
-
-After installation, you can manage and deploy updates using `deploy-rs`.
+### 5. Deploy Updates
 
 ```bash
-# Deploy changes to the host
+# System + integrated Home Manager
 nix run github:serokell/deploy-rs -- .#your-hostname
-```
 
-For user-specific settings, apply them with Home Manager directly on the target machine.
-
-```bash
-# On the target machine
+# Standalone Home Manager only
 home-manager switch --flake .#your-user@your-hostname
 ```
 
-Notes for NixOS hosts:
+## Using Home Manager on Non-NixOS Systems
 
-- If `withHomeManager = true`, `nixos-rebuild` and `deploy-rs` will update the host's integrated Home Manager profiles together with the system
-- You can still use standalone Home Manager outputs such as `homeConfigurations."your-user@your-hostname"` for user-only updates
-- On `pixelbook`, GNOME appearance preferences are managed through the integrated Home Manager profile
-
-## 🐧 Using Home Manager on Non-NixOS Systems
-
-If you want to use Home Manager to manage your user configuration on Non-NixOS systems like Arch Linux, Ubuntu, or Fedora, follow these steps:
-
-### 1. Install Nix
-
-Install Nix using the official installation script:
+For hosts like hasee (Arch Linux), only user-space is managed:
 
 ```bash
+# Install Nix
 curl -L https://nixos.org/nix/install | sh -s -- --daemon
-```
 
-After installation, you need to either reopen your terminal or run:
-
-```bash
-source ~/.nix-profile/etc/profile.d/nix.sh
-```
-
-### 2. Configure Flakes and Trusted User
-
-Enable Flakes feature and set the current user as trusted user (required to use cache servers configured in flake.nix):
-
-```bash
-# Create user-level config directory
+# Configure flakes
 mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
-# Enable Flakes experimental features (user-level)
-cat >> ~/.config/nix/nix.conf << 'EOF'
-experimental-features = nix-command flakes
-EOF
-
-# Set current user as trusted user (requires sudo, system-level)
-sudo bash -c 'echo "trusted-users = steve" >> /etc/nix/nix.conf'
-
-# Enable automatic Nix store optimization (saves disk space)
-sudo bash -c 'echo "auto-optimise-store = true" >> /etc/nix/nix.conf'
-
-# Restart nix-daemon service
-sudo systemctl restart nix-daemon
-```
-
-**About auto-optimise-store:**
-- This option automatically detects duplicate files in the Nix store and eliminates them via hard links
-- Typically saves 20-40% of disk space
-- Runs automatically after each build, no manual intervention needed
-- Completely transparent to users and programs
-
-### 3. Install Home Manager
-
-Install Home Manager using Flakes:
-
-```bash
-nix run home-manager/master -- switch --flake .#your-user@your-hostname
-```
-
-For example, for the steve user on hasee host:
-
-```bash
+# Apply Home Manager
 nix run home-manager/master -- switch --flake .#steve@hasee
 ```
 
-### 4. Apply Configuration
+Non-NixOS profiles use `targets.genericLinux.enable = true` and `nixGL` for GPU-accelerated apps.
 
-To update your configuration in the future, simply run:
+## VM Apps
 
-```bash
-home-manager switch --flake .#your-user@your-hostname
-```
-
-For a remote Non-NixOS host, the recommended workflow is to push the repo from your local machine and run Home Manager remotely:
+The pentest VM can be built and run directly:
 
 ```bash
-# Run on your local machine
-rsync -az --delete ./ your-user@your-host:/path/to/nix-config/
-ssh your-user@your-host 'zsh -lic "cd /path/to/nix-config && home-manager switch --flake .#your-user@your-hostname"'
+nix run .#build-vm-pentest   # Build the VM image
+nix run .#vm-pentest          # Run the VM
 ```
-
-Notes:
-
-- Use `rsync` to keep the flake repository on the remote host in sync quickly
-- Run `home-manager switch` via `zsh -lic` on the remote host so the login shell loads the Nix environment; this avoids `nix: command not found` in non-interactive SSH sessions
-- If the remote SSH hostname differs from the hostname defined in the flake, keep using the flake hostname in `.#your-user@your-hostname`
-
-### Notes
-
-- On Non-NixOS systems, you can only manage your user environment with Home Manager. NixOS system-level configurations are not available.
-- Home Manager will automatically install necessary dependencies, but some system-level features may require manual configuration.
-- The configuration includes `targets.genericLinux.enable = true` for better Linux compatibility.
