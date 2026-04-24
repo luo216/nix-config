@@ -1,9 +1,6 @@
 # Pixelbook Go — Chromebook 刷 NixOS
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
-let
-  sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com";
-in
 {
   # ── 引导 ──────────────────────────────────────────────
   boot = {
@@ -42,14 +39,26 @@ in
     dhcpcd.enable = false;
   };
 
-  # ── Nix（仅本机特有） ─────────────────────────────────
+  # ventoy 标记为 insecure，放行后可安装；版本更新无漏洞后删除此行
   nixpkgs.config.permittedInsecurePackages = [
     "ventoy-1.1.07"
   ];
 
-  # ── 语言（本机默认中文） ──────────────────────────────
-  i18n.defaultLocale = "zh_CN.UTF-8";
-  console.font = "Lat2-Terminus16";
+  # ── 时区与语言 ────────────────────────────────────────
+  time.timeZone = "Asia/Shanghai";
+
+  i18n = {
+    defaultLocale = "zh_CN.UTF-8";
+    supportedLocales = [
+      "en_US.UTF-8/UTF-8"
+      "zh_CN.UTF-8/UTF-8"
+    ];
+  };
+
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "us";
+  };
 
   # ── 硬件 ──────────────────────────────────────────────
   hardware = {
@@ -72,7 +81,9 @@ in
       "adbusers"
     ];
     shell = pkgs.zsh;
-    openssh.authorizedKeys.keys = [ sshKey ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
+    ];
   };
 
   # ── 安全 ──────────────────────────────────────────────
@@ -125,8 +136,14 @@ in
 
   # ── 程序 ──────────────────────────────────────────────
   programs = {
+    zsh.enable = true;
     dconf.enable = true;
     adb.enable = true;
+
+    git = {
+      enable = true;
+      lfs.enable = true;
+    };
 
     nix-ld = {
       enable = true;
@@ -178,7 +195,7 @@ in
       ];
     };
 
-    gnome.gnome-remote-desktop.enable = false;
+    gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
 
     desktopManager.gnome.enable = true;

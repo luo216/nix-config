@@ -9,15 +9,15 @@
 }:
 
 let
-  sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com";
-
   homeManagerUsers = builtins.listToAttrs (
     map (user: {
       name = user.username;
       value = {
-        _module.args.user = user;
-        _module.args.homeConfigurationName = "${user.username}@${host.hostname}";
-        _module.args.integratedHomeManager = true;
+        _module.args = {
+          inherit user;
+          homeConfigurationName = "${user.username}@${host.hostname}";
+          integratedHomeManager = true;
+        };
         imports = [ (../home-manager + "/${host.hostname}/${user.username}") ];
       };
     }) host.users
@@ -28,9 +28,6 @@ in
   imports = [
     ./disko/${host.hostname}.nix
     ./config/${host.hostname}/default.nix
-    outputs.nixosModules.docker-easyconnect
-    outputs.nixosModules.network-printers
-    outputs.nixosModules.pixelbook-go-audio
     inputs.stylix.nixosModules.stylix
   ] ++ lib.optionals (host.withHomeManager or false) [
     inputs.home-manager.nixosModules.home-manager
@@ -38,6 +35,9 @@ in
 
   # ── Facter ────────────────────────────────────────────
   facter.reportPath = ./factors/${host.hostname}.json;
+
+  # ── 网络 ──────────────────────────────────────────────
+  networking.hostName = host.hostname;
 
   # ── Nixpkgs ───────────────────────────────────────────
   nixpkgs = {
@@ -62,9 +62,11 @@ in
         substituters = [
           "https://mirror.sjtu.edu.cn/nix-channels/store"
           "https://cache.nixos.org"
+          "https://nix-community.cachix.org"
         ];
         trusted-public-keys = [
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         ];
         auto-optimise-store = true;
       };
@@ -79,19 +81,6 @@ in
       };
     };
 
-  # ── 网络 ──────────────────────────────────────────────
-  networking.hostName = host.hostname;
-
-  # ── 时区与语言 ────────────────────────────────────────
-  time.timeZone = "Asia/Shanghai";
-
-  i18n.supportedLocales = [
-    "en_US.UTF-8/UTF-8"
-    "zh_CN.UTF-8/UTF-8"
-  ];
-
-  console.keyMap = "us";
-
   # ── SSH ───────────────────────────────────────────────
   services.openssh = {
     enable = true;
@@ -101,15 +90,9 @@ in
     };
   };
 
-  # ── 用户 ──────────────────────────────────────────────
-  users.users.root.openssh.authorizedKeys.keys = [ sshKey ];
-
-  programs.zsh.enable = true;
-
-  programs.git = {
-    enable = true;
-    lfs.enable = true;
-  };
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
+  ];
 
   # ── Home Manager ──────────────────────────────────────
   home-manager = lib.mkIf (host.withHomeManager or false) {

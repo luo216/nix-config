@@ -1,50 +1,40 @@
 {
-  description = "A NixOS configuration that can be deployed with deploy-rs";
+  description = "NixOS configuration deployed with deploy-rs";
 
   nixConfig = {
-    # override the default substituters
     substituters = [
-      # cache mirror located in China
-      # status: https://mirror.sjtu.edu.cn/
       "https://mirror.sjtu.edu.cn/nix-channels/store"
-      # status: https://mirrors.ustc.edu.cn/status/
-      # "https://mirrors.ustc.edu.cn/nix-channels/store"
-
       "https://cache.nixos.org"
-
-      # nix community's cache server
       "https://nix-community.cachix.org"
     ];
     trusted-public-keys = [
-      # SJTU mirror public key (same as cache.nixos.org)
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      # nix community's cache server public key
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
 
   inputs = {
-    # Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Home manager
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # Stylix
     stylix.url = "github:danth/stylix/release-25.11";
 
-    # Disko
-    disko.url = "github:nix-community/disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # Facter
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 
-    # Deploy-rs
-    deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -61,8 +51,8 @@
     }@inputs:
     let
       inherit (self) outputs;
+      inherit (nixpkgs) lib;
 
-      # Supported systems for your flake packages, shell, etc.
       systems = [
         "aarch64-linux"
         "i686-linux"
@@ -70,26 +60,11 @@
         "aarch64-darwin"
         "x86_64-darwin"
       ];
+      forAllSystems = lib.genAttrs systems;
 
-      # Generate attributes for each system
-      forAllSystems = nixpkgs.lib.genAttrs systems;
+      pkgsFor = system: import nixpkgs { inherit system; config.allowUnfree = true; };
 
-      pkgsFor =
-        system:
-        import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-
-      isNixosHost =
-        host:
-        builtins.pathExists (./nixos/config + "/${host.hostname}/default.nix");
-
-      homeModulePath = host: user: ./home-manager + "/${host.hostname}/${user.username}";
-
-      standaloneHomeName = host: user: "${user.username}@${host.hostname}";
-
-      # Hosts and users configuration
+      # ── Hosts ────────────────────────────────────────────
       hosts = [
         {
           hostname = "pixelbook";
@@ -97,116 +72,39 @@
           deploy = true;
           withHomeManager = true;
           ip = "192.168.31.76";
-          users = [
-            {
-              username = "steve";
-              # user-specific attributes can go here
-            }
-          ];
+          users = [{ username = "steve"; }];
         }
         {
           hostname = "hasee";
           system = "x86_64-linux";
-          users = [
-            {
-              username = "steve";
-              # user-specific attributes can go here
-            }
-          ];
+          users = [{ username = "steve"; }];
         }
         {
           hostname = "tencent-cvm";
           system = "x86_64-linux";
-          users = [
-            {
-              username = "steve";
-              # user-specific attributes can go here
-            }
-          ];
+          users = [{ username = "steve"; }];
         }
         {
           hostname = "pentest";
           system = "x86_64-linux";
           withHomeManager = true;
-          users = [
-            {
-              username = "pentest";
-            }
-          ];
+          users = [{ username = "pentest"; }];
         }
       ];
 
+      hasNixosConfig = host: builtins.pathExists (./nixos/config + "/${host.hostname}/default.nix");
+      nixosHosts = builtins.filter hasNixosConfig hosts;
+      deployableHosts = builtins.filter (host: host ? ip && host ? deploy && host.deploy && hasNixosConfig host) hosts;
+
     in
     {
-      # Custom packages
       packages = forAllSystems (system: import ./pkgs (pkgsFor system));
-
-      apps = forAllSystems (
-        system:
-        let
-          pkgs = pkgsFor system;
-          pentestVm = self.nixosConfigurations.pentest.config.system.build.vm;
-        in
-        {
-          build-vm-pentest = {
-            type = "app";
-            program =
-              "${pkgs.writeShellApplication {
-                name = "build-vm-pentest";
-                runtimeInputs = with pkgs; [
-                  coreutils
-                  gitMinimal
-                  nix
-                ];
-                text = ''
-                  set -euo pipefail
-
-                  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-                  out_dir="''${PENTEST_OUT_DIR:-$repo_root/out}"
-
-                  mkdir -p "$out_dir"
-                  exec nix build --out-link "$out_dir/result-vm-pentest" ".#nixosConfigurations.pentest.config.system.build.vm" "$@"
-                '';
-              }}/bin/build-vm-pentest";
-          };
-          vm-pentest = {
-            type = "app";
-            program =
-              "${pkgs.writeShellApplication {
-                name = "run-vm-pentest";
-                runtimeInputs = with pkgs; [
-                  coreutils
-                  gitMinimal
-                ];
-                text = ''
-                  set -euo pipefail
-
-                  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-                  out_dir="''${PENTEST_OUT_DIR:-$repo_root/out}"
-
-                  mkdir -p "$out_dir"
-                  cd "$out_dir"
-
-                  exec ${pentestVm}/bin/run-pentest-vm "$@"
-                '';
-              }}/bin/run-vm-pentest";
-          };
-        }
-      );
-
-      # Formatter for Nix files
       formatter = forAllSystems (system: (pkgsFor system).alejandra);
-
-      # Overlays
       overlays = import ./overlays { inherit inputs; };
-
-      # Reusable nixos modules
       nixosModules = import ./modules/nixos;
-
-      # Reusable home-manager modules
       homeManagerModules = import ./modules/home-manager;
 
-      # NixOS configurations for hosts that have a NixOS host directory
+      # ── NixOS configurations ──────────────────────────────
       nixosConfigurations = builtins.listToAttrs (
         map (host: {
           name = host.hostname;
@@ -219,56 +117,89 @@
               ./nixos/configuration.nix
             ];
           };
-        }) (builtins.filter isNixosHost hosts)
+        }) nixosHosts
       );
 
-      # Home-manager configurations for all users
+      # ── VM apps ──────────────────────────────────────────
+      apps = forAllSystems (
+        system:
+        let
+          pkgs = pkgsFor system;
+          mkVmApp = name: vmDrv:
+            {
+              "build-vm-${name}" = {
+                type = "app";
+                program = "${pkgs.writeShellApplication {
+                  name = "build-vm-${name}";
+                  runtimeInputs = with pkgs; [ coreutils gitMinimal nix ];
+                  text = ''
+                    set -euo pipefail
+                    repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+                    out_dir="''${${lib.toUpper name}_OUT_DIR:-$repo_root/out}"
+                    mkdir -p "$out_dir"
+                    exec nix build --out-link "$out_dir/result-vm-${name}" ".#nixosConfigurations.${name}.config.system.build.vm" "$@"
+                  '';
+                }}/bin/build-vm-${name}";
+              };
+              "vm-${name}" = {
+                type = "app";
+                program = "${pkgs.writeShellApplication {
+                  name = "run-vm-${name}";
+                  runtimeInputs = with pkgs; [ coreutils gitMinimal ];
+                  text = ''
+                    set -euo pipefail
+                    repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+                    out_dir="''${${lib.toUpper name}_OUT_DIR:-$repo_root/out}"
+                    mkdir -p "$out_dir"
+                    cd "$out_dir"
+                    exec ${vmDrv}/bin/run-${name}-vm "$@"
+                  '';
+                }}/bin/run-vm-${name}";
+              };
+            };
+        in
+        mkVmApp "pentest" self.nixosConfigurations.pentest.config.system.build.vm
+      );
+
+      # ── Home Manager (standalone) ────────────────────────
       homeConfigurations = builtins.listToAttrs (
         builtins.concatLists (
           map (
             host:
             map (user: {
-              name = standaloneHomeName host user;
+              name = "${user.username}@${host.hostname}";
               value = home-manager.lib.homeManagerConfiguration {
                 pkgs = pkgsFor host.system;
                 extraSpecialArgs = {
-                  inherit
-                    inputs
-                    outputs
-                    user
-                    host
-                    ;
-                  homeConfigurationName = standaloneHomeName host user;
+                  inherit inputs outputs user host;
+                  homeConfigurationName = "${user.username}@${host.hostname}";
                   integratedHomeManager = false;
                 };
-                modules = [
-                  (homeModulePath host user)
-                ];
+                modules = [ (./home-manager + "/${host.hostname}/${user.username}") ];
               };
             }) host.users
           ) hosts
         )
       );
 
-      # Deploy-rs configuration for hosts explicitly marked for deployment
+      # ── Deploy-rs ────────────────────────────────────────
       deploy = {
         nodes = builtins.listToAttrs (
           map (host: {
             name = host.hostname;
             value = {
-              hostname = host.ip; # 远端 IP 或主机名
-              sshUser = "root"; # SSH 登录用用户
-              remoteBuild = false; # 强制本地构建再推送
+              hostname = host.ip;
+              sshUser = "root";
+              remoteBuild = false;
               profiles.system = {
-                user = "root"; # 系统 profile 用户
+                user = "root";
                 path = deploy-rs.lib.${host.system}.activate.nixos self.nixosConfigurations.${host.hostname};
               };
             };
-          }) (builtins.filter (host: host ? ip && host ? deploy && host.deploy && isNixosHost host) hosts)
+          }) deployableHosts
         );
       };
 
-      # Checks for deploy-rs
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }
