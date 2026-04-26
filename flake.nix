@@ -87,6 +87,9 @@
         {
           hostname = "pentest";
           system = "x86_64-linux";
+          deploy = true;
+          ip = "localhost";
+          sshPort = 2222;
           withHomeManager = true;
           users = [{ username = "pentest"; }];
         }
@@ -190,6 +193,7 @@
             value = {
               hostname = host.ip;
               sshUser = "root";
+              sshOptions = if host ? sshPort then [ "-p" (toString host.sshPort) ] else [];
               remoteBuild = false;
               profiles.system = {
                 user = "root";
