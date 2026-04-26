@@ -61,8 +61,8 @@ in
       };
 
       keybindings = {
-        "ctrl+shift+enter" = "launch --location=vsplit --cwd=current";
-        "ctrl+shift+|" = "launch --location=hsplit --cwd=current";
+        "ctrl+shift+enter" = "launch --cwd=current";
+        "ctrl+shift+\\" = "launch --location=vsplit --cwd=current";
         "ctrl+shift+n" = "new_os_window_with_cwd";
         "ctrl+shift+t" = "new_tab_with_cwd";
         "ctrl+shift+1" = "goto_tab 1";
