@@ -5,5 +5,8 @@ pkgs: {
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix { };
   cpa = pkgs.callPackage ./cpa.nix { };
   google-chrome-canary = pkgs.callPackage ./google-chrome-canary.nix { };
+  qq = pkgs.callPackage ./qq.nix { };
   wechat = pkgs.callPackage ./wechat.nix { };
+  wemeet = pkgs.callPackage ./wemeet { };
+  wpsoffice-cn = pkgs.callPackage ./wpsoffice-cn.nix { };
 }
