@@ -61,8 +61,24 @@ in
       };
 
       keybindings = {
-        "ctrl+shift+enter" = "new_window_with_cwd";
+        "ctrl+shift+enter" = "launch --location=vsplit --cwd=current";
+        "ctrl+shift+|" = "launch --location=hsplit --cwd=current";
         "ctrl+shift+n" = "new_os_window_with_cwd";
+        "ctrl+shift+t" = "new_tab_with_cwd";
+        "ctrl+shift+1" = "goto_tab 1";
+        "ctrl+shift+2" = "goto_tab 2";
+        "ctrl+shift+3" = "goto_tab 3";
+        "ctrl+shift+4" = "goto_tab 4";
+        "ctrl+shift+5" = "goto_tab 5";
+        "ctrl+shift+6" = "goto_tab 6";
+        "ctrl+shift+7" = "goto_tab 7";
+        "ctrl+shift+8" = "goto_tab 8";
+        "ctrl+shift+9" = "goto_tab 9";
+        "ctrl+shift+f" = "toggle_layout stack";
+        "ctrl+shift+left" = "neighboring_window left";
+        "ctrl+shift+down" = "neighboring_window down";
+        "ctrl+shift+up" = "neighboring_window up";
+        "ctrl+shift+right" = "neighboring_window right";
       };
     };
   };

@@ -50,6 +50,9 @@ deploy.log
 # Codex local workspace data
 .codex/
 
+# Claude Code local data
+.claude/
+
 # Local build and VM runtime output
 out/
 
