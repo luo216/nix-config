@@ -120,6 +120,7 @@
       intel-media-driver
       ventoy
       scrcpy
+      tigervnc
     ];
 
     sessionVariables = {
@@ -237,7 +238,7 @@
       httpPort = 8888;
       vncPort = 5901;
       mode = "proxy";
-      vncPassword = "change-me";
+      vncPassword = "passwd";
     };
 
     dnsmasq-dhcp = {
