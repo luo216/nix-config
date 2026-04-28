@@ -6,6 +6,7 @@
     outputs.nixosModules.pixelbook-go-audio
     outputs.nixosModules.network-printers
     outputs.nixosModules.docker-easyconnect
+    outputs.nixosModules.dnsmasq-dhcp
   ];
 
   # ── 引导 ──────────────────────────────────────────────
@@ -237,6 +238,17 @@
       vncPort = 5901;
       mode = "proxy";
       vncPassword = "change-me";
+    };
+
+    dnsmasq-dhcp = {
+      enable = false;
+      interface = "enp0s20f0u2u4c2";
+      subnet = "192.168.99";
+      hostIP = 1;
+      poolStart = 100;
+      poolEnd = 200;
+      dns = "8.8.8.8";
+      staticBindings = [ ];
     };
   };
 
