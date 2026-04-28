@@ -128,6 +128,8 @@
         system:
         let
           pkgs = pkgsFor system;
+          hm = home-manager.packages.${system}.default;
+          deploy = deploy-rs.packages.${system}.default;
           mkVmApp = name: vmDrv:
             {
               "build-vm-${name}" = {
@@ -161,7 +163,16 @@
               };
             };
         in
-        mkVmApp "pentest" self.nixosConfigurations.pentest.config.system.build.vm
+        {
+          home-manager = {
+            type = "app";
+            program = "${hm}/bin/home-manager";
+          };
+          deploy = {
+            type = "app";
+            program = "${deploy}/bin/deploy";
+          };
+        } // mkVmApp "pentest" self.nixosConfigurations.pentest.config.system.build.vm
       );
 
       # ── Home Manager (standalone) ────────────────────────
