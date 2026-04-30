@@ -97,11 +97,17 @@
   };
 
   # ── 安全 ──────────────────────────────────────────────
-  security.wrappers.sparkle = {
-    owner = "root";
-    group = "root";
-    capabilities = "cap_net_admin,cap_net_raw+ep";
-    source = "${pkgs.sparkle}/bin/sparkle";
+  security = {
+    pki.certificateFiles = [
+      ../../../modules/templates/certs/mitmproxy-ca-cert.pem
+    ];
+
+    wrappers.sparkle = {
+      owner = "root";
+      group = "root";
+      capabilities = "cap_net_admin,cap_net_raw+ep";
+      source = "${pkgs.sparkle}/bin/sparkle";
+    };
   };
 
   # ── 系统包 ────────────────────────────────────────────
