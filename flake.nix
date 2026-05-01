@@ -77,6 +77,9 @@
         {
           hostname = "hasee";
           system = "x86_64-linux";
+          deploy = true;
+          withHomeManager = true;
+          ip = "192.168.31.172";
           users = [{ username = "steve"; }];
         }
         {

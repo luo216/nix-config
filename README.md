@@ -15,7 +15,7 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 | Host | System | Type | Home Manager | Deploy |
 |------|--------|------|-------------|--------|
 | pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `.#deploy` |
-| hasee | x86_64-linux | Non-NixOS (Arch) | Standalone | - |
+| hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.172` |
 | tencent-cvm | x86_64-linux | NixOS (headless) | Standalone | - |
 | pentest | x86_64-linux | NixOS VM | Integrated | localhost |
 
@@ -135,6 +135,29 @@ Add to NixOS config for hardware detection:
 ### 4. Install
 
 **⚠️ Destructive — erases target disk. ⚠️**
+
+For physical machines, prefer booting the target into a NixOS installer and skipping `nixos-anywhere`'s kexec phase. This avoids firmware/GPU kexec hangs observed on laptops such as `hasee`, and is fast once the installer is already running.
+
+On the target NixOS installer:
+
+```bash
+passwd
+systemctl start sshd
+ip -br addr
+```
+
+From this repo:
+
+```bash
+nix run github:nix-community/nixos-anywhere -- \
+  --phases disko,install,reboot \
+  --generate-hardware-config nixos-facter ./nixos/factors/<hostname>.json \
+  --flake .#<hostname> \
+  --target-host nixos@<installer-ip> \
+  --sudo
+```
+
+For machines where the existing OS can kexec reliably, the default `nixos-anywhere` flow can boot the installer over SSH:
 
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
