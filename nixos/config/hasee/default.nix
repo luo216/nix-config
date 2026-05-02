@@ -6,7 +6,6 @@
   ...
 }: {
   imports = [
-    outputs.nixosModules.network-printers
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
   ];
@@ -140,6 +139,7 @@
     initialPassword = "passwd";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHKEBaHem+gU3ZFXceYBSXi6tdiQ6B6fkMo2dAy3R3rQ hjzhang216@gmail.com"
     ];
   };
 
@@ -242,29 +242,6 @@
 
     fwupd.enable = true;
 
-    printing = {
-      enable = true;
-      drivers = with pkgs; [brlaser];
-    };
-
-    network-printers = {
-      enable = true;
-      printers = [
-        {
-          name = "pantum-m6760";
-          description = "Pantum M6760";
-          location = "Wi-Fi Direct";
-          deviceUri = "ipp://192.168.223.1/ipp/print";
-          model = "everywhere";
-          testHosts = ["192.168.223.1"];
-          ppdOptions = {
-            PageSize = "A4";
-            Duplex = "None";
-          };
-        }
-      ];
-    };
-
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
 
@@ -298,7 +275,7 @@
     };
 
     docker-easyconnect = {
-      enable = false;
+      enable = true;
       socksPort = 1080;
       httpPort = 8888;
       vncPort = 5901;
