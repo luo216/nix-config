@@ -10,5 +10,5 @@ Packages are imported automatically — add a new `.nix` file and register it in
 |---------|-------------|
 | cc-switch-cli | CLI tool for switching Claude Code |
 | cpa | CPA proxy client |
-| google-chrome-canary | Google Chrome Canary browser |
+| google-chrome-stable | Google Chrome Stable browser from Google's current deb |
 | sparkle | Network tool with capabilities wrapper |

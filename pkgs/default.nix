@@ -4,7 +4,7 @@ pkgs: {
   # example = pkgs.callPackage ./example { };
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix { };
   cpa = pkgs.callPackage ./cpa.nix { };
-  google-chrome-canary = pkgs.callPackage ./google-chrome-canary.nix { };
+  google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix { };
   qq = pkgs.callPackage ./qq.nix { };
   wechat = pkgs.callPackage ./wechat.nix { };
   wemeet = pkgs.callPackage ./wemeet { };

@@ -67,6 +67,12 @@
       natural-scroll = true;
       click-method = "fingers";
     };
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-type = "suspend";
+      sleep-inactive-ac-timeout = 14400;
+      sleep-inactive-battery-type = "suspend";
+      sleep-inactive-battery-timeout = 7200;
+    };
     "org/gnome/shell/extensions/kimpanel" = {
       font = "Sans 16";
     };
@@ -76,7 +82,25 @@
         "kimpanel@kde.org"
         "gsconnect@andyholmes.github.io"
         "syncthing-indicator@mkljczk.pl"
+        "Vitals@CoreCoding.com"
       ];
+    };
+    "org/gnome/shell/extensions/vitals" = {
+      hot-sensors = [
+        "_processor_usage_"
+        "_memory_usage_"
+        "__network-rx_max__"
+        "__network-tx_max__"
+      ];
+      show-temperature = false;
+      show-voltage = false;
+      show-fan = false;
+      show-storage = false;
+      show-system = false;
+      include-public-ip = false;
+      fixed-widths = true;
+      hide-icons = false;
+      update-time = 3;
     };
   };
 
@@ -158,7 +182,7 @@
     # === 桌面应用 ===
     input-leap # KVM switch (Barrier replacement)
     moonlight-qt # Video player
-    google-chrome-canary # Web browser
+    google-chrome-stable # Web browser
     wpsoffice-cn # WPS Office 中文版（官方）
     qq # QQ
     wechat # 微信
@@ -269,6 +293,9 @@
         }
         {
           package = pkgs.gnomeExtensions.syncthing-indicator;
+        }
+        {
+          package = pkgs.gnomeExtensions.vitals;
         }
       ];
     };

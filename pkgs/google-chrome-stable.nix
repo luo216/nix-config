@@ -1,5 +1,4 @@
-# Google Chrome Canary for NixOS
-# Based on: https://github.com/nix-community/browser-previews
+# Google Chrome Stable for NixOS
 {
   fetchurl,
   lib,
@@ -98,9 +97,8 @@
 let
   opusWithCustomModes = libopus.override { withCustomModes = true; };
 
-  # Canary version info
-  version = "149.0.7809.0";
-  hash_deb_amd64 = "sha256-ma2XlY9kaTg5/QAXYhawXYmxBqdUbldRVfWkmKTenAA=";
+  version = "147.0.7727.137";
+  hash_deb_amd64 = "sha256-2QKA8nk+O10cGr0gGOMSlLkxpO+WHFG1yul9a3VGq64=";
 
   deps =
     [
@@ -165,12 +163,12 @@ let
       gtk4
     ];
 
-  pkgName = "google-chrome-canary";
+  pkgName = "google-chrome-stable";
 in
 stdenv.mkDerivation {
   inherit version;
 
-  name = "google-chrome-canary-${version}";
+  name = "google-chrome-stable-${version}";
 
   src = fetchurl {
     url = "https://dl.google.com/linux/chrome/deb/pool/main/g/${pkgName}/${pkgName}_${version}-1_amd64.deb";
@@ -202,8 +200,8 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    appname=chrome-canary
-    dist=canary
+    appname=chrome
+    dist=stable
 
     exe=$out/bin/google-chrome-$dist
 
@@ -258,11 +256,11 @@ stdenv.mkDerivation {
   '';
 
   meta = {
-    description = "Google Chrome Canary - The bleeding edge web browser for developers";
-    homepage = "https://www.google.com/chrome/canary/";
+    description = "Google Chrome Stable web browser";
+    homepage = "https://www.google.com/chrome/";
     license = lib.licenses.unfree;
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [ "x86_64-linux" ];
-    mainProgram = "google-chrome-canary";
+    mainProgram = "google-chrome-stable";
   };
 }

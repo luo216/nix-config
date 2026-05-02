@@ -30,6 +30,9 @@
       "rd.udev.log_level=3"
       "udev.log_priority=3"
     ];
+    extraModprobeConfig = ''
+      options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
+    '';
   };
 
   # Existing data SSD. The NixOS install target is /dev/sda only; keep this
@@ -265,7 +268,13 @@
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
 
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome = {
+      enable = true;
+      extraGSettingsOverrides = ''
+        [org.gnome.desktop.session]
+        idle-delay=uint32 3600
+      '';
+    };
 
     displayManager = {
       gdm = {

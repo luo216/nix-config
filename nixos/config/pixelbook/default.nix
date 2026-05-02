@@ -215,7 +215,13 @@
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
 
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome = {
+      enable = true;
+      extraGSettingsOverrides = ''
+        [org.gnome.desktop.session]
+        idle-delay=uint32 3600
+      '';
+    };
 
     displayManager = {
       gdm = {
