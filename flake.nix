@@ -79,7 +79,7 @@
           system = "x86_64-linux";
           deploy = true;
           withHomeManager = true;
-          ip = "192.168.31.172";
+          ip = "192.168.31.129";
           users = [{ username = "steve"; }];
         }
         {

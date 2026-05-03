@@ -28,9 +28,40 @@
       "loglevel=3"
       "rd.udev.log_level=3"
       "udev.log_priority=3"
+      "intel_iommu=on"
+      "iommu=pt"
+      "kvm.ignore_msrs=1"
+      "vfio-pci.ids=10de:25a2,10de:2291,15b7:5002"
+    ];
+    initrd.kernelModules = [
+      "i915"
+      "vfio"
+      "vfio_iommu_type1"
+      "vfio_pci"
+    ];
+    kernelModules = [
+      "kvm-intel"
+      "vfio"
+      "vfio_pci"
+      "vfio_iommu_type1"
+    ];
+    blacklistedKernelModules = [
+      "nouveau"
+      "nvidia"
+      "nvidia_drm"
+      "nvidia_modeset"
+      "nvidia_uvm"
     ];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
+      options vfio-pci ids=10de:25a2,10de:2291,15b7:5002 disable_vga=1
+      options kvm ignore_msrs=1
+      softdep nouveau pre: vfio-pci
+      softdep nvidia pre: vfio-pci
+      softdep nvidia_drm pre: vfio-pci
+      softdep nvidia_modeset pre: vfio-pci
+      softdep nvidia_uvm pre: vfio-pci
+      softdep nvme pre: vfio-pci
     '';
   };
 
@@ -101,21 +132,6 @@
       ];
     };
 
-    nvidia = {
-      modesetting.enable = true;
-      powerManagement.enable = true;
-      powerManagement.finegrained = false;
-      open = false;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-
-      prime = {
-        sync.enable = true;
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
-    };
-
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -123,14 +139,13 @@
     };
   };
 
-  services.xserver.videoDrivers = ["nvidia"];
-
   # ── 用户 ──────────────────────────────────────────────
   users.users.steve = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
       "docker"
+      "kvm"
       "networkmanager"
       "video"
       "adbusers"
@@ -174,6 +189,11 @@
       libva-utils
       pciutils
       usbutils
+      qemu_kvm
+      OVMFFull
+      swtpm
+      virt-viewer
+      virtio-win
       ventoy
       scrcpy
       tigervnc
@@ -241,7 +261,6 @@
     fstrim.enable = true;
 
     fwupd.enable = true;
-
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
 
