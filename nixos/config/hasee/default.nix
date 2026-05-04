@@ -192,6 +192,7 @@
       qemu_kvm
       OVMFFull
       swtpm
+      acpica-tools
       virt-viewer
       virtio-win
       ventoy
@@ -207,6 +208,7 @@
 
   systemd.tmpfiles.rules = [
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
+    "d /data/share 0775 steve users - -"
   ];
 
   # ── 字体 ──────────────────────────────────────────────
@@ -315,7 +317,27 @@
   };
 
   # ── 虚拟化 ────────────────────────────────────────────
-  virtualisation.docker.enable = true;
+  virtualisation = {
+    docker.enable = true;
+    oci-containers = {
+      backend = "docker";
+      containers.vm-filedrop = {
+        image = "awkto/filedrop:latest";
+        autoStart = true;
+        ports = [
+          "0.0.0.0:8088:3000"
+        ];
+        volumes = [
+          "/data/share:/data"
+        ];
+        environment = {
+          PORT = "3000";
+          UPLOAD_DIR = "/data";
+          MAX_FILE_SIZE = "8192";
+        };
+      };
+    };
+  };
 
   # ── 主题 ──────────────────────────────────────────────
   stylix = {
