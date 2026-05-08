@@ -31,6 +31,11 @@
 
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 
+    NixVirt = {
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +51,7 @@
       stylix,
       disko,
       nixos-facter-modules,
+      NixVirt,
       deploy-rs,
       ...
     }@inputs:
@@ -120,6 +126,7 @@
             modules = [
               disko.nixosModules.disko
               nixos-facter-modules.nixosModules.facter
+              NixVirt.nixosModules.default
               ./nixos/configuration.nix
             ];
           };

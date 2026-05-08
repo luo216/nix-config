@@ -8,6 +8,7 @@
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
+    outputs.nixosModules.win11-vm
   ];
 
   # ── 引导 ──────────────────────────────────────────────
@@ -149,6 +150,7 @@
       "networkmanager"
       "video"
       "adbusers"
+      "libvirtd"
     ];
     shell = pkgs.zsh;
     initialPassword = "passwd";
@@ -313,6 +315,10 @@
       poolEnd = 200;
       dns = "8.8.8.8";
       staticBindings = [];
+    };
+
+    win11-vm = {
+      enable = true;
     };
   };
 
