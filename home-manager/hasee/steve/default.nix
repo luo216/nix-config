@@ -188,6 +188,7 @@
     wechat # 微信
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
+    codex-desktop # Codex Desktop for Linux
 
     # === 系统工具 ===
     xdg-user-dirs
