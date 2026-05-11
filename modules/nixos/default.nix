@@ -5,5 +5,5 @@
   dnsmasq-dhcp = import ./dnsmasq-dhcp.nix;
   network-printers = import ./network-printers.nix;
   pixelbook-go-audio = import ./pixelbook-go-audio.nix;
-  win11-vm = import ./win11-vm.nix;
+  windows-vm = import ./windows-vm.nix;
 }

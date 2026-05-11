@@ -8,7 +8,7 @@
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
-    outputs.nixosModules.win11-vm
+    outputs.nixosModules.windows-vm
   ];
 
   # ── 引导 ──────────────────────────────────────────────
@@ -317,8 +317,11 @@
       staticBindings = [];
     };
 
-    win11-vm = {
+    windows-vm = {
       enable = true;
+      # Phase 1: SPICE-only boot to copy fonts out of Windows.
+      # Flip to true after fonts are exported to hand the NVIDIA card to the VM.
+      dgpuPassthrough = false;
     };
   };
 

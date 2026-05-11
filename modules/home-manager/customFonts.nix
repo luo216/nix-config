@@ -4,13 +4,25 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customFonts;
-in
-{
+
+  windowsFonts = pkgs.stdenvNoCC.mkDerivation {
+    pname = "custom-windows-fonts";
+    version = "local";
+    src = ../templates/fonts/windows;
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/share/fonts/truetype/windows
+      find . -type f \( -iname '*.ttf' -o -iname '*.ttc' -o -iname '*.otf' \) \
+        -exec cp -v {} $out/share/fonts/truetype/windows/ \;
+
+      runHook postInstall
+    '';
+  };
+in {
   options.programs.customFonts = {
     enable = mkEnableOption "shared font packages and fontconfig defaults";
   };
@@ -35,7 +47,7 @@ in
           "Source Han Mono SC"
           "Noto Color Emoji"
         ];
-        emoji = [ "Noto Color Emoji" ];
+        emoji = ["Noto Color Emoji"];
       };
     };
 
@@ -50,6 +62,7 @@ in
       liberation_ttf
       carlito
       caladea
+      windowsFonts
     ];
   };
 }
