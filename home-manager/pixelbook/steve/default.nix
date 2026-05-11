@@ -198,6 +198,7 @@
     # === 文件管理和文档渲染 ===
     trash-cli # 文件回收站功能
     ghostscript # PDF 渲染 (gs)
+    libreoffice-fresh # LibreOffice/soffice for document preview
     tectonic # LaTeX 渲染（比 texlive 更轻量）
     mermaid-cli # Mermaid 图表渲染
     sqlite # SQLite3 数据库
