@@ -168,7 +168,7 @@
     # === 图像和预览 ===
     imagemagick
     resvg
-    poppler # PDF preview
+    poppler-utils # PDF tools: pdfinfo, pdftotext, pdftoppm, pdfimages, pdffonts
 
     # === 数据处理 ===
     jq # JSON processor
