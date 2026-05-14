@@ -49,18 +49,18 @@
   zlib,
 }: let
   pname = "codex-desktop";
-  version = "0-unstable-2026-05-02";
+  version = "0-unstable-2026-05-14";
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "e643c5924cdce5530733bb429543e571c915b63c";
-    hash = "sha256-NZf+p7bgxMXoYkPd8stBqS5+5QREQ9WIEwhLskVezZU=";
+    rev = "f2d35d3cab2d9daa73dc73d4ef0c02add2e265fe";
+    hash = "sha256-M3V0j1tYiev8yza931cVnn/OiyotvvLRP/nRsV/6mdQ=";
   };
 
   codexDmg = fetchurl {
     url = "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg";
-    hash = "sha256-KvrWUJgRYbuG/YFSIc/pdkRhGRK3fDqfKj10O7rjFck=";
+    hash = "sha256-4FroU+UDXJSbB5FfjGhiGyXrQ/R+UYXuaYPoR7oXbyc=";
   };
 
   electronLibs = [
@@ -206,7 +206,7 @@
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-8CPw3aGYOA/UuM/JmORqz/GZLmaQJcmQ7HiXHPh5H6o=";
+    outputHash = "sha256-zYnRKsDy8bD/sRm8poVSOPvNd7d2daVjT83VSZAJxAk=";
     unsafeDiscardReferences.out = true;
 
     dontConfigure = true;
@@ -241,9 +241,9 @@
               --replace-fail "npx --yes asar" "asar"
       substituteInPlace "$source_dir/scripts/lib/native-modules.sh" \
         --replace-fail "npx --yes @electron/rebuild" "electron-rebuild"
-      substituteInPlace "$source_dir/scripts/patch-linux-window-ui.js" \
+      substituteInPlace "$source_dir/scripts/patches/computer-use.js" \
         --replace-fail 'throw new Error("Required Linux Computer Use plugin gate patch failed: could not enable bundled Computer Use on Linux");' \
-        'console.warn("WARN: Could not enable bundled Computer Use on Linux — skipping Computer Use plugin gate patch"); return currentSource;'
+        'console.warn("WARN: Could not enable bundled Computer Use on Linux - skipping Computer Use plugin gate patch"); return currentSource;'
 
       export CODEX_INSTALL_DIR="$out/opt/codex-desktop"
             ${bash}/bin/bash "$source_dir/install.sh" "$source_dir/Codex.dmg"
@@ -292,7 +292,7 @@ in
 
       resources_dir="$out/opt/codex-desktop/resources"
       substituteInPlace "$resources_dir/app-extracted/.vite/build/main-"*.js \
-        --replace-fail 'process.platform===`linux`&&codexLinuxIsTrayEnabled()' \
+        --replace-fail 'process.platform===`linux`&&(typeof codexLinuxIsTrayEnabled!==`function`||codexLinuxIsTrayEnabled())' \
         'process.platform===`linux`&&process.env.CODEX_LINUX_SYSTEM_TRAY_ENABLED!==`0`'
 
       (cd "$resources_dir/app-extracted" && find . -type f | LC_ALL=C sort | sed 's#^\./##') > "$TMPDIR/app.asar.ordering"

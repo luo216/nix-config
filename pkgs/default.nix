@@ -1,8 +1,14 @@
 # Custom packages, that can be defined similarly to ones from nixpkgs
 # You can build them using 'nix build .#example'
-pkgs: {
+pkgs:
+let
+  claudeDesktop = pkgs.callPackage ./claude-desktop.nix { };
+in
+{
   # example = pkgs.callPackage ./example { };
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix { };
+  claude-code-desktop = claudeDesktop;
+  claude-desktop = claudeDesktop;
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix { };
   cpa = pkgs.callPackage ./cpa.nix { };
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix { };

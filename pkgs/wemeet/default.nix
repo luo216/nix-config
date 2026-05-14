@@ -46,13 +46,13 @@
 let
   wemeet-wayland-screenshare = stdenv.mkDerivation {
     pname = "wemeet-wayland-screenshare";
-    version = "0-unstable-2025-05-31";
+    version = "0-unstable-2026-05-14";
 
     src = fetchFromGitHub {
       owner = "xuwd1";
       repo = "wemeet-wayland-screenshare";
-      rev = "7f338966e162612b09d838512b11af5901414d05";
-      hash = "sha256-UtPcgEa+9KrF4CblC8D4oClvVJs+a5DWtwH/fD7puVs=";
+      rev = "a5d252d0a0916dddfe5309ae6b6f007869614478";
+      hash = "sha256-MAcLtSurQl0wLC6K114erdAyugN71Ae56XxMFhft0lU=";
       fetchSubmodules = true;
     };
 
@@ -81,12 +81,12 @@ let
 
   libwemeetwrap = stdenv.mkDerivation {
     pname = "libwemeetwrap";
-    version = "0-unstable-2023-12-14";
+    version = "0-unstable-2026-05-14";
 
     src = fetchgit {
       url = "https://aur.archlinux.org/wemeet-bin.git";
-      rev = "8f03fbc4d5ae263ed7e670473886cfa1c146aecc";
-      hash = "sha256-ExzLCIoLu4KxaoeWNhMXixdlDTIwuPiYZkO+XVK8X10=";
+      rev = "480f1ae6f36e4ef0cc80c70de1ee752d74c41f95";
+      hash = "sha256-eUx25Rg7J5/Wv3wo5uGmFzUnPKVh03twyFMkOkQGY+k=";
     };
 
     dontWrapQtApps = true;

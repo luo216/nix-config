@@ -189,6 +189,7 @@
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
     codex-desktop # Codex Desktop for Linux
+    claude-desktop # Claude Desktop for Linux with MCP FHS support
 
     # === 系统工具 ===
     xdg-user-dirs
