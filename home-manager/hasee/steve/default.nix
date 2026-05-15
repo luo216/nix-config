@@ -10,6 +10,7 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
+    outputs.homeManagerModules.customClaudeDesktop # Claude Desktop
     outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
@@ -189,7 +190,6 @@
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
     codex-desktop # Codex Desktop for Linux
-    claude-desktop # Claude Desktop native Nix package
 
     # === 系统工具 ===
     xdg-user-dirs
@@ -207,6 +207,8 @@
     # === 剪贴板 ===
     wl-clipboard
   ];
+
+  programs.customClaudeDesktop.enable = true;
 
   services = {
     udiskie = {
