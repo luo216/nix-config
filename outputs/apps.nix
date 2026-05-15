@@ -32,6 +32,7 @@ in
                 exec nix build --out-link "$out_dir/result-vm-${name}" ".#nixosConfigurations.${name}.config.system.build.vm" "$@"
               '';
             }}/bin/build-vm-${name}";
+            meta.description = "Build the ${name} NixOS VM and link it under ./out";
           };
           "vm-${name}" = {
             type = "app";
@@ -47,6 +48,7 @@ in
                 exec ${vmDrv}/bin/run-${name}-vm "$@"
               '';
             }}/bin/run-vm-${name}";
+            meta.description = "Run the ${name} NixOS VM from the local ./out workspace";
           };
         };
     in
@@ -54,10 +56,12 @@ in
       home-manager = {
         type = "app";
         program = "${hm}/bin/home-manager";
+        meta.description = "Run the Home Manager CLI pinned by this flake";
       };
       deploy = {
         type = "app";
         program = "${deploy}/bin/deploy";
+        meta.description = "Run deploy-rs for the deployment nodes defined by this flake";
       };
     } // mkVmApp "pentest" self.nixosConfigurations.pentest.config.system.build.vm
   );
