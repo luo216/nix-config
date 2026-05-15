@@ -1,5 +1,7 @@
 # Custom Modules
 
+Exported as `outputs.nixosModules` and `outputs.homeManagerModules` via `outputs/modules.nix`.
+
 ## home-manager/
 
 Reusable Home Manager modules with `custom*` prefix:
@@ -24,8 +26,10 @@ Reusable NixOS modules:
 | Module | Description |
 |--------|-------------|
 | docker-easyconnect | EasyConnect VPN in Docker |
+| dnsmasq-dhcp | DHCP server for device provisioning |
 | network-printers | Declarative network printer setup |
 | pixelbook-go-audio | Pixelbook Go AVS audio firmware support |
+| windows-vm | Windows VM via QEMU |
 
 ## templates/
 

@@ -3,7 +3,7 @@
 `configuration.nix` contains settings shared across all NixOS hosts:
 
 - **Facter** — hardware report path
-- **Networking** — `hostName` derived from flake host metadata
+- **Networking** — `hostName` derived from host metadata (see `outputs/hosts.nix`)
 - **Nixpkgs** — overlays (custom packages + unstable)
 - **Nix** — daemon settings (substituters, GC, registry)
 - **SSH** — OpenSSH server with root authorized key

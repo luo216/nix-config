@@ -1,5 +1,7 @@
 # Nixpkgs Overlays
 
+Defined in `outputs/modules.nix`, imported here from `overlays/default.nix`.
+
 - **additions** — Custom packages from `../pkgs/` directory
 - **unstable-packages** — Unstable nixpkgs accessible via `pkgs.unstable`
 

@@ -1,10 +1,10 @@
 # Per-Host Home Manager Configurations
 
-Each subdirectory follows the pattern `hostname/user/default.nix`, matching the `homeConfigurations` output in `flake.nix`.
+Each subdirectory follows the pattern `hostname/user/default.nix`, matching the `homeConfigurations` output generated in `outputs/home-configs.nix`.
 
 ## Integration Modes
 
-- **Integrated** (`withHomeManager = true` in flake.nix): HM is part of NixOS build, updated via `nixos-rebuild` or `deploy-rs`
+- **Integrated** (`withHomeManager = true` in `outputs/hosts.nix`): HM is part of NixOS build, updated via `nixos-rebuild` or `deploy-rs`
 - **Standalone**: HM is independent, updated via `home-manager switch --flake .#user@hostname`
 
 ## Module Imports

@@ -1,0 +1,34 @@
+# Host definitions.  Add / remove machines by editing this list.
+# Each entry is threaded into nixosConfigurations, homeConfigurations, deploy nodes, and VM apps.
+[
+  {
+    hostname = "pixelbook";
+    system = "x86_64-linux";
+    deploy = true;
+    withHomeManager = true;
+    ip = "192.168.31.76";
+    users = [{ username = "steve"; }];
+  }
+  {
+    hostname = "hasee";
+    system = "x86_64-linux";
+    deploy = true;
+    withHomeManager = true;
+    ip = "192.168.31.129";
+    users = [{ username = "steve"; }];
+  }
+  {
+    hostname = "tencent-cvm";
+    system = "x86_64-linux";
+    users = [{ username = "steve"; }];
+  }
+  {
+    hostname = "pentest";
+    system = "x86_64-linux";
+    deploy = true;
+    ip = "localhost";
+    sshPort = 2222;
+    withHomeManager = true;
+    users = [{ username = "pentest"; }];
+  }
+]

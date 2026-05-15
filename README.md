@@ -23,7 +23,17 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 
 ```
 .
-├── flake.nix                    # Flake entry point
+├── flake.nix                    # Flake entry (inputs only + outputs hook)
+├── outputs/                     # Flake outputs, split by concern
+│   ├── default.nix              #   Orchestrator — merges sub-modules
+│   ├── hosts.nix                #   Host definitions (data)
+│   ├── lib.nix                  #   Shared helpers (systems, forAllSystems, pkgsFor)
+│   ├── packages.nix             #   packages + formatter
+│   ├── modules.nix              #   overlays + nixosModules + homeManagerModules
+│   ├── nixos-configs.nix        #   nixosConfigurations
+│   ├── home-configs.nix         #   homeConfigurations
+│   ├── apps.nix                 #   apps (home-manager, deploy, VM launchers)
+│   └── deploy.nix               #   deploy nodes + checks
 ├── home-manager/                # Per-host user configs
 │   └── <hostname>/<username>/   # User-specific HM config
 ├── modules/
@@ -74,7 +84,7 @@ nix run .#vm-pentest          # Run VM
 
 ### 1. Define Host
 
-Add to `flake.nix` `hosts` list:
+Add to `outputs/hosts.nix` list:
 
 ```nix
 {
