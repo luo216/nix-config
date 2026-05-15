@@ -15,7 +15,7 @@ nix build .#wechat
 | Package | Description |
 |---------|-------------|
 | cc-switch-cli | CLI tool for switching Claude Code sessions |
-| claude-desktop | Claude Desktop (aaddrick packaging) |
+| claude-desktop | Claude Desktop (aaddrick native Nix packaging) |
 | codex-desktop | Codex Desktop (ilysenko Linux build) |
 | cpa | CLI Proxy API client |
 | google-chrome-stable | Google Chrome Stable from Google's current deb |

@@ -17,6 +17,4 @@ let
     inherit node-pty;
   };
 in
-callPackage "${src}/nix/fhs.nix" {
-  claude-desktop = claude-desktop-unwrapped;
-}
+claude-desktop-unwrapped
