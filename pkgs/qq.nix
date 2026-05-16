@@ -31,10 +31,10 @@
 }:
 
 let
-  version = "3.2.25-2026-02-05";
+  version = "3.2.28-2026-04-29";
   src = fetchurl {
-    url = "https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.25_260205_amd64_01.deb";
-    hash = "sha256-TVEHWd8lyfhcfj6E83XDaFq2L75wtNNI97osG6iCvuA=";
+    url = "https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.28_260429_amd64_01.deb";
+    hash = "sha256-aOeddKzcDFpw76jqHYtkELUaIZBoQ3dNOC8y4OOh8Nc=";
   };
 in
 stdenv.mkDerivation {

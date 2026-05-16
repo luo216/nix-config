@@ -4,6 +4,7 @@
   inputs,
   outputs,
   lib,
+  pkgs,
   host,
   ...
 }:
@@ -46,6 +47,13 @@ in
       outputs.overlays.unstable-packages
     ];
     config.allowUnfree = true;
+  };
+
+  boot = lib.mkIf (lib.elem host.hostname [
+    "hasee"
+    "pixelbook"
+  ]) {
+    kernelPackages = pkgs.unstable.linuxPackages_latest;
   };
 
   # ── Nix ───────────────────────────────────────────────

@@ -19,7 +19,7 @@
   gtk3,
   makeWrapper,
   nodejs,
-  p7zip,
+  _7zz,
   patchelf,
   procps,
   python3,
@@ -49,18 +49,18 @@
   zlib,
 }: let
   pname = "codex-desktop";
-  version = "0-unstable-2026-05-14";
+  version = "0-unstable-2026-05-16";
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "f2d35d3cab2d9daa73dc73d4ef0c02add2e265fe";
-    hash = "sha256-M3V0j1tYiev8yza931cVnn/OiyotvvLRP/nRsV/6mdQ=";
+    rev = "c8e7e2b9204e2c4934f82a0aebbe9bf1762db524";
+    hash = "sha256-27Mw4l125GZ/qu6WQlMghipLjs2BudXge4/5imW1DcY=";
   };
 
   codexDmg = fetchurl {
     url = "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg";
-    hash = "sha256-4FroU+UDXJSbB5FfjGhiGyXrQ/R+UYXuaYPoR7oXbyc=";
+    hash = "sha256-WTeptN8D9hF2ffvlJKppfLTOJr5Z0hjokHCnGX6drk0=";
   };
 
   electronLibs = [
@@ -198,7 +198,7 @@
       gnused
       makeWrapper
       nodejs
-      p7zip
+      _7zz
       patchelf
       python3
       unzip
@@ -206,7 +206,7 @@
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-zYnRKsDy8bD/sRm8poVSOPvNd7d2daVjT83VSZAJxAk=";
+    outputHash = "sha256-a7FgjGyfJA4GQ7oLjLKoOseIEWk2ddDx/OmSSFffy6Y=";
     unsafeDiscardReferences.out = true;
 
     dontConfigure = true;
@@ -237,10 +237,8 @@
             substituteInPlace "$source_dir/scripts/lib/asar-patch.sh" \
               --replace-fail "npx --yes asar" "asar" \
               --replace-fail "npx asar" "asar"
-            substituteInPlace "$source_dir/scripts/lib/dmg.sh" \
-              --replace-fail "npx --yes asar" "asar"
-      substituteInPlace "$source_dir/scripts/lib/native-modules.sh" \
-        --replace-fail "npx --yes @electron/rebuild" "electron-rebuild"
+      substituteInPlace "$source_dir/scripts/lib/dmg.sh" \
+        --replace-fail "npx --yes asar" "asar"
       substituteInPlace "$source_dir/scripts/patches/computer-use.js" \
         --replace-fail 'throw new Error("Required Linux Computer Use plugin gate patch failed: could not enable bundled Computer Use on Linux");' \
         'console.warn("WARN: Could not enable bundled Computer Use on Linux - skipping Computer Use plugin gate patch"); return currentSource;'
