@@ -60,12 +60,7 @@
           state = true;
           retries = 8191;
         };
-        vendor_id = {
-          state = true;
-          value = "GenuineIntel";
-        };
       };
-      kvm = {hidden = {state = true;};};
     };
     cpu = {
       mode = "host-passthrough";
@@ -103,72 +98,40 @@
       suspend-to-disk = {enabled = false;};
     };
     devices = let
-      hostdevList =
-        lib.optional cfg.nvmePassthrough {
-          mode = "subsystem";
-          type = "pci";
-          managed = true;
-          source = {address = pciAddr 2 0 0;};
-          address = pciAddr 1 0 0;
-        }
-        ++ lib.optionals cfg.dgpuPassthrough [
-          {
-            mode = "subsystem";
-            type = "pci";
-            managed = true;
-            source = {address = pciAddr 1 0 0;};
-            rom = {
-              bar = false;
-              file = cfg.romPath;
-            };
-            address = pciAddr 2 0 0 // {multifunction = true;};
-          }
-          {
-            mode = "subsystem";
-            type = "pci";
-            managed = true;
-            source = {address = pciAddr 1 0 1;};
-            address = pciAddr 2 0 1;
-          }
-        ];
+      hostdevList = lib.optional cfg.nvmePassthrough {
+        mode = "subsystem";
+        type = "pci";
+        managed = true;
+        source = {address = pciAddr 2 0 0;};
+        address = pciAddr 1 0 0;
+      };
     in
       {
         emulator = "/run/libvirt/nix-emulators/qemu-system-x86_64";
-        controller =
-          [
-            {
-              type = "usb";
-              index = 0;
-              model = "qemu-xhci";
-              ports = 15;
-              address = pciAddr 0 7 0;
-            }
-            {
-              type = "pci";
-              index = 0;
-              model = "pcie-root";
-            }
-            {
-              type = "pci";
-              index = 1;
-              model = "pcie-root-port";
-              address = pciAddr 0 1 0;
-              target = {
-                chassis = 1;
-                port = 16;
-              };
-            }
-          ]
-          ++ lib.optional cfg.dgpuPassthrough {
+        controller = [
+          {
+            type = "usb";
+            index = 0;
+            model = "qemu-xhci";
+            ports = 15;
+            address = pciAddr 0 7 0;
+          }
+          {
             type = "pci";
-            index = 2;
+            index = 0;
+            model = "pcie-root";
+          }
+          {
+            type = "pci";
+            index = 1;
             model = "pcie-root-port";
-            address = pciAddr 0 2 0;
+            address = pciAddr 0 1 0;
             target = {
-              chassis = 2;
-              port = 17;
+              chassis = 1;
+              port = 16;
             };
-          };
+          }
+        ];
         input = [
           {
             type = "tablet";
@@ -243,22 +206,6 @@ in {
       type = lib.types.bool;
       default = true;
       description = "Pass NVMe SSD (02:00.0) to the VM.";
-    };
-
-    dgpuPassthrough = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = ''
-        Pass NVIDIA dGPU (01:00.0 + 01:00.1) to the VM.
-        Keep this disabled while collecting Windows fonts via the SPICE
-        console; flip to true once the host is ready to give up the GPU.
-      '';
-    };
-
-    romPath = lib.mkOption {
-      type = lib.types.str;
-      default = "/data/vm/roms/rtx3050_pcat.rom";
-      description = "Path to NVIDIA GPU ROM file (used when dgpuPassthrough is enabled).";
     };
 
     glAcceleration = lib.mkOption {

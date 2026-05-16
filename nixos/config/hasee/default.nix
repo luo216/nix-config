@@ -20,6 +20,7 @@
         efiSysMountPoint = "/boot";
       };
     };
+    kernelPackages = pkgs.unstable.linuxPackages_latest;
     plymouth.enable = true;
     initrd.systemd.enable = true;
     kernelParams = [
@@ -32,7 +33,7 @@
       "intel_iommu=on"
       "iommu=pt"
       "kvm.ignore_msrs=1"
-      "vfio-pci.ids=10de:25a2,10de:2291,15b7:5002"
+      "vfio-pci.ids=15b7:5002"
     ];
     initrd.kernelModules = [
       "i915"
@@ -46,22 +47,10 @@
       "vfio_pci"
       "vfio_iommu_type1"
     ];
-    blacklistedKernelModules = [
-      "nouveau"
-      "nvidia"
-      "nvidia_drm"
-      "nvidia_modeset"
-      "nvidia_uvm"
-    ];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
-      options vfio-pci ids=10de:25a2,10de:2291,15b7:5002 disable_vga=1
+      options vfio-pci ids=15b7:5002
       options kvm ignore_msrs=1
-      softdep nouveau pre: vfio-pci
-      softdep nvidia pre: vfio-pci
-      softdep nvidia_drm pre: vfio-pci
-      softdep nvidia_modeset pre: vfio-pci
-      softdep nvidia_uvm pre: vfio-pci
       softdep nvme pre: vfio-pci
     '';
   };
@@ -131,6 +120,23 @@
         libva-vdpau-driver
         libvdpau-va-gl
       ];
+    };
+
+    nvidia = {
+      modesetting.enable = true;
+      open = true;
+      powerManagement.enable = true;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+
+      prime = {
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
     };
 
     bluetooth = {
@@ -263,6 +269,7 @@
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
+    xserver.videoDrivers = ["nvidia"];
 
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;
@@ -319,9 +326,7 @@
 
     windows-vm = {
       enable = true;
-      # Phase 1: SPICE-only boot to copy fonts out of Windows.
-      # Flip to true after fonts are exported to hand the NVIDIA card to the VM.
-      dgpuPassthrough = false;
+      nvmePassthrough = true;
     };
   };
 

@@ -1,7 +1,9 @@
 # Pixelbook Go — Chromebook 刷 NixOS
-{ pkgs, outputs, ... }:
-
 {
+  pkgs,
+  outputs,
+  ...
+}: {
   imports = [
     outputs.nixosModules.pixelbook-go-audio
     outputs.nixosModules.network-printers
@@ -18,8 +20,9 @@
         efiSysMountPoint = "/boot";
       };
     };
+    kernelPackages = pkgs.unstable.linuxPackages_latest;
     plymouth.enable = true;
-    kernelModules = [ "i2c-dev" ];
+    kernelModules = ["i2c-dev"];
     initrd.systemd.enable = true;
     kernelParams = [
       "quiet"
@@ -192,7 +195,7 @@
 
     printing = {
       enable = true;
-      drivers = with pkgs; [ brlaser ];
+      drivers = with pkgs; [brlaser];
     };
 
     network-printers = {
@@ -204,7 +207,7 @@
           location = "Wi-Fi Direct";
           deviceUri = "ipp://192.168.223.1/ipp/print";
           model = "everywhere";
-          testHosts = [ "192.168.223.1" ];
+          testHosts = ["192.168.223.1"];
           ppdOptions = {
             PageSize = "A4";
             Duplex = "None";
@@ -262,7 +265,7 @@
       poolStart = 100;
       poolEnd = 200;
       dns = "8.8.8.8";
-      staticBindings = [ ];
+      staticBindings = [];
     };
   };
 
