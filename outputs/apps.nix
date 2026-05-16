@@ -64,5 +64,23 @@ in
         meta.description = "Run deploy-rs for the deployment nodes defined by this flake";
       };
     } // mkVmApp "pentest" self.nixosConfigurations.pentest.config.system.build.vm
+      // {
+        "vm-win11" = {
+          type = "app";
+          program = "${pkgs.writeShellApplication {
+            name = "win11";
+            runtimeInputs = with pkgs; [ virt-viewer libvirt ];
+            text = ''
+              set -euo pipefail
+              if ! virsh -c qemu:///system list --name | grep -qF win11; then
+                echo "Starting win11..."
+                virsh -c qemu:///system start win11
+              fi
+              exec virt-viewer -c qemu:///system win11
+            '';
+          }}/bin/win11";
+          meta.description = "Start the Windows 11 VM and connect via SPICE";
+        };
+      }
   );
 }

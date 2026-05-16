@@ -9,30 +9,17 @@
   pciAddr = bus: slot: function: {
     type = "pci";
     domain = 0;
-    bus = bus;
-    slot = slot;
-    inherit function;
+    inherit bus slot function;
   };
 
   domainDef = {
     type = "kvm";
-    name = "windows";
+    name = "win11";
     uuid = "c1a2b3d4-e5f6-7890-abcd-ef1234567890";
-    memory = {
-      count =
-        if lib.hasSuffix "G" cfg.memory
-        then lib.toInt (lib.removeSuffix "G" cfg.memory)
-        else if lib.hasSuffix "M" cfg.memory
-        then lib.toInt (lib.removeSuffix "M" cfg.memory)
-        else lib.toInt cfg.memory;
-      unit =
-        if lib.hasSuffix "G" cfg.memory
-        then "GiB"
-        else "MiB";
-    };
+    memory = {count = 16; unit = "GiB";};
     vcpu = {
       placement = "static";
-      count = cfg.vcpu;
+      count = 8;
     };
     os = {
       type = "hvm";
@@ -45,22 +32,31 @@
       };
       nvram = {
         template = "/run/libvirt/nix-ovmf/edk2-i386-vars.fd";
-        path = cfg.nvramPath;
+        path = "/data/vm/nvram/win11_OVMF_VARS.fd";
       };
       boot = [{dev = "hd";} {dev = "cdrom";}];
-      bootmenu = {enable = true;};
+      bootmenu.enable = true;
     };
     features = {
       acpi = {};
       apic = {};
       hyperv = {
-        relaxed = {state = true;};
-        vapic = {state = true;};
-        spinlocks = {
-          state = true;
-          retries = 8191;
-        };
+        relaxed.state = true;
+        vapic.state = true;
+        spinlocks = {state = true; retries = 8191;};
+        vendor_id = {state = true; value = "GenuineIntel";};
+        vpindex.state = true;
+        runtime.state = true;
+        synic.state = true;
+        stimer.state = true;
+        frequencies.state = true;
+        tlbflush.state = true;
+        ipi.state = true;
+        evmcs.state = true;
+        reset.state = true;
       };
+      kvm.hidden.state = true;
+      vmport.state = false;
     };
     cpu = {
       mode = "host-passthrough";
@@ -76,162 +72,91 @@
     clock = {
       offset = "localtime";
       timer = [
-        {
-          name = "rtc";
-          tickpolicy = "catchup";
-        }
-        {
-          name = "pit";
-          tickpolicy = "delay";
-        }
-        {
-          name = "hpet";
-          present = false;
-        }
+        {name = "rtc"; tickpolicy = "catchup";}
+        {name = "pit"; tickpolicy = "delay";}
+        {name = "hpet"; present = false;}
+        {name = "hypervclock"; present = true;}
       ];
     };
     on_poweroff = "destroy";
     on_reboot = "destroy";
     on_crash = "destroy";
     pm = {
-      suspend-to-mem = {enabled = false;};
-      suspend-to-disk = {enabled = false;};
+      suspend-to-mem.enabled = false;
+      suspend-to-disk.enabled = false;
     };
-    devices = let
-      hostdevList = lib.optional cfg.nvmePassthrough {
-        mode = "subsystem";
-        type = "pci";
-        managed = true;
-        source = {address = pciAddr 2 0 0;};
-        address = pciAddr 1 0 0;
+    devices = {
+      emulator = "/run/libvirt/nix-emulators/qemu-system-x86_64";
+      controller = [
+        {type = "usb"; index = 0; model = "qemu-xhci"; ports = 15;}
+        {type = "pci"; index = 0; model = "pcie-root";}
+        {type = "pci"; index = 1; model = "pcie-root-port"; target = {chassis = 1; port = 16;};}
+        {type = "pci"; index = 2; model = "pcie-root-port"; target = {chassis = 2; port = 17;};}
+        {type = "pci"; index = 3; model = "pcie-root-port"; target = {chassis = 3; port = 18;};}
+        {type = "pci"; index = 4; model = "pcie-root-port"; target = {chassis = 4; port = 19;};}
+      ];
+      input = [
+        {type = "tablet"; bus = "usb";}
+        {type = "keyboard"; bus = "usb";}
+      ];
+      interface = {
+        type = "user";
+        mac.address = "52:54:00:12:34:56";
+        model.type = "e1000e";
       };
-    in
-      {
-        emulator = "/run/libvirt/nix-emulators/qemu-system-x86_64";
-        controller = [
-          {
-            type = "usb";
-            index = 0;
-            model = "qemu-xhci";
-            ports = 15;
-            address = pciAddr 0 7 0;
-          }
-          {
-            type = "pci";
-            index = 0;
-            model = "pcie-root";
-          }
-          {
-            type = "pci";
-            index = 1;
-            model = "pcie-root-port";
-            address = pciAddr 0 1 0;
-            target = {
-              chassis = 1;
-              port = 16;
-            };
-          }
-        ];
-        input = [
-          {
-            type = "tablet";
-            bus = "usb";
-            address = {
-              type = "usb";
-              bus = 0;
-              port = 1;
-            };
-          }
-          {
-            type = "keyboard";
-            bus = "usb";
-            address = {
-              type = "usb";
-              bus = 0;
-              port = 2;
-            };
-          }
-        ];
-        interface = {
-          type = "user";
-          mac = {address = "52:54:00:12:34:56";};
-          model = {type = "e1000e";};
-          address = pciAddr 0 4 0;
-        };
-        tpm = {
-          model = "tpm-crb";
-          backend = {
-            type = "emulator";
-            version = "2.0";
-          };
-        };
-        video = {
-          model = {
-            type = "virtio";
-            heads = 1;
-            primary = true;
-            acceleration = {accel3d = cfg.glAcceleration;};
-          };
-          address = pciAddr 0 5 0;
-        };
-        graphics = {
-          type = "spice";
-          autoport = true;
-          listen = {type = "none";};
-          image = {compression = false;};
-          gl = {enable = cfg.glAcceleration;};
-        };
-      }
-      // lib.optionalAttrs (hostdevList != []) {
-        hostdev = hostdevList;
+      tpm = {
+        model = "tpm-crb";
+        backend = {type = "emulator"; version = "2.0";};
       };
+      video = {
+        model = {type = "qxl"; heads = 1; primary = true;};
+      };
+      graphics = {
+        type = "spice";
+        autoport = true;
+        listen = {type = "address"; address = "127.0.0.1";};
+        image.compression = false;
+      };
+      sound.model = "ich9";
+      channel = [
+        {
+          type = "unix";
+          target = {type = "virtio"; name = "org.qemu.guest_agent.0";};
+        }
+        {
+          type = "spicevmc";
+          target = {type = "virtio"; name = "com.redhat.spice.0";};
+        }
+      ];
+      redirdev = [
+        {bus = "usb"; type = "spicevmc";}
+        {bus = "usb"; type = "spicevmc";}
+      ];
+      console.type = "pty";
+      memballoon.model = "virtio";
+      hostdev = [
+        {
+          mode = "subsystem";
+          type = "pci";
+          managed = true;
+          source.address = pciAddr 2 0 0;
+          address = pciAddr 3 0 0;
+        }
+      ];
+    };
   };
 in {
-  options.services.windows-vm = {
-    enable = lib.mkEnableOption "Windows VM";
-
-    memory = lib.mkOption {
-      type = lib.types.str;
-      default = "16G";
-      description = "VM memory (e.g. \"16G\", \"8192M\").";
-    };
-
-    vcpu = lib.mkOption {
-      type = lib.types.ints.positive;
-      default = 8;
-      description = "Number of virtual CPUs.";
-    };
-
-    nvmePassthrough = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Pass NVMe SSD (02:00.0) to the VM.";
-    };
-
-    glAcceleration = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Enable SPICE GL with virtio video 3D acceleration.";
-    };
-
-    nvramPath = lib.mkOption {
-      type = lib.types.str;
-      default = "/data/vm/nvram/windows_OVMF_VARS.fd";
-      description = "Path to OVMF variables file.";
-    };
-  };
+  options.services.windows-vm.enable = lib.mkEnableOption "Windows 11 VM with NVMe passthrough";
 
   config = lib.mkIf cfg.enable {
     virtualisation.libvirt.enable = true;
     virtualisation.libvirt.swtpm.enable = true;
 
-    virtualisation.libvirt.connections."qemu:///system" = {
-      domains = [
-        {
-          definition = inputs.NixVirt.lib.domain.writeXML domainDef;
-          active = false;
-        }
-      ];
-    };
+    virtualisation.libvirt.connections."qemu:///system".domains = [
+      {
+        definition = inputs.NixVirt.lib.domain.writeXML domainDef;
+        active = false;
+      }
+    ];
   };
 }

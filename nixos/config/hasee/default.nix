@@ -324,10 +324,7 @@
       staticBindings = [];
     };
 
-    windows-vm = {
-      enable = true;
-      nvmePassthrough = true;
-    };
+    windows-vm.enable = true;
   };
 
   # ── 虚拟化 ────────────────────────────────────────────
