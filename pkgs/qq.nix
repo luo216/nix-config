@@ -22,6 +22,7 @@
   stdenv,
   vips,
   at-spi2-core,
+  patchelf,
   autoPatchelfHook,
   writeShellScript,
   makeShellWrapper,
@@ -46,6 +47,7 @@ stdenv.mkDerivation {
     makeShellWrapper
     wrapGAppsHook3
     dpkg
+    patchelf
   ];
 
   buildInputs = [
@@ -149,8 +151,11 @@ stdenv.mkDerivation {
         ''}
 
       # Remove bundled libraries
-      rm -r $out/opt/QQ/resources/app/sharp-lib
       rm -r $out/opt/QQ/resources/app/libssh2.so.1
+
+      # Patch sharp-linux-x64.node to use bundled libvips-cpp (system vips lacks vips_g_once)
+      patchelf --set-rpath "$out/opt/QQ/resources/app/sharp-lib" \
+        $out/opt/QQ/resources/app/sharp-linux-x64.node
 
       ln -s ${libayatana-appindicator}/lib/libayatana-appindicator3.so \
         $out/opt/QQ/libappindicator3.so
