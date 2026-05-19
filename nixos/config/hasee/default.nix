@@ -111,6 +111,7 @@
   hardware = {
     enableRedistributableFirmware = true;
     cpu.intel.updateMicrocode = true;
+    uinput.enable = true;
 
     graphics = {
       enable = true;
@@ -155,6 +156,8 @@
       "kvm"
       "networkmanager"
       "video"
+      "input"
+      "uinput"
       "adbusers"
       "libvirtd"
     ];
@@ -274,6 +277,12 @@
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
+    sunshine = {
+      enable = true;
+      package = pkgs.sunshine;
+      openFirewall = true;
+      capSysAdmin = true;
+    };
 
     desktopManager.gnome = {
       enable = true;

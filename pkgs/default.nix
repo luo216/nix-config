@@ -13,6 +13,7 @@ in
   cpa = pkgs.callPackage ./cpa.nix { };
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix { };
   qq = pkgs.callPackage ./qq.nix { };
+  sunshine = pkgs.callPackage ./sunshine.nix { };
   wechat = pkgs.callPackage ./wechat.nix { };
   wemeet = pkgs.callPackage ./wemeet { };
   wpsoffice-cn = pkgs.callPackage ./wpsoffice-cn.nix { };
