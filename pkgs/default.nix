@@ -7,6 +7,7 @@ in
 {
   # example = pkgs.callPackage ./example { };
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix { };
+  cloakbrowser-chromium = pkgs.callPackage ./cloakbrowser.nix { };
   claude-code-desktop = claudeDesktop;
   claude-desktop = claudeDesktop;
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix { };

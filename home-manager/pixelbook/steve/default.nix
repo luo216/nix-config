@@ -184,6 +184,7 @@
     input-leap # KVM switch (Barrier replacement)
     moonlight-qt # Video player
     google-chrome-stable # Web browser
+    cloakbrowser-chromium # Stealth Chromium (anti-bot-detection, AI agent CDP)
     wpsoffice-cn # WPS Office 中文版（官方）
     qq # QQ
     wechat # 微信
