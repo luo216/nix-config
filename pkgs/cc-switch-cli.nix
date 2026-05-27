@@ -2,11 +2,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "cc-switch-cli";
-  version = "5.5.0";
+  version = "5.6.1";
 
   src = fetchurl {
     url = "https://github.com/SaladDay/cc-switch-cli/releases/download/v${finalAttrs.version}/cc-switch-cli-linux-x64-musl.tar.gz";
-    hash = "sha256-mvqgJvm8JKeVo+AeVpCuI2iVaJw0n2GjPEdrGGe5rNI=";
+    hash = "sha256-AYlNyL/uEDpzdtRNV5h9cpXsO2j0+DqndErgOvXqDM4=";
   };
 
   dontConfigure = true;

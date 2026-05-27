@@ -5,14 +5,14 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "cpa";
-  version = "7.0.9";
+  version = "7.1.22";
 
   src =
     let
       assets = {
         x86_64-linux = {
           url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_linux_amd64.tar.gz";
-          hash = "sha256-7qtLwV7JX3Ho5el/4e8+fzAmC2vskMCU57Q0AaM2Qgs=";
+          hash = "sha256-/4MOOEF1TfF3GDq9A4ThrKLuzvKcshNSwO3xVnUo9bo=";
         };
         aarch64-linux = {
           url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_linux_arm64.tar.gz";

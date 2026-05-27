@@ -7,8 +7,8 @@ let
   src = fetchFromGitHub {
     owner = "aaddrick";
     repo = "claude-desktop-debian";
-    rev = "d50e5c366ec958bfe8325ea867c4c7ee5d2c410a";
-    hash = "sha256-M1CZhiDjNKC/OYLW4xCmSxEkvTbIlKiiZwIoyahlKJg=";
+    rev = "98232dbd81591eae64d565fff856e80c5c6ef08b";
+    hash = "sha256-woTHicw3feGdE4AmnHKDocoga3ZTNkFkzfRhug98oMo=";
   };
 
   node-pty = callPackage "${src}/nix/node-pty.nix" { };

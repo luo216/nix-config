@@ -49,18 +49,18 @@
   zlib,
 }: let
   pname = "codex-desktop";
-  version = "0-unstable-2026-05-16";
+  version = "0-unstable-2026-05-26";
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "c8e7e2b9204e2c4934f82a0aebbe9bf1762db524";
-    hash = "sha256-27Mw4l125GZ/qu6WQlMghipLjs2BudXge4/5imW1DcY=";
+    rev = "7c41fc9f8f2352df0893fd98104d3680ee01342f";
+    hash = "sha256-QicCGr+V2BqpCAUwWwzE0adoZK8VyoqrgYRjFmrh5BQ=";
   };
 
   codexDmg = fetchurl {
     url = "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg";
-    hash = "sha256-WTeptN8D9hF2ffvlJKppfLTOJr5Z0hjokHCnGX6drk0=";
+    hash = "sha256-smhl7TqwSYqLigb9lBfS2wOKLA8oUI+QHjnOzNTCZSk=";
   };
 
   electronLibs = [
@@ -206,7 +206,7 @@
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-a7FgjGyfJA4GQ7oLjLKoOseIEWk2ddDx/OmSSFffy6Y=";
+    outputHash = "sha256-snlLTKfIZK1khh4g+znLeLhmHuphHSk7fmszdFWqsg0=";
     unsafeDiscardReferences.out = true;
 
     dontConfigure = true;

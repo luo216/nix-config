@@ -55,6 +55,7 @@
   pipewire,
   config,
   coreutils,
+  qt6,
   udevCheckHook,
   cudaSupport ? config.cudaSupport,
   cudaPackages ? { },
@@ -75,13 +76,13 @@ let
 in
 stdenv'.mkDerivation (finalAttrs: {
   pname = "sunshine";
-  version = "2026.518.24409";
+  version = "2026.528.35537";
 
   src = fetchFromGitHub {
     owner = "LizardByte";
     repo = "Sunshine";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-TmvbsFyZNQuu4ZW/Iimh+04YAO1ccRuRRC7RSiA7IlQ=";
+    hash = "sha256-u1+Q49kFlZoZ3AOWmCOuLsA2C+HHgT+qC0t4QHpFim0=";
     fetchSubmodules = true;
   };
 
@@ -90,7 +91,7 @@ stdenv'.mkDerivation (finalAttrs: {
     pname = "sunshine-ui";
     npmDeps = fetchNpmDeps {
       inherit (finalAttrs) src;
-      hash = "sha256-KxsEcE8MO5FVRmobPpLa4G6HJzm2dG48q8nxalgIHP0=";
+      hash = "sha256-WSHBMnYp/7T5PP1NDlEvYRfsYKFda8hvsFwRMQpNg/o=";
     };
 
     postPatch = ''
@@ -128,7 +129,7 @@ stdenv'.mkDerivation (finalAttrs: {
       substituteInPlace packaging/linux/app-dev.lizardbyte.app.Sunshine.service.in \
         --subst-var-by PROJECT_DESCRIPTION 'Self-hosted game stream host for Moonlight' \
         --subst-var-by SUNSHINE_EXECUTABLE_PATH $out/bin/sunshine \
-        --replace-fail '/bin/sleep' '${lib.getExe' coreutils "sleep"}'
+        --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'
     '';
 
   nativeBuildInputs = [
@@ -140,6 +141,7 @@ stdenv'.mkDerivation (finalAttrs: {
   ++ lib.optionals isLinux [
     wayland-scanner
     autoPatchelfHook
+    qt6.wrapQtAppsHook
   ]
   ++ lib.optionals cudaSupport [
     autoAddDriverRunpath
@@ -190,6 +192,8 @@ stdenv'.mkDerivation (finalAttrs: {
     libappindicator
     libnotify
     pipewire
+    qt6.qtbase
+    qt6.qtsvg
   ]
   ++ lib.optionals cudaSupport [
     cudaPackages.cudatoolkit
