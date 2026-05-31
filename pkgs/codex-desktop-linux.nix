@@ -289,6 +289,33 @@ in
       chmod -R u+w "$out/opt/codex-desktop"
 
       resources_dir="$out/opt/codex-desktop/resources"
+      install -Dm0755 /dev/stdin "$resources_dir/bin/codex" <<'SH'
+      #!${bash}/bin/bash
+      set -euo pipefail
+
+      if [ -n "''${CODEX_CLI_PATH:-}" ] && [ "''${CODEX_CLI_PATH:-}" != "$0" ] && [ -x "$CODEX_CLI_PATH" ]; then
+        exec "$CODEX_CLI_PATH" "$@"
+      fi
+
+      for candidate in \
+        "$HOME/.npm-global/bin/codex" \
+        "$HOME/.local/bin/codex" \
+        "$HOME/.bun/bin/codex" \
+        "$HOME/.local/share/pnpm/codex" \
+        "/run/current-system/sw/bin/codex" \
+        "/usr/local/bin/codex" \
+        "/usr/bin/codex"
+      do
+        if [ "$candidate" != "$0" ] && [ -x "$candidate" ]; then
+          exec "$candidate" "$@"
+        fi
+      done
+
+      echo "Codex CLI is required but was not found. Set CODEX_CLI_PATH or install @openai/codex." >&2
+      exit 127
+      SH
+      ln -sfn bin/codex "$resources_dir/codex"
+
       substituteInPlace "$resources_dir/app-extracted/.vite/build/main-"*.js \
         --replace-fail 'process.platform===`linux`&&(typeof codexLinuxIsTrayEnabled!==`function`||codexLinuxIsTrayEnabled())' \
         'process.platform===`linux`&&process.env.CODEX_LINUX_SYSTEM_TRAY_ENABLED!==`0`'
