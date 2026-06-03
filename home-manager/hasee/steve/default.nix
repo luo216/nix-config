@@ -20,6 +20,7 @@
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customKitty # Terminal (kitty)
+    outputs.homeManagerModules.customHermes # Hermes Agent + Web UI
   ];
 
   # Set your username and home directory from the flake
@@ -211,6 +212,7 @@
   ];
 
   programs.customClaudeDesktop.enable = true;
+  programs.customHermes.enable = true;
 
   services = {
     udiskie = {

@@ -3,6 +3,7 @@
   customClaudeDesktop = import ./customClaudeDesktop.nix;
   customCpa = import ./customCpa.nix;
   customFcitx5 = import ./customFcitx5.nix;
+  customHermes = import ./customHermes.nix;
   customFonts = import ./customFonts.nix;
   customKitty = import ./customKitty.nix;
   customRainbarf = import ./customRainbarf.nix;
