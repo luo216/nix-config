@@ -1,6 +1,7 @@
 {
   customBase = import ./customBase.nix;
   customClaudeDesktop = import ./customClaudeDesktop.nix;
+  customCcx = import ./customCcx.nix;
   customCpa = import ./customCpa.nix;
   customFcitx5 = import ./customFcitx5.nix;
   customHermes = import ./customHermes.nix;

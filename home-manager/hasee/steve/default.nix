@@ -10,6 +10,7 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
+    outputs.homeManagerModules.customCcx # AI API Gateway (CCX)
     outputs.homeManagerModules.customClaudeDesktop # Claude Desktop
     outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
@@ -233,6 +234,12 @@
       enable = true;
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
       managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
+    };
+
+    customCcx = {
+      enable = true;
+      proxyAccessKey = "TAoAN93hhVphA6sk2Jyo7y7G";
+      adminAccessKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
     };
   };
 
