@@ -211,9 +211,6 @@
     wl-clipboard
   ];
 
-  programs.customFeishu.enable = true;
-  programs.customHermes.enable = true;
-
   services = {
     udiskie = {
       enable = true;
@@ -244,6 +241,9 @@
   };
 
   programs = {
+    customFeishu.enable = true;
+    customHermes.enable = true;
+
     git = {
       enable = true;
       lfs.enable = true;
