@@ -11,7 +11,6 @@
   imports = [
     outputs.homeManagerModules.customBase
     outputs.homeManagerModules.customCcx # AI API Gateway (CCX)
-    outputs.homeManagerModules.customClaudeDesktop # Claude Desktop
     outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
@@ -20,7 +19,8 @@
     outputs.homeManagerModules.customTemplates # Template files mapping
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
-    outputs.homeManagerModules.customKitty # Terminal (kitty)
+    outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
+    outputs.homeManagerModules.customFeishu # Feishu desktop and CLI
     outputs.homeManagerModules.customHermes # Hermes Agent + Web UI
   ];
 
@@ -193,7 +193,6 @@
     wechat # 微信
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
-    codex-desktop # Codex Desktop for Linux
 
     # === 系统工具 ===
     xdg-user-dirs
@@ -212,7 +211,7 @@
     wl-clipboard
   ];
 
-  programs.customClaudeDesktop.enable = true;
+  programs.customFeishu.enable = true;
   programs.customHermes.enable = true;
 
   services = {
@@ -240,6 +239,7 @@
       enable = true;
       proxyAccessKey = "TAoAN93hhVphA6sk2Jyo7y7G";
       adminAccessKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
+      logLevel = "warn";
     };
   };
 
@@ -286,8 +286,8 @@
     # Enable shared fonts
     customFonts.enable = true;
 
-    # Enable kitty terminal
-    customKitty.enable = true;
+    # Enable Ghostty terminal
+    customGhostty.enable = true;
 
     # Enable yazi file manager
     customYazi.enable = true;

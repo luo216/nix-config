@@ -1,12 +1,12 @@
 {
   customBase = import ./customBase.nix;
-  customClaudeDesktop = import ./customClaudeDesktop.nix;
   customCcx = import ./customCcx.nix;
   customCpa = import ./customCpa.nix;
   customFcitx5 = import ./customFcitx5.nix;
+  customFeishu = import ./customFeishu.nix;
   customHermes = import ./customHermes.nix;
   customFonts = import ./customFonts.nix;
-  customKitty = import ./customKitty.nix;
+  customGhostty = import ./customGhostty.nix;
   customRainbarf = import ./customRainbarf.nix;
   customTemplates = import ./customTemplates.nix;
   customTmux = import ./customTmux.nix;

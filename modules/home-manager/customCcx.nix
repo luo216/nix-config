@@ -74,7 +74,7 @@ in
 
       Service = {
         Type = "simple";
-        ExecStart = "${cfg.package}/bin/ccx";
+        ExecStart = "${cfg.package}/bin/ccx --statedir %h/.local/state/ccx --logdir none";
         Restart = "on-failure";
         RestartSec = 5;
         Environment =

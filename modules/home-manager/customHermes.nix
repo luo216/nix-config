@@ -76,10 +76,11 @@ in
         ExecStart = "${hermesWebui}/bin/hermes-webui";
         Restart = "on-failure";
         RestartSec = 5;
-        Environment = ''
-          HERMES_WEBUI_HOST=127.0.0.1
-          HERMES_WEBUI_PORT=8787
-        '';
+        Environment = [
+          "HERMES_WEBUI_HOST=127.0.0.1"
+          "HERMES_WEBUI_PORT=8787"
+          "HERMES_WEBUI_DEFAULT_WORKSPACE=%h/WorkSpace"
+        ];
       };
 
       Install = {
