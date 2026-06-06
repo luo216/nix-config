@@ -21,7 +21,6 @@
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
     outputs.homeManagerModules.customFeishu # Feishu desktop and CLI
-    outputs.homeManagerModules.customHermes # Hermes Agent + Web UI
   ];
 
   # Set your username and home directory from the flake
@@ -242,7 +241,6 @@
 
   programs = {
     customFeishu.enable = true;
-    customHermes.enable = true;
 
     git = {
       enable = true;

@@ -4,7 +4,6 @@
   customCpa = import ./customCpa.nix;
   customFcitx5 = import ./customFcitx5.nix;
   customFeishu = import ./customFeishu.nix;
-  customHermes = import ./customHermes.nix;
   customFonts = import ./customFonts.nix;
   customGhostty = import ./customGhostty.nix;
   customRainbarf = import ./customRainbarf.nix;

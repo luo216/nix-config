@@ -40,10 +40,6 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    hermes-agent = {
-      url = "github:NousResearch/hermes-agent/main";
-    };
   };
 
   outputs = inputs: (import ./outputs) inputs;
