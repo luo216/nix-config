@@ -6,7 +6,6 @@
   outputs,
   disko,
   nixos-facter-modules,
-  NixVirt,
 }:
 let
   hasConfig = host: builtins.pathExists (../nixos/config + "/${host.hostname}/default.nix");
@@ -22,7 +21,6 @@ in
         modules = [
           disko.nixosModules.disko
           nixos-facter-modules.nixosModules.facter
-          NixVirt.nixosModules.default
           ../nixos/configuration.nix
         ];
       };

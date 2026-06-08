@@ -4,7 +4,6 @@
   home-manager,
   disko,
   nixos-facter-modules,
-  NixVirt,
   deploy-rs,
   ...
 }@inputs:
@@ -17,7 +16,7 @@ builtins.foldl' (a: b: a // b) { } [
   (import ./packages.nix { inherit (lib) forAllSystems pkgsFor; })
   (import ./modules.nix { inherit inputs; })
   (import ./nixos-configs.nix {
-    inherit nixpkgs hosts inputs outputs disko nixos-facter-modules NixVirt;
+    inherit nixpkgs hosts inputs outputs disko nixos-facter-modules;
   })
   (import ./home-configs.nix {
     inherit hosts inputs outputs home-manager;

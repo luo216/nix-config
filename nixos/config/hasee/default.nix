@@ -33,7 +33,8 @@
       "intel_iommu=on"
       "iommu=pt"
       "kvm.ignore_msrs=1"
-      "vfio-pci.ids=15b7:5002"
+      "vfio-pci.ids=10de:25a2,10de:2291,15b7:5002"
+      "kvmfr.static_size_mb=32"
     ];
     initrd.kernelModules = [
       "i915"
@@ -43,14 +44,27 @@
     ];
     kernelModules = [
       "kvm-intel"
+      "kvmfr"
       "vfio"
       "vfio_pci"
       "vfio_iommu_type1"
     ];
+    extraModulePackages = [
+      config.boot.kernelPackages.kvmfr
+    ];
+    blacklistedKernelModules = [
+      "nouveau"
+      "nvidia"
+      "nvidia_drm"
+      "nvidia_modeset"
+      "nvidia_uvm"
+    ];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
-      options vfio-pci ids=15b7:5002
+      options vfio-pci ids=10de:25a2,10de:2291,15b7:5002
       options kvm ignore_msrs=1
+      softdep nvidia pre: vfio-pci
+      softdep nouveau pre: vfio-pci
       softdep nvme pre: vfio-pci
     '';
   };
@@ -123,23 +137,6 @@
       ];
     };
 
-    nvidia = {
-      modesetting.enable = true;
-      open = true;
-      powerManagement.enable = true;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-
-      prime = {
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
-    };
-
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -204,6 +201,7 @@
       OVMFFull
       swtpm
       acpica-tools
+      looking-glass-client
       virt-viewer
       virtio-win
       ventoy
@@ -221,6 +219,10 @@
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
     "d /data/share 0775 steve users - -"
   ];
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="kvmfr", OWNER="steve", GROUP="kvm", MODE="0660"
+  '';
 
   # ── 字体 ──────────────────────────────────────────────
   fonts = {
@@ -272,7 +274,7 @@
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
-    xserver.videoDrivers = ["nvidia"];
+    xserver.videoDrivers = ["modesetting"];
 
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;
