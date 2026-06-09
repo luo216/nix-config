@@ -10,7 +10,7 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
-    outputs.homeManagerModules.customCcx # AI API Gateway (CCX)
+    outputs.homeManagerModules.customClaudeDesktop # Claude Desktop
     outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
@@ -20,8 +20,9 @@
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
-    outputs.homeManagerModules.customFeishu # Feishu desktop and CLI
   ];
+
+  programs.customClaudeDesktop.enable = true;
 
   # Set your username and home directory from the flake
   home = {
@@ -53,7 +54,6 @@
       gtk.enable = true;
       qt = {
         enable = true;
-        platform = "qtct";
         standardDialogs = "xdgdesktopportal";
       };
     };
@@ -192,6 +192,8 @@
     wechat # 微信
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
+    codex-desktop # Codex Desktop（Electron GUI）
+    opencode-desktop # OpenCode Desktop（Electron GUI）
 
     # === 系统工具 ===
     xdg-user-dirs
@@ -230,18 +232,9 @@
       apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
       managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
     };
-
-    customCcx = {
-      enable = true;
-      proxyAccessKey = "TAoAN93hhVphA6sk2Jyo7y7G";
-      adminAccessKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
-      logLevel = "warn";
-    };
   };
 
   programs = {
-    customFeishu.enable = true;
-
     git = {
       enable = true;
       lfs.enable = true;
