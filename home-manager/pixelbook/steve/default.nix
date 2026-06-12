@@ -10,7 +10,6 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
-    outputs.homeManagerModules.customClaudeDesktop # Claude Desktop
     outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
@@ -21,8 +20,6 @@
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
   ];
-
-  programs.customClaudeDesktop.enable = true;
 
   # Set your username and home directory from the flake
   home = {
@@ -159,8 +156,11 @@
 
     # === 网络工具 ===
     nuclei # Vulnerability scanner
-    mitmproxy # Intercepting HTTP/HTTPS proxy
+    burpsuite # Web application security testing platform
+    mitmproxy # Intercept, modify, replay, save HTTP/S traffic
     httpie # User-friendly HTTP client
+    mkcert # Local certificate manager for HTTPS development
+    nssTools # certutil for managing browser certificate databases
     sqlmap
     freerdp # xfreerdp CLI client for RDP
 
@@ -193,7 +193,6 @@
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
     codex-desktop # Codex Desktop（Electron GUI）
-    opencode-desktop # OpenCode Desktop（Electron GUI）
 
     # === 系统工具 ===
     xdg-user-dirs
