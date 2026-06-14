@@ -22,13 +22,5 @@
     system = "x86_64-linux";
     users = [{ username = "steve"; }];
   }
-  {
-    hostname = "pentest";
-    system = "x86_64-linux";
-    deploy = true;
-    ip = "localhost";
-    sshPort = 2222;
-    withHomeManager = true;
-    users = [{ username = "pentest"; }];
-  }
+
 ]

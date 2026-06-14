@@ -15,9 +15,8 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 | Host | System | Type | Home Manager | Deploy |
 |------|--------|------|-------------|--------|
 | pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `.#deploy` |
-| hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.172` |
+| hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.129` |
 | tencent-cvm | x86_64-linux | NixOS (headless) | Standalone | - |
-| pentest | x86_64-linux | NixOS VM | Integrated | localhost |
 
 ## Directory Structure
 
@@ -54,8 +53,7 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 ```bash
 nix run .#deploy              # deploy-rs CLI
 nix run .#home-manager        # home-manager CLI
-nix run .#build-vm-pentest    # Build VM image
-nix run .#vm-pentest          # Run VM
+nix run .#vm-win11            # Start Windows 11 VM via SPICE
 ```
 
 ## Modules
@@ -79,6 +77,12 @@ nix run .#vm-pentest          # Run VM
 | `customTmux` | Tmux configuration |
 | `customYazi` | Yazi file manager |
 | `customZsh` | Zsh shell |
+
+### Tools
+
+| Package | Description |
+|---------|-------------|
+| `nssTools` | certutil for managing browser SSL certificates (Chrome NSS database) |
 
 ## Quick Start
 

@@ -15,7 +15,7 @@
 }: let
   cfg = config.services.windows-vm;
 in {
-  options.services.windows-vm.enable = lib.mkEnableOption "Windows 11 VM host (libvirt + virt-manager, RTX 3050 / NVMe passthrough / Looking Glass)";
+  options.services.windows-vm.enable = lib.mkEnableOption "Windows 11 VM host (libvirt + virt-manager, NVMe passthrough)";
 
   config = lib.mkIf cfg.enable {
     virtualisation.libvirtd = {
@@ -25,7 +25,7 @@ in {
       onShutdown = "shutdown";
       qemu = {
         package = pkgs.qemu_kvm;
-        # PCI(GPU/NVMe)直通需要 qemu 以 root 跑以访问 vfio。
+        # NVMe直通需要 qemu 以 root 跑以访问 vfio。
         runAsRoot = true;
         # OVMF 固件由 QEMU 自带,libvirtd 自动软链到 /run/libvirt/nix-ovmf/。
         swtpm.enable = true;

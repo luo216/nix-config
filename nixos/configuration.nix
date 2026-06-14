@@ -4,7 +4,6 @@
   inputs,
   outputs,
   lib,
-  pkgs,
   host,
   ...
 }:
@@ -30,7 +29,8 @@ in
     ./disko/${host.hostname}.nix
     ./config/${host.hostname}/default.nix
     inputs.stylix.nixosModules.stylix
-  ] ++ lib.optionals (host.withHomeManager or false) [
+  ]
+  ++ lib.optionals (host.withHomeManager or false) [
     inputs.home-manager.nixosModules.home-manager
   ];
 
@@ -61,7 +61,7 @@ in
         nix-path = config.nix.nixPath;
         trusted-users = map (user: user.username) host.users;
         substituters = [
-          "https://mirror.sjtu.edu.cn/nix-channels/store"
+          # "https://mirror.sjtu.edu.cn/nix-channels/store"
           "https://cache.nixos.org"
           "https://nix-community.cachix.org"
         ];

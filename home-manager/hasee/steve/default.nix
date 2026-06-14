@@ -51,6 +51,7 @@
       gtk.enable = true;
       qt = {
         enable = true;
+        platform = "qtct";
         standardDialogs = "xdgdesktopportal";
       };
     };

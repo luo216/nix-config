@@ -1,10 +1,10 @@
 # Hasee — Intel/NVIDIA laptop migrated from Arch Linux
 {
-  config,
   pkgs,
   outputs,
   ...
-}: {
+}:
+{
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
@@ -33,38 +33,25 @@
       "intel_iommu=on"
       "iommu=pt"
       "kvm.ignore_msrs=1"
-      "vfio-pci.ids=10de:25a2,10de:2291,15b7:5002"
-      "kvmfr.static_size_mb=32"
+      "vfio-pci.ids=15b7:5002"
     ];
     initrd.kernelModules = [
       "i915"
       "vfio"
-      "vfio_iommu_type1"
       "vfio_pci"
     ];
     kernelModules = [
       "kvm-intel"
-      "kvmfr"
       "vfio"
       "vfio_pci"
-      "vfio_iommu_type1"
-    ];
-    extraModulePackages = [
-      config.boot.kernelPackages.kvmfr
     ];
     blacklistedKernelModules = [
       "nouveau"
-      "nvidia"
-      "nvidia_drm"
-      "nvidia_modeset"
-      "nvidia_uvm"
     ];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
-      options vfio-pci ids=10de:25a2,10de:2291,15b7:5002
+      options vfio-pci ids=15b7:5002
       options kvm ignore_msrs=1
-      softdep nvidia pre: vfio-pci
-      softdep nouveau pre: vfio-pci
       softdep nvme pre: vfio-pci
     '';
   };
@@ -87,8 +74,6 @@
 
   # ── 电源管理 ──────────────────────────────────────────
   powerManagement.enable = true;
-  services.thermald.enable = true;
-
   # ── 网络 ──────────────────────────────────────────────
   networking = {
     firewall.enable = false;
@@ -201,7 +186,6 @@
       OVMFFull
       swtpm
       acpica-tools
-      looking-glass-client
       virt-viewer
       virtio-win
       ventoy
@@ -219,10 +203,6 @@
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
     "d /data/share 0775 steve users - -"
   ];
-
-  services.udev.extraRules = ''
-    SUBSYSTEM=="kvmfr", OWNER="steve", GROUP="kvm", MODE="0660"
-  '';
 
   # ── 字体 ──────────────────────────────────────────────
   fonts = {
@@ -271,10 +251,11 @@
 
   # ── 服务 ──────────────────────────────────────────────
   services = {
+    thermald.enable = true;
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
-    xserver.videoDrivers = ["modesetting"];
+    xserver.videoDrivers = [ "modesetting" ];
 
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;
@@ -332,7 +313,7 @@
       poolStart = 100;
       poolEnd = 200;
       dns = "8.8.8.8";
-      staticBindings = [];
+      staticBindings = [ ];
     };
 
     windows-vm.enable = true;
