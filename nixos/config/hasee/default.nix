@@ -191,6 +191,7 @@
       ventoy
       scrcpy
       tigervnc
+      cisco-packettracer
     ];
 
     sessionVariables = {

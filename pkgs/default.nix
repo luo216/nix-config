@@ -5,6 +5,7 @@ pkgs:
   # example = pkgs.callPackage ./example { };
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix { };
   cloakbrowser-chromium = pkgs.callPackage ./cloakbrowser.nix { };
+  cisco-packettracer = pkgs.callPackage ./cisco-packettracer.nix { };
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix { };
   cpa = pkgs.callPackage ./cpa.nix { };
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix { };
