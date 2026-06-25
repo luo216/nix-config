@@ -7,6 +7,8 @@ Each subdirectory follows the pattern `hostname/user/default.nix`, matching the 
 - **Integrated** (`withHomeManager = true` in `outputs/hosts.nix`): HM is part of NixOS build, updated via `nixos-rebuild` or `deploy-rs`
 - **Standalone**: HM is independent, updated via `home-manager switch --flake .#user@hostname`
 
+At the moment, all tracked hosts use the integrated mode.
+
 ## Module Imports
 
 All configs import `outputs.homeManagerModules.customBase` first, then add host-specific modules:

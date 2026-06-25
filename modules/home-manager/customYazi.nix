@@ -9,6 +9,59 @@ with lib;
 
 let
   cfg = config.programs.customYazi;
+  textExtensions = [
+    "*.md"
+    "*.txt"
+    "*.nix"
+    "*.toml"
+    "*.yaml"
+    "*.yml"
+    "*.json"
+    "*.jsonc"
+    "*.ini"
+    "*.conf"
+    "*.cfg"
+    "*.sh"
+    "*.bash"
+    "*.zsh"
+    "*.fish"
+    "*.lua"
+    "*.py"
+    "*.js"
+    "*.jsx"
+    "*.ts"
+    "*.tsx"
+    "*.rs"
+    "*.c"
+    "*.h"
+    "*.cpp"
+    "*.hpp"
+    "*.go"
+    "*.java"
+    "*.css"
+    "*.scss"
+    "*.html"
+    "*.sql"
+    "*.csv"
+    "*.lock"
+  ];
+  textOpenRules =
+    [
+      {
+        mime = "text/*";
+        use = [
+          "edit"
+          "open"
+        ];
+      }
+    ]
+    ++ map (pattern: {
+      url = pattern;
+      use = [
+        "edit"
+        "open"
+      ];
+    }) textExtensions;
 in
 {
   options.programs.customYazi = {
@@ -26,6 +79,13 @@ in
     programs.yazi = {
       enable = true;
       inherit (cfg) package;
+      extraPackages = with pkgs; [
+        file
+        loupe
+        mpv
+        neovim
+        xdg-utils
+      ];
 
       settings = {
         mgr = {
@@ -37,6 +97,67 @@ in
           max_width = 600;
           max_height = 900;
         };
+
+        opener = {
+          edit = [
+            {
+              run = "nvim %s";
+              block = true;
+              desc = "Neovim";
+              for = "unix";
+            }
+          ];
+          play = [
+            {
+              run = "mpv %s";
+              orphan = true;
+              desc = "mpv";
+              for = "unix";
+            }
+          ];
+          image = [
+            {
+              run = "loupe %s";
+              orphan = true;
+              desc = "Loupe";
+              for = "unix";
+            }
+          ];
+          open = [
+            {
+              run = "xdg-open %s1";
+              orphan = true;
+              desc = "System default";
+              for = "unix";
+            }
+          ];
+        };
+
+        open.prepend_rules =
+          [
+            {
+              mime = "video/*";
+              use = [
+                "play"
+                "open"
+              ];
+            }
+            {
+              mime = "audio/*";
+              use = [
+                "play"
+                "open"
+              ];
+            }
+            {
+              mime = "image/*";
+              use = [
+                "image"
+                "open"
+              ];
+            }
+          ]
+          ++ textOpenRules;
       };
 
       keymap = {
@@ -380,4 +501,3 @@ in
     };
   };
 }
-

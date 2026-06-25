@@ -17,10 +17,4 @@
     ip = "192.168.31.129";
     users = [{ username = "steve"; }];
   }
-  {
-    hostname = "tencent-cvm";
-    system = "x86_64-linux";
-    users = [{ username = "steve"; }];
-  }
-
 ]

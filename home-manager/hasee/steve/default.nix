@@ -170,6 +170,7 @@
     mpv
 
     # === 图像和预览 ===
+    loupe
     imagemagick
     resvg
     poppler-utils # PDF tools: pdfinfo, pdftotext, pdftoppm, pdfimages, pdffonts
@@ -187,7 +188,6 @@
     input-leap # KVM switch (Barrier replacement)
     moonlight-qt # Video player
     google-chrome-stable # Web browser
-    cloakbrowser-chromium # Stealth Chromium (anti-bot-detection, AI agent CDP)
     wpsoffice-cn # WPS Office 中文版（官方）
     qq # QQ
     wechat # 微信
@@ -229,8 +229,8 @@
 
     customCpa = {
       enable = true;
-      apiKeys = [ "TAoAN93hhVphA6sk2Jyo7y7G" ];
-      managementSecretKey = "yG9O8VX0zoJjfAKNPiGJlLrG7DdVc5-J";
+      apiKeys = [ "passwd" ];
+      managementSecretKey = "passwd";
     };
   };
 

@@ -8,7 +8,7 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 - **Declarative Disk Partitioning**: Manages disk layouts with `disko`
 - **Remote Deployment**: `nixos-anywhere` for installation, `deploy-rs` for updates
 - **Modular Design**: Reusable modules for NixOS and Home Manager
-- **Multi-host**: Single flake manages NixOS machines, VMs, and non-NixOS systems
+- **Multi-host**: Single flake manages multiple NixOS machines and VM workflows
 
 ## Hosts
 
@@ -16,7 +16,6 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 |------|--------|------|-------------|--------|
 | pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `.#deploy` |
 | hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.129` |
-| tencent-cvm | x86_64-linux | NixOS (headless) | Standalone | - |
 
 ## Directory Structure
 
@@ -108,8 +107,8 @@ Add to `outputs/hosts.nix` list:
 
 **HM naming:**
 
-- Standalone: `user@host` (e.g., `steve@pixelbook`)
 - Integrated: `home-manager.users.steve`
+- Standalone outputs remain supported by the flake, but there are no standalone hosts in the current inventory.
 
 ### 2. Create Disk Layout
 
@@ -184,12 +183,11 @@ nix run github:nix-community/nixos-anywhere -- \
 
 ```bash
 nix run .#deploy -- .#<hostname>
-
-# Standalone HM
-nix run .#home-manager -- switch --flake .#<user>@<host>
 ```
 
 ## Non-NixOS Systems
+
+The flake still exposes standalone Home Manager outputs for non-NixOS targets, but none are currently tracked in `outputs/hosts.nix`.
 
 ### Setup
 
