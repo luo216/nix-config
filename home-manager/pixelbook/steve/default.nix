@@ -170,6 +170,7 @@
     mpv
 
     # === 图像和预览 ===
+    gimp
     loupe
     imagemagick
     resvg
