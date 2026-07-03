@@ -209,12 +209,39 @@
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
       source-han-sans
       source-han-serif
       source-han-mono
       noto-fonts-color-emoji
     ];
-    fontconfig.enable = true;
+    fontDir.enable = true;
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        serif = [
+          "Noto Serif CJK SC"
+          "Source Han Serif SC"
+          "Noto Serif"
+          "Noto Color Emoji"
+        ];
+        sansSerif = [
+          "Noto Sans CJK SC"
+          "Source Han Sans SC"
+          "Noto Sans"
+          "Noto Color Emoji"
+        ];
+        monospace = [
+          "Source Han Mono SC"
+          "Noto Sans Mono CJK SC"
+          "Noto Sans Mono"
+          "Noto Color Emoji"
+        ];
+        emoji = [ "Noto Color Emoji" ];
+      };
+    };
   };
 
   # ── 程序 ──────────────────────────────────────────────
@@ -267,6 +294,7 @@
       openFirewall = true;
       capSysAdmin = true;
     };
+    todesk.enable = true;
 
     desktopManager.gnome = {
       enable = true;
