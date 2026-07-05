@@ -3,11 +3,12 @@
   pkgs,
   outputs,
   ...
-}:
-{
+}: {
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
+    outputs.nixosModules.nps-ehang
+    outputs.nixosModules.wine-gui-tools
     outputs.nixosModules.windows-vm
   ];
 
@@ -141,6 +142,7 @@
       "input"
       "uinput"
       "adbusers"
+      "wireshark"
       "libvirtd"
     ];
     shell = pkgs.zsh;
@@ -239,7 +241,7 @@
           "Noto Sans Mono"
           "Noto Color Emoji"
         ];
-        emoji = [ "Noto Color Emoji" ];
+        emoji = ["Noto Color Emoji"];
       };
     };
   };
@@ -249,6 +251,10 @@
     zsh.enable = true;
     dconf.enable = true;
     adb.enable = true;
+    wireshark = {
+      enable = true;
+      package = pkgs.wireshark;
+    };
 
     git = {
       enable = true;
@@ -283,7 +289,7 @@
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
-    xserver.videoDrivers = [ "modesetting" ];
+    xserver.videoDrivers = ["modesetting"];
 
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;
@@ -342,10 +348,22 @@
       poolStart = 100;
       poolEnd = 200;
       dns = "8.8.8.8";
-      staticBindings = [ ];
+      staticBindings = [];
+    };
+
+    nps-ehang = {
+      enable = true;
+      webIp = "127.0.0.1";
+      webPort = 18080;
+      bridgePort = 18024;
+      adminPassword = "passwd";
+      allowPorts = [
+        "20000-20100"
+      ];
     };
 
     windows-vm.enable = true;
+    wine-gui-tools.enable = true;
   };
 
   # ── 虚拟化 ────────────────────────────────────────────
