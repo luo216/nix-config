@@ -49,18 +49,18 @@
   zlib,
 }: let
   pname = "codex-desktop";
-  version = "0-unstable-2026-06-08";
+  version = "0-unstable-2026-07-08";
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "27901613204cfe6c9ee9c790fa702b1e7cdb6295";
-    hash = "sha256-F3S7OwBeVlj4KcY44YAYsIpSpTPP4QmuLQzyXUc5LEI=";
+    rev = "90ea76122401255d74a28a2420d5d9e6c59aa72f";
+    hash = "sha256-kn5zXKpFzb563gS6vqTDrJXdwtRc9Y37PUJqQLRcXNM=";
   };
 
   codexDmg = fetchurl {
     url = "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg";
-    hash = "sha256-QtVs+lj5wDyQabjx6imzjZmTLSFJXF7CsQNnxznbCw8=";
+    hash = "sha256-MKL+mR5Ibx7W1SUWeWOXM1aNIN7cDXHJieggC8cRxGw=";
   };
 
   electronLibs = [
@@ -206,7 +206,7 @@
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-eEgK3eI+SWqp5oHXWRp70iELjW8qXqT733h47ZmZlv8=";
+    outputHash = "sha256-O3eYBHK+6zdExfViQ7c11tvofIy0q5uGkEpVfGCHAFo=";
     unsafeDiscardReferences.out = true;
 
     dontConfigure = true;
@@ -239,9 +239,11 @@
               --replace-fail "npx asar" "asar"
       substituteInPlace "$source_dir/scripts/lib/dmg.sh" \
         --replace-fail "npx --yes asar" "asar"
-      substituteInPlace "$source_dir/scripts/patches/computer-use.js" \
-        --replace-fail 'throw new Error("Required Linux Computer Use plugin gate patch failed: could not enable bundled Computer Use on Linux");' \
-        'console.warn("WARN: Could not enable bundled Computer Use on Linux - skipping Computer Use plugin gate patch"); return currentSource;'
+      if [ -f "$source_dir/scripts/patches/computer-use.js" ]; then
+        substituteInPlace "$source_dir/scripts/patches/computer-use.js" \
+          --replace-fail 'throw new Error("Required Linux Computer Use plugin gate patch failed: could not enable bundled Computer Use on Linux");' \
+          'console.warn("WARN: Could not enable bundled Computer Use on Linux - skipping Computer Use plugin gate patch"); return currentSource;'
+      fi
 
       export CODEX_INSTALL_DIR="$out/opt/codex-desktop"
             ${bash}/bin/bash "$source_dir/install.sh" "$source_dir/Codex.dmg"
@@ -315,10 +317,6 @@ in
       exit 127
       SH
       ln -sfn bin/codex "$resources_dir/codex"
-
-      substituteInPlace "$resources_dir/app-extracted/.vite/build/main-"*.js \
-        --replace-fail 'process.platform===`linux`&&(typeof codexLinuxIsTrayEnabled!==`function`||codexLinuxIsTrayEnabled())' \
-        'process.platform===`linux`&&process.env.CODEX_LINUX_SYSTEM_TRAY_ENABLED!==`0`'
 
       (cd "$resources_dir/app-extracted" && find . -type f | LC_ALL=C sort | sed 's#^\./##') > "$TMPDIR/app.asar.ordering"
       asar pack "$resources_dir/app-extracted" "$resources_dir/app.asar" \

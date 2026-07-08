@@ -3,7 +3,7 @@
 
   nixConfig = {
     substituters = [
-      # "https://mirror.sjtu.edu.cn/nix-channels/store"
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
     ];

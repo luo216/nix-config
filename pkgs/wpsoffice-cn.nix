@@ -28,10 +28,10 @@
 
 let
   pname = "wpsoffice-cn";
-  version = "12.1.2.25882";
+  version = "12.1.2.26885";
 
-  wpsUrl = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb";
-  wpsHash = "sha256-ZdYtB83mGbnbjh7wHRAt37QfZ1F/5eoFUcZYTNhGGUc=";
+  wpsUrl = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/26885/wps-office_12.1.2.26885.AK.preread.sw.Personal_715971_amd64.deb";
+  wpsHash = "sha256-VdpRSUZ6FYS0ttEoDLWrBMBhRTl0gQ+slnmzO9hmTlE=";
 
   src = runCommandLocal "wpsoffice-cn-${version}.deb"
     {
@@ -115,10 +115,6 @@ stdenv.mkDerivation {
     patchelf --add-needed libudev.so.1 $out/opt/kingsoft/wps-office/office6/addons/cef/libcef.so
     patchelf --replace-needed libmysqlclient.so.18 libmysqlclient.so $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
     patchelf --add-rpath ${libmysqlclient}/lib/mariadb $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
-    for i in $out/bin/*; do
-      substituteInPlace $i \
-        --replace-fail '[ $haveConf -eq 1 ] &&' '[ ! $currentMode ] ||'
-    done
   '';
 
   meta = with lib; {

@@ -414,88 +414,92 @@ in
               bold = true;
             }
             {
-              name = "*/";
+              url = "*/";
               fg = "blue";
               bold = true;
             }
           ];
         };
 
-        icons = {
-          "Desktop/" = "";
-          "Documents/" = "";
-          "Downloads/" = "";
-          "Pictures/" = "";
-          "Music/" = "";
-          "Movies/" = "";
-          "Videos/" = "";
-          "Public/" = "";
-          "Library/" = "";
-          "Development/" = "";
-          ".config/" = "";
-          ".git/" = "";
-          ".gitignore" = "";
-          ".gitmodules" = "";
-          ".gitattributes" = "";
-          ".DS_Store" = "";
-          ".bashrc" = "";
-          ".bashprofile" = "";
-          ".zshrc" = "";
-          ".zshenv" = "";
-          ".zprofile" = "";
-          ".vimrc" = "";
-          "*.txt" = "";
-          "*.md" = "";
-          "*.zip" = "";
-          "*.tar" = "";
-          "*.gz" = "";
-          "*.7z" = "";
-          "*.mp3" = "";
-          "*.flac" = "";
-          "*.wav" = "";
-          "*.mp4" = "";
-          "*.mkv" = "";
-          "*.avi" = "";
-          "*.mov" = "";
-          "*.jpg" = "";
-          "*.jpeg" = "";
-          "*.png" = "";
-          "*.gif" = "";
-          "*.webp" = "";
-          "*.avif" = "";
-          "*.bmp" = "";
-          "*.ico" = "";
-          "*.svg" = "";
-          "*.c" = "";
-          "*.cpp" = "";
-          "*.h" = "";
-          "*.hpp" = "";
-          "*.rs" = "";
-          "*.go" = "";
-          "*.py" = "";
-          "*.js" = "";
-          "*.ts" = "";
-          "*.tsx" = "";
-          "*.jsx" = "";
-          "*.rb" = "";
-          "*.php" = "";
-          "*.java" = "";
-          "*.sh" = "";
-          "*.fish" = "";
-          "*.swift" = "";
-          "*.vim" = "";
-          "*.lua" = "";
-          "*.html" = "";
-          "*.css" = "";
-          "*.scss" = "";
-          "*.json" = "";
-          "*.toml" = "";
-          "*.yml" = "";
-          "*.yaml" = "";
-          "*.ini" = "";
-          "*.conf" = "";
-          "*" = "";
-          "*/" = "";
+        icon = {
+          prepend_dirs = [
+            { name = "Desktop"; text = ""; }
+            { name = "Documents"; text = ""; }
+            { name = "Downloads"; text = ""; }
+            { name = "Pictures"; text = ""; }
+            { name = "Music"; text = ""; }
+            { name = "Movies"; text = ""; }
+            { name = "Videos"; text = ""; }
+            { name = "Public"; text = ""; }
+            { name = "Library"; text = ""; }
+            { name = "Development"; text = ""; }
+            { name = ".config"; text = ""; }
+            { name = ".git"; text = ""; }
+          ];
+          prepend_files = [
+            { name = ".gitignore"; text = ""; }
+            { name = ".gitmodules"; text = ""; }
+            { name = ".gitattributes"; text = ""; }
+            { name = ".DS_Store"; text = ""; }
+            { name = ".bashrc"; text = ""; }
+            { name = ".bashprofile"; text = ""; }
+            { name = ".zshrc"; text = ""; }
+            { name = ".zshenv"; text = ""; }
+            { name = ".zprofile"; text = ""; }
+            { name = ".vimrc"; text = ""; }
+          ];
+          prepend_exts = [
+            { name = "txt"; text = ""; }
+            { name = "md"; text = ""; }
+            { name = "zip"; text = ""; }
+            { name = "tar"; text = ""; }
+            { name = "gz"; text = ""; }
+            { name = "7z"; text = ""; }
+            { name = "mp3"; text = ""; }
+            { name = "flac"; text = ""; }
+            { name = "wav"; text = ""; }
+            { name = "mp4"; text = ""; }
+            { name = "mkv"; text = ""; }
+            { name = "avi"; text = ""; }
+            { name = "mov"; text = ""; }
+            { name = "jpg"; text = ""; }
+            { name = "jpeg"; text = ""; }
+            { name = "png"; text = ""; }
+            { name = "gif"; text = ""; }
+            { name = "webp"; text = ""; }
+            { name = "avif"; text = ""; }
+            { name = "bmp"; text = ""; }
+            { name = "ico"; text = ""; }
+            { name = "svg"; text = ""; }
+            { name = "c"; text = ""; }
+            { name = "cpp"; text = ""; }
+            { name = "h"; text = ""; }
+            { name = "hpp"; text = ""; }
+            { name = "rs"; text = ""; }
+            { name = "go"; text = ""; }
+            { name = "py"; text = ""; }
+            { name = "js"; text = ""; }
+            { name = "ts"; text = ""; }
+            { name = "tsx"; text = ""; }
+            { name = "jsx"; text = ""; }
+            { name = "rb"; text = ""; }
+            { name = "php"; text = ""; }
+            { name = "java"; text = ""; }
+            { name = "sh"; text = ""; }
+            { name = "fish"; text = ""; }
+            { name = "swift"; text = ""; }
+            { name = "vim"; text = ""; }
+            { name = "lua"; text = ""; }
+            { name = "html"; text = ""; }
+            { name = "css"; text = ""; }
+            { name = "scss"; text = ""; }
+            { name = "json"; text = ""; }
+            { name = "toml"; text = ""; }
+            { name = "yml"; text = ""; }
+            { name = "yaml"; text = ""; }
+            { name = "ini"; text = ""; }
+            { name = "conf"; text = ""; }
+          ];
         };
       };
     };

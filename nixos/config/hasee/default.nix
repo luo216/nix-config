@@ -8,8 +8,9 @@
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
     outputs.nixosModules.nps-ehang
+    outputs.nixosModules.ventoy-insecure
     outputs.nixosModules.wine-gui-tools
-    outputs.nixosModules.windows-vm
+    outputs.nixosModules.virtualizationHost
   ];
 
   # ── 引导 ──────────────────────────────────────────────
@@ -85,11 +86,6 @@
     useDHCP = false;
     dhcpcd.enable = false;
   };
-
-  # ventoy 标记为 insecure，放行后可安装；版本更新无漏洞后删除此行
-  nixpkgs.config.permittedInsecurePackages = [
-    "ventoy-1.1.07"
-  ];
 
   # ── 时区与语言 ────────────────────────────────────────
   time.timeZone = "Asia/Shanghai";
@@ -362,13 +358,16 @@
       ];
     };
 
-    windows-vm.enable = true;
+    virtualizationHost.enable = true;
     wine-gui-tools.enable = true;
   };
 
   # ── 虚拟化 ────────────────────────────────────────────
   virtualisation = {
-    docker.enable = true;
+    docker = {
+      enable = true;
+      package = pkgs.docker_29;
+    };
     oci-containers = {
       backend = "docker";
       containers.vm-filedrop = {

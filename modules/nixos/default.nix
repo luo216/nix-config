@@ -6,6 +6,7 @@
   network-printers = import ./network-printers.nix;
   nps-ehang = import ./nps-ehang.nix;
   pixelbook-go-audio = import ./pixelbook-go-audio.nix;
+  virtualizationHost = import ./virtualization-host.nix;
+  ventoy-insecure = import ./ventoy-insecure.nix;
   wine-gui-tools = import ./wine-gui-tools.nix;
-  windows-vm = import ./windows-vm.nix;
 }

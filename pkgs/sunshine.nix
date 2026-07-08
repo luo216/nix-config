@@ -76,13 +76,13 @@ let
 in
 stdenv'.mkDerivation (finalAttrs: {
   pname = "sunshine";
-  version = "2026.528.35537";
+  version = "2026.704.34109";
 
   src = fetchFromGitHub {
     owner = "LizardByte";
     repo = "Sunshine";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-u1+Q49kFlZoZ3AOWmCOuLsA2C+HHgT+qC0t4QHpFim0=";
+    hash = "sha256-GNVoj62VRq6fKAezrQRU9r6sYEHN8kjzmEwpo/kBXJA=";
     fetchSubmodules = true;
   };
 
@@ -91,7 +91,7 @@ stdenv'.mkDerivation (finalAttrs: {
     pname = "sunshine-ui";
     npmDeps = fetchNpmDeps {
       inherit (finalAttrs) src;
-      hash = "sha256-WSHBMnYp/7T5PP1NDlEvYRfsYKFda8hvsFwRMQpNg/o=";
+      hash = "sha256-A/l/gBLpKp8lw1L2W+4JYn5WzhLAmAWEXRwm2TwZlno=";
     };
 
     postPatch = ''

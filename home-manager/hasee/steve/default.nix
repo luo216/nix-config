@@ -138,6 +138,7 @@
 
     # === 开发工具 ===
     lazygit # Git GUI
+    gh # GitHub CLI
     cargo # Rust package manager and build tool
     gcc # C compiler
     gnumake # Build automation tool

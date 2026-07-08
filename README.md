@@ -52,7 +52,6 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 ```bash
 nix run .#deploy              # deploy-rs CLI
 nix run .#home-manager        # home-manager CLI
-nix run .#vm-win11            # Start Windows 11 VM via SPICE
 ```
 
 ## Modules
@@ -65,6 +64,7 @@ nix run .#vm-win11            # Start Windows 11 VM via SPICE
 | `docker-easyconnect` | EasyConnect VPN in Docker with VNC |
 | `network-printers` | Event-driven network printer configuration |
 | `pixelbook-go-audio` | Pixelbook Go audio driver (AVS/SOF) |
+| `virtualizationHost` | libvirt + virt-manager host setup |
 
 ### Home Manager Modules
 

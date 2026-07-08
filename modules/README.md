@@ -29,7 +29,7 @@ Reusable NixOS modules:
 | dnsmasq-dhcp | DHCP server for device provisioning |
 | network-printers | Declarative network printer setup |
 | pixelbook-go-audio | Pixelbook Go AVS audio firmware support |
-| windows-vm | Windows VM via QEMU |
+| virtualizationHost | libvirt + virt-manager host setup |
 
 ## templates/
 
