@@ -5,7 +5,6 @@ pkgs: {
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix {};
   cisco-packettracer = pkgs.callPackage ./cisco-packettracer.nix {};
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix {};
-  cpa = pkgs.callPackage ./cpa.nix {};
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix {};
   nps-ehang = pkgs.callPackage ./nps-ehang.nix {};
   qq = pkgs.callPackage ./qq.nix {};

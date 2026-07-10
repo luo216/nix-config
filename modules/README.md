@@ -9,7 +9,6 @@ Reusable Home Manager modules with `custom*` prefix:
 | Module | Namespace | Description |
 |--------|-----------|-------------|
 | customBase | `customBase` | Shared defaults (nix.gc, home-manager enable, nixpkgs handling) |
-| customCpa | `services.customCpa` | CPA proxy client |
 | customFcitx5 | `programs.customFcitx5` | Input method framework |
 | customFonts | `programs.customFonts` | Font packages |
 | customKitty | `programs.customKitty` | Terminal emulator |

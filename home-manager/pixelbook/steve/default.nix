@@ -10,7 +10,6 @@
   # Import modular configurations
   imports = [
     outputs.homeManagerModules.customBase
-    outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
@@ -227,12 +226,6 @@
       enable = true;
       guiAddress = "127.0.0.1:8384";
       tray.enable = false;
-    };
-
-    customCpa = {
-      enable = true;
-      apiKeys = [ "passwd" ];
-      managementSecretKey = "passwd";
     };
   };
 

@@ -21,4 +21,4 @@ imports = [
 ];
 ```
 
-Custom modules use the `custom*` naming convention for both files and option namespaces (e.g., `programs.customZsh`, `services.customCpa`).
+Custom modules use the `custom*` naming convention for both files and option namespaces (e.g., `programs.customZsh`, `programs.customTmux`).

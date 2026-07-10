@@ -16,7 +16,6 @@ nix build .#wechat
 |---------|-------------|
 | cc-switch-cli | CLI tool for switching Claude Code sessions |
 | codex-desktop | Codex Desktop (ilysenko Linux build) |
-| cpa | CLI Proxy API client |
 | google-chrome-stable | Google Chrome Stable from Google's current deb |
 | qq | QQ (Linux) |
 | wechat | WeChat (Linux AppImage) |
