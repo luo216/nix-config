@@ -260,7 +260,7 @@ stdenv.mkDerivation {
         "--set XDG_SESSION_TYPE x11"
         "--set QT_QPA_PLATFORM xcb"
         "--unset WAYLAND_DISPLAY"
-        "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so:${wemeet-wayland-screenshare}/lib/wemeet/libhook.so"
+        "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so"
       ];
     in
     ''
