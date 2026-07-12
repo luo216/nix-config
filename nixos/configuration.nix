@@ -61,6 +61,8 @@ in
         nix-path = config.nix.nixPath;
         trusted-users = map (user: user.username) host.users;
         substituters = [
+          "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+          "https://mirrors.ustc.edu.cn/nix-channels/store"
           "https://mirror.sjtu.edu.cn/nix-channels/store"
           "https://cache.nixos.org"
           "https://nix-community.cachix.org"
