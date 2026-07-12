@@ -202,8 +202,15 @@
         pango
         fontconfig
         freetype
+        lcms2
         libpng
         libjpeg_turbo
+        expat
+        harfbuzz
+        graphite2
+        pixman
+        nspr
+        nss
         sqlite
         libnotify
         icu
