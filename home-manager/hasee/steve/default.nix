@@ -18,6 +18,7 @@
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
+    outputs.homeManagerModules.customCtfMsf # Metasploit toolkit
   ];
 
   # Set your username and home directory from the flake
@@ -55,6 +56,8 @@
       };
     };
   };
+
+  programs.customCtfMsf.enable = true;
 
   dconf.settings = {
     "org/gnome/desktop/background" = {
@@ -156,14 +159,34 @@
     lua # Lua（某些插件需要）
 
     # === 网络工具 ===
-    nuclei # Vulnerability scanner
-    burpsuite # Web application security testing platform
-    mitmproxy # Intercept, modify, replay, save HTTP/S traffic
     httpie # User-friendly HTTP client
     mkcert # Local certificate manager for HTTPS development
     nssTools # certutil for managing browser certificate databases
-    sqlmap
     freerdp # xfreerdp CLI client for RDP
+
+    # === CTF 扩展 ===
+
+    # Web
+    nuclei # Vulnerability scanner
+    burpsuite # Web application security testing platform
+    mitmproxy # Intercept, modify, replay, save HTTP/S traffic
+    sqlmap
+
+    # Stego / Misc
+    file
+    binwalk
+    foremost
+    exiftool
+    zsteg
+    steghide
+    qsstv
+    audacity
+    stegsolve
+
+    # Crack
+    john
+    hashcat
+    bkcrack
 
     # === 媒体工具 ===
     ffmpeg
@@ -186,7 +209,6 @@
     unrar
 
     # === 桌面应用 ===
-    input-leap # KVM switch (Barrier replacement)
     moonlight-qt # Video player
     google-chrome-stable # Web browser
     wpsoffice-cn # WPS Office 中文版（官方）

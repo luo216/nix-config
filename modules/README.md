@@ -9,6 +9,7 @@ Reusable Home Manager modules with `custom*` prefix:
 | Module | Namespace | Description |
 |--------|-----------|-------------|
 | customBase | `customBase` | Shared defaults (nix.gc, home-manager enable, nixpkgs handling) |
+| customCtfMsf | `programs.customCtfMsf` | Metasploit, MCP, and exploit database toolkit |
 | customFcitx5 | `programs.customFcitx5` | Input method framework |
 | customFonts | `programs.customFonts` | Font packages |
 | customKitty | `programs.customKitty` | Terminal emulator |

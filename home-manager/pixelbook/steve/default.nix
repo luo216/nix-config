@@ -138,11 +138,7 @@
     # === 开发工具 ===
     lazygit # Git GUI
     gh # GitHub CLI
-    cargo # Rust package manager and build tool
-    gcc # C compiler
-    gnumake # Build automation tool
     nodejs_24 # Node.js 24
-    bun # Fast JavaScript runtime and package manager
     tree-sitter # Tree-sitter CLI
     uv # Python package installer (uvx for running tools)
 
@@ -156,13 +152,9 @@
     lua # Lua（某些插件需要）
 
     # === 网络工具 ===
-    nuclei # Vulnerability scanner
-    burpsuite # Web application security testing platform
-    mitmproxy # Intercept, modify, replay, save HTTP/S traffic
     httpie # User-friendly HTTP client
     mkcert # Local certificate manager for HTTPS development
     nssTools # certutil for managing browser certificate databases
-    sqlmap
     freerdp # xfreerdp CLI client for RDP
 
     # === 媒体工具 ===
@@ -170,15 +162,14 @@
     mpv
 
     # === 图像和预览 ===
-    gimp
     loupe
     imagemagick
     resvg
     poppler-utils # PDF tools: pdfinfo, pdftotext, pdftoppm, pdfimages, pdffonts
 
     # === 数据处理 ===
+    file # File type detection (Yazi prerequisite)
     jq # JSON processor
-    pandoc # Universal document converter
     markdownlint-cli2 # Markdown linting tool
 
     # === 压缩工具 ===
@@ -186,7 +177,6 @@
     unrar
 
     # === 桌面应用 ===
-    input-leap # KVM switch (Barrier replacement)
     moonlight-qt # Video player
     google-chrome-stable # Web browser
     wpsoffice-cn # WPS Office 中文版（官方）
@@ -203,9 +193,6 @@
 
     # === 文件管理和文档渲染 ===
     trash-cli # 文件回收站功能
-    ghostscript # PDF 渲染 (gs)
-    tectonic # LaTeX 渲染（比 texlive 更轻量）
-    mermaid-cli # Mermaid 图表渲染
     sqlite # SQLite3 数据库
 
     # === 剪贴板 ===

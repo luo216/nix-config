@@ -1,5 +1,6 @@
 {
   customBase = import ./customBase.nix;
+  customCtfMsf = import ./customCtfMsf.nix;
   customFcitx5 = import ./customFcitx5.nix;
   customFonts = import ./customFonts.nix;
   customGhostty = import ./customGhostty.nix;
