@@ -188,6 +188,16 @@
     hashcat
     bkcrack
 
+    # PWN
+    gdb
+    gef
+    checksec
+    one_gadget
+    patchelf
+    strace
+    ltrace
+    ghidra
+
     # === 媒体工具 ===
     ffmpeg
     mpv
