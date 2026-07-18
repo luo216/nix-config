@@ -307,10 +307,6 @@
 
     desktopManager.gnome = {
       enable = true;
-      extraGSettingsOverrides = ''
-        [org.gnome.desktop.session]
-        idle-delay=uint32 3600
-      '';
     };
 
     displayManager = {

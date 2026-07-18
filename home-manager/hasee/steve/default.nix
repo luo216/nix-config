@@ -71,9 +71,7 @@
     };
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-type = "suspend";
-      sleep-inactive-ac-timeout = 14400;
       sleep-inactive-battery-type = "suspend";
-      sleep-inactive-battery-timeout = 7200;
     };
     "org/gnome/shell/extensions/kimpanel" = {
       font = "Sans 16";
