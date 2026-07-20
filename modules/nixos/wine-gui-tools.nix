@@ -3,11 +3,9 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   cfg = config.services.wine-gui-tools;
-in
-{
+in {
   options.services.wine-gui-tools = {
     enable = lib.mkEnableOption "Wine runtime for Windows GUI tools";
 

@@ -1,169 +1,175 @@
-# Modular NixOS Configuration
+# NixOS Configuration
 
-A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywhere` installation and `deploy-rs` updates.
-
-## Features
-
-- **Hardware Detection**: Uses `nixos-facter` for hardware-specific configurations
-- **Declarative Disk Partitioning**: Manages disk layouts with `disko`
-- **Remote Deployment**: `nixos-anywhere` for installation, `deploy-rs` for updates
-- **Modular Design**: Reusable modules for NixOS and Home Manager
-- **Multi-host**: Single flake manages multiple NixOS machines and VM workflows
+Multi-host NixOS 25.11 configuration for x86_64 Linux desktops. The flake
+manages NixOS systems, per-host users, integrated Home Manager, custom packages,
+disk layouts, hardware reports, and deploy-rs nodes.
 
 ## Hosts
 
-| Host | System | Type | Home Manager | Deploy |
-|------|--------|------|-------------|--------|
-| pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `.#deploy` |
-| hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.129` |
+| Host | Desktop | Primary user | Home Manager | Deploy target |
+|------|---------|--------------|--------------|---------------|
+| `pixelbook` | GNOME Wayland | `steve` | Integrated | `192.168.31.76` |
+| `hasee` | GNOME Wayland | `steve` | Integrated | `192.168.31.129` |
+| `kali` | XFCE X11 | `test` | Standalone (`test@kali`) | `192.168.122.117` |
 
-`hasee` keeps GNOME Wayland and display output on the Intel GPU. NVIDIA PRIME
-render offload is available through `nvidia-offload`; HMCL and Steam default to
-the RTX 3050 while ordinary desktop applications continue to use Intel.
+Hasee uses Intel for GNOME and display output. NVIDIA PRIME render offload is
+enabled for selected applications; Steam and HMCL default to the RTX 3050.
 
-## Directory Structure
+## Architecture
 
-```
-.
-├── flake.nix                    # Flake entry (inputs only + outputs hook)
-├── outputs/                     # Flake outputs, split by concern
-│   ├── default.nix              #   Orchestrator — merges sub-modules
-│   ├── hosts.nix                #   Host definitions (data)
-│   ├── lib.nix                  #   Shared helpers (systems, forAllSystems, pkgsFor)
-│   ├── packages.nix             #   packages + formatter
-│   ├── modules.nix              #   overlays + nixosModules + homeManagerModules
-│   ├── nixos-configs.nix        #   nixosConfigurations
-│   ├── home-configs.nix         #   homeConfigurations
-│   ├── apps.nix                 #   apps (home-manager, deploy, VM launchers)
-│   └── deploy.nix               #   deploy nodes + checks
-├── home-manager/                # Per-host user configs
-│   └── <hostname>/<username>/   # User-specific HM config
-├── modules/
-│   ├── home-manager/            # Reusable HM modules
-│   ├── nixos/                   # Reusable NixOS modules
-│   └── templates/               # Static assets (firmware, themes)
+```text
+flake.nix
+├── outputs/                 Flake output orchestration
+│   ├── hosts.nix            Host inventory data
+│   ├── nixos-configs.nix    Hosts, users, integrated HM, nixosConfigurations
+│   ├── home-configs.nix     Standalone HM hosts only
+│   ├── deploy.nix           deploy-rs nodes and checks
+│   └── packages.nix         Packages and formatter
 ├── nixos/
-│   ├── configuration.nix        # Shared NixOS config
-│   ├── config/<hostname>/       # Per-host NixOS config
-│   ├── disko/<hostname>.nix     # Per-host disk layout
-│   └── factors/<hostname>.json  # Per-host hardware report
-├── overlays/                    # Custom package overlays
-└── pkgs/                        # Custom package definitions
+│   ├── configuration.nix    Shared NixOS settings
+│   ├── config/<host>/       Machine-specific configuration
+│   ├── users/<host>/<user>/ Per-machine NixOS user modules
+│   ├── disko/               Disk layouts
+│   └── factors/             nixos-facter reports
+├── home-manager/
+│   ├── configuration.nix    Shared HM entry point and defaults
+│   └── <host>/<user>/       Per-machine HM user configuration
+├── modules/                 Reusable NixOS and HM modules
+├── overlays/                Custom, modified, and unstable packages
+└── pkgs/                    Custom package definitions
 ```
 
-## Flake Apps
+The dependency path is:
 
-```bash
-nix run .#deploy              # deploy-rs CLI
-nix run .#home-manager        # home-manager CLI
+```text
+flake.nix
+→ outputs/default.nix
+→ outputs/hosts.nix
+→ outputs/nixos-configs.nix
+→ nixos/configuration.nix
+→ nixos/config/<host> and nixos/users/<host>/<user>
 ```
 
-## Modules
+Home Manager follows the same entry-point pattern:
 
-### NixOS Modules
+```text
+outputs/nixos-configs.nix or outputs/home-configs.nix
+→ home-manager/configuration.nix
+→ home-manager/<host>/<user>/default.nix
+```
 
-| Module | Description |
-|--------|-------------|
-| `dnsmasq-dhcp` | DHCP server for device provisioning |
-| `docker-easyconnect` | EasyConnect VPN in Docker with VNC |
-| `network-printers` | Event-driven network printer configuration |
-| `pixelbook-go-audio` | Pixelbook Go audio driver (AVS/SOF) |
-| `virtualizationHost` | libvirt + virt-manager host setup |
+## Host Inventory
 
-### Home Manager Modules
-
-| Module | Description |
-|--------|-------------|
-| `customBase` | Shared base configuration |
-| `customFcitx5` | Fcitx5 input method |
-| `customKitty` | Kitty terminal |
-| `customTmux` | Tmux configuration |
-| `customYazi` | Yazi file manager |
-| `customZsh` | Zsh shell |
-
-### Tools
-
-| Package | Description |
-|---------|-------------|
-| `nssTools` | certutil for managing browser SSL certificates (Chrome NSS database) |
-
-## Quick Start
-
-### 1. Define Host
-
-Add to `outputs/hosts.nix` list:
+Hosts are declared in `outputs/hosts.nix`:
 
 ```nix
 {
-  hostname = "your-hostname";
+  hostname = "hasee";
   system = "x86_64-linux";
-  deploy = true;           # Include in deploy-rs
-  withHomeManager = true;  # Integrate HM into NixOS
-  ip = "192.168.1.100";    # Required if deploy = true
-  users = [{ username = "your-user"; }];
+  nixos = true;
+  deploy = true;
+  withHomeManager = true;
+  ip = "192.168.31.129";
+  primaryUser = "steve";
+  users = ["steve"];
 }
 ```
 
-**Switches:**
+`nixos` is required, and it is independent from `withHomeManager`. `nixos = true`
+means that the host already has a NixOS configuration: its files are validated,
+then exposed as `nixosConfigurations.<hostname>`. Every declared user plus root
+is loaded from `nixos/users/`. `withHomeManager` only selects whether HM is
+integrated into that NixOS output or exported independently.
 
-- `deploy = true`: Adds host to `deploy.nodes`
-- `withHomeManager = true`: Integrates users under `home-manager.users`
+Host declarations never create or overwrite configuration files. Evaluation
+stops with the exact paths to create when a required NixOS, user, disko, facter,
+or Home Manager file is missing.
 
-**HM naming:**
+## Home Manager Modes
 
-- Integrated: `home-manager.users.steve`
-- Standalone outputs remain supported by the flake, but there are no standalone hosts in the current inventory.
+Each HM configuration has exactly one activation mode:
 
-### 2. Create Disk Layout
+- `withHomeManager = true`: HM follows NixOS rebuilds or deploy-rs.
+- `withHomeManager = false`: standalone HM outputs are generated.
 
-`nixos/disko/your-hostname.nix`:
+Hasee and Pixelbook use integrated Home Manager. Kali exports the standalone
+`test@kali` configuration. Integrated Home Manager is generated for
+`primaryUser`; standalone Home Manager is generated for each user listed on a
+host. A NixOS host may set `withHomeManager = false` to keep NixOS and HM
+activations, and therefore their generations, separate.
 
-```nix
-{
-  disko.devices = {
-    disk.primary = {
-      type = "disk";
-      device = "/dev/vda";
-      content = {
-        type = "gpt";
-        partitions = {
-          ESP = { size = "512M"; type = "EF00"; content = { type = "filesystem"; format = "vfat"; mountpoint = "/boot"; }; };
-          root = { size = "100%"; content = { type = "filesystem"; format = "ext4"; mountpoint = "/"; }; };
-        };
-      };
-    };
-  };
-}
-```
+## Common Commands
 
-### 3. Create Configs
-
-| File | Purpose |
-|------|---------|
-| `nixos/config/<hostname>/default.nix` | NixOS system config |
-| `home-manager/<hostname>/<user>/default.nix` | Home Manager user config |
-
-Add to NixOS config for hardware detection:
-
-```nix
-{ hardware.facter.reportPath = ./factors/<hostname>.json; }
-```
-
-### 4. Install
-
-**⚠️ Destructive — erases target disk. ⚠️**
-
-For physical machines, prefer booting the target into a NixOS installer and skipping `nixos-anywhere`'s kexec phase. This avoids firmware/GPU kexec hangs observed on laptops such as `hasee`, and is fast once the installer is already running.
-
-On the target NixOS installer:
+Show outputs:
 
 ```bash
-passwd
-systemctl start sshd
-ip -br addr
+nix flake show
 ```
 
-From this repo:
+Format Nix files:
+
+```bash
+nix fmt
+```
+
+Evaluate the Flake outputs:
+
+```bash
+nix flake check path:. --no-build
+```
+
+Build a system without activating it:
+
+```bash
+nix build --no-link path:.#nixosConfigurations.hasee.config.system.build.toplevel
+```
+
+Deploy a configured host:
+
+```bash
+nix run .#deploy -- .#hasee
+```
+
+## Adding a Host
+
+Add the host record to `outputs/hosts.nix`. No template files are generated.
+
+For `nixos = true`, create:
+
+```text
+nixos/config/<hostname>/default.nix
+nixos/disko/<hostname>.nix
+nixos/factors/<hostname>.json
+nixos/users/<hostname>/<username>/default.nix
+nixos/users/<hostname>/root/default.nix
+```
+
+For Home Manager, create
+`home-manager/<hostname>/<username>/default.nix`. With integrated HM only the
+`primaryUser` entry is required; with standalone HM every listed user needs an
+entry. Evaluation reports any missing path and never fills it automatically.
+
+## Adding a User
+
+Add the username to the host:
+
+```nix
+users = ["steve" "kali"];
+```
+
+Then create:
+
+```text
+nixos/users/<hostname>/kali/default.nix
+home-manager/<hostname>/kali/default.nix  # required when the host uses HM
+```
+
+The user descriptor must define `username` and `nixosModule`.
+
+## Installation
+
+Disk installation is destructive. From a NixOS installer, a typical
+`nixos-anywhere` invocation is:
 
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
@@ -174,55 +180,5 @@ nix run github:nix-community/nixos-anywhere -- \
   --sudo
 ```
 
-For machines where the existing OS can kexec reliably, the default `nixos-anywhere` flow can boot the installer over SSH:
-
-```bash
-nix run github:nix-community/nixos-anywhere -- \
-  --generate-hardware-config nixos-facter ./nixos/factors/<hostname>.json \
-  --flake .#<hostname> \
-  --target-host root@<ip>
-```
-
-### 5. Deploy Updates
-
-```bash
-nix run .#deploy -- .#<hostname>
-```
-
-## Non-NixOS Systems
-
-The flake still exposes standalone Home Manager outputs for non-NixOS targets, but none are currently tracked in `outputs/hosts.nix`.
-
-### Setup
-
-```bash
-# Install Nix
-curl -L https://nixos.org/nix/install | sh -s -- --daemon
-source ~/.nix-profile/etc/profile.d/nix.sh
-
-# Configure flakes
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-sudo bash -c 'echo "trusted-users = $USER" >> /etc/nix/nix.conf'
-sudo bash -c 'echo "auto-optimise-store = true" >> /etc/nix/nix.conf'
-sudo systemctl restart nix-daemon
-```
-
-### Apply
-
-```bash
-nix run .#home-manager -- switch --flake .#<user>@<host>
-```
-
-### Remote Deploy
-
-```bash
-rsync -az --delete ./ <user>@<host>:/path/to/nix-config/
-ssh <user>@<host> 'zsh -lic "cd /path/to/nix-config && nix run .#home-manager -- switch --flake .#<user>@<host>"'
-```
-
-**Notes:**
-
-- Only user-space managed
-- `targets.genericLinux.enable = true` for compatibility
-- `nixGL` for GPU-accelerated apps
+The user performs builds, installation, activation, reboot, and runtime
+validation.

@@ -6,11 +6,9 @@
   pkgs,
   user,
   ...
-}:
-{
+}: {
   # Import modular configurations
   imports = [
-    outputs.homeManagerModules.customBase
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
@@ -57,8 +55,6 @@
       };
     };
   };
-
-  programs.customCtfMsf.enable = true;
 
   dconf.settings = {
     "org/gnome/desktop/background" = {
@@ -272,6 +268,8 @@
   };
 
   programs = {
+    customCtfMsf.enable = true;
+
     git = {
       enable = true;
       lfs.enable = true;
@@ -344,10 +342,4 @@
       ];
     };
   };
-
-  # Nicely reload system units when changing configs
-  systemd.user.startServices = "sd-switch";
-
-  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "25.11";
 }

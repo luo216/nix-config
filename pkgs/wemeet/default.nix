@@ -41,9 +41,7 @@
   opencv4WithoutCuda,
   pipewire,
   fetchgit,
-}:
-
-let
+}: let
   wemeet-wayland-screenshare = stdenv.mkDerivation {
     pname = "wemeet-wayland-screenshare";
     version = "0-unstable-2026-05-14";
@@ -56,7 +54,7 @@ let
       fetchSubmodules = true;
     };
 
-    nativeBuildInputs = [ cmake ninja pkg-config ];
+    nativeBuildInputs = [cmake ninja pkg-config];
 
     buildInputs = [
       wireplumber
@@ -91,9 +89,9 @@ let
 
     dontWrapQtApps = true;
 
-    nativeBuildInputs = [ pkg-config ];
+    nativeBuildInputs = [pkg-config];
 
-    buildInputs = [ openssl libpulseaudio xorg.libX11 ];
+    buildInputs = [openssl libpulseaudio xorg.libX11];
 
     buildPhase = ''
       runHook preBuild
@@ -127,9 +125,9 @@ let
     dontUnpack = true;
     dontWrapQtApps = true;
 
-    nativeBuildInputs = [ pkg-config ];
+    nativeBuildInputs = [pkg-config];
 
-    buildInputs = [ xorg.libX11 ];
+    buildInputs = [xorg.libX11];
 
     buildPhase = ''
       runHook preBuild
@@ -159,90 +157,89 @@ let
     attrs.${stdenv.hostPlatform.system}
       or (throw "wemeet: ${stdenv.hostPlatform.system} is not supported");
 in
-stdenv.mkDerivation {
-  pname = "wemeet";
-  version = "3.26.10.401";
+  stdenv.mkDerivation {
+    pname = "wemeet";
+    version = "3.26.10.401";
 
-  src = selectSystem {
-    x86_64-linux = fetchurl {
-      url = "https://updatecdn.meeting.qq.com/cos/72e0e0023e1d1e6d4123fba28821aea1/TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb";
-      hash = "sha256-cPN7ApIJwO+RvpgT7r9mUMbLmgD3xxhJAVh3Pi/mrK8=";
+    src = selectSystem {
+      x86_64-linux = fetchurl {
+        url = "https://updatecdn.meeting.qq.com/cos/72e0e0023e1d1e6d4123fba28821aea1/TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb";
+        hash = "sha256-cPN7ApIJwO+RvpgT7r9mUMbLmgD3xxhJAVh3Pi/mrK8=";
+      };
+      aarch64-linux = fetchurl {
+        url = "https://updatecdn.meeting.qq.com/cos/c06d6bc4a3370dbfb2f43bbc6ff8969e/TencentMeeting_0300000000_3.26.10.401_arm64_default.publish.officialwebsite.deb";
+        hash = "sha256-W50E1bmqJLPDU7FY0qNKPlh1z8A9Ez1Gc+NrHQhBwgI=";
+      };
     };
-    aarch64-linux = fetchurl {
-      url = "https://updatecdn.meeting.qq.com/cos/c06d6bc4a3370dbfb2f43bbc6ff8969e/TencentMeeting_0300000000_3.26.10.401_arm64_default.publish.officialwebsite.deb";
-      hash = "sha256-W50E1bmqJLPDU7FY0qNKPlh1z8A9Ez1Gc+NrHQhBwgI=";
-    };
-  };
 
-  nativeBuildInputs = [
-    dpkg
-    autoPatchelfHook
-    makeWrapper
-  ];
+    nativeBuildInputs = [
+      dpkg
+      autoPatchelfHook
+      makeWrapper
+    ];
 
-  buildInputs = [
-    nss
-    xorg.libX11
-    xorg.libSM
-    xorg.libICE
-    xorg.libXtst
-    desktop-file-utils
-    libpulseaudio
-    libgcrypt
-    dbus
-    systemd
-    udev
-    libGL
-    fontconfig
-    freetype
-    openssl
-    wayland
-    libdrm
-    harfbuzz
-    openldap
-    curl
-    nghttp2
-    libunwind
-    alsa-lib
-    libidn2
-    rtmpdump
-    libpsl
-    libkrb5
-    xkeyboard_config
-  ];
+    buildInputs = [
+      nss
+      xorg.libX11
+      xorg.libSM
+      xorg.libICE
+      xorg.libXtst
+      desktop-file-utils
+      libpulseaudio
+      libgcrypt
+      dbus
+      systemd
+      udev
+      libGL
+      fontconfig
+      freetype
+      openssl
+      wayland
+      libdrm
+      harfbuzz
+      openldap
+      curl
+      nghttp2
+      libunwind
+      alsa-lib
+      libidn2
+      rtmpdump
+      libpsl
+      libkrb5
+      xkeyboard_config
+    ];
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir -p $out/app
-    cp -r opt/wemeet $out/app/wemeet
-    cp -r usr/share $out/share
-    rm -f $out/app/wemeet/lib/libcurl.so
-    substituteInPlace $out/share/applications/wemeetapp.desktop \
-      --replace-fail "/opt/wemeet/wemeetapp.sh" "wemeet" \
-      --replace-fail "/opt/wemeet/wemeet.svg" "wemeet"
-    substituteInPlace $out/app/wemeet/bin/qt.conf \
-      --replace-fail "Prefix = ../" "Prefix = $out/app/wemeet/lib"
-    cp -r $out/app/wemeet/icons $out/share/icons || true
-    install -Dm0644 $out/app/wemeet/wemeet.svg $out/share/icons/hicolor/scalable/apps/wemeet.svg
-    ln -s $out/app/wemeet/bin/raw/xcast.conf $out/app/wemeet/bin/xcast.conf
-    ln -s $out/app/wemeet/plugins $out/app/wemeet/lib/plugins
-    ln -s $out/app/wemeet/resources $out/app/wemeet/lib/resources
-    ln -s $out/app/wemeet/translations $out/app/wemeet/lib/translations
+      mkdir -p $out/app
+      cp -r opt/wemeet $out/app/wemeet
+      cp -r usr/share $out/share
+      rm -f $out/app/wemeet/lib/libcurl.so
+      substituteInPlace $out/share/applications/wemeetapp.desktop \
+        --replace-fail "/opt/wemeet/wemeetapp.sh" "wemeet" \
+        --replace-fail "/opt/wemeet/wemeet.svg" "wemeet"
+      substituteInPlace $out/app/wemeet/bin/qt.conf \
+        --replace-fail "Prefix = ../" "Prefix = $out/app/wemeet/lib"
+      cp -r $out/app/wemeet/icons $out/share/icons || true
+      install -Dm0644 $out/app/wemeet/wemeet.svg $out/share/icons/hicolor/scalable/apps/wemeet.svg
+      ln -s $out/app/wemeet/bin/raw/xcast.conf $out/app/wemeet/bin/xcast.conf
+      ln -s $out/app/wemeet/plugins $out/app/wemeet/lib/plugins
+      ln -s $out/app/wemeet/resources $out/app/wemeet/lib/resources
+      ln -s $out/app/wemeet/translations $out/app/wemeet/lib/translations
 
-    runHook postInstall
-  '';
-
-  postInstall = selectSystem {
-    x86_64-linux = ''
-      # cmp rdi, 0 -> cmp r12, 0, at co_jump_to_link to address coroutine context resume issue
-      echo -ne '\x49\x83\xfc\x00' | dd of=$out/app/wemeet/lib/libwemeet_base.so bs=1 seek=$((0x94c833)) conv=notrunc
+      runHook postInstall
     '';
-    aarch64-linux = "";
-  };
 
-  preFixup =
-    let
+    postInstall = selectSystem {
+      x86_64-linux = ''
+        # cmp rdi, 0 -> cmp r12, 0, at co_jump_to_link to address coroutine context resume issue
+        echo -ne '\x49\x83\xfc\x00' | dd of=$out/app/wemeet/lib/libwemeet_base.so bs=1 seek=$((0x94c833)) conv=notrunc
+      '';
+      aarch64-linux = "";
+    };
+
+    preFixup = let
       baseWrapperArgs = [
         "--set LP_NUM_THREADS 2"
         "--set QT_STYLE_OVERRIDE fusion"
@@ -252,30 +249,33 @@ stdenv.mkDerivation {
         "--prefix PATH : $out/app/wemeet/bin"
         "--prefix QT_PLUGIN_PATH : $out/app/wemeet/plugins"
       ];
-      commonWrapperArgs = baseWrapperArgs ++ [
-        "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so:${wemeet-x11-fix}/lib/libwemeet-x11-fix.so"
-        "--run 'if [[ $XDG_SESSION_TYPE == \"wayland\" ]]; then export LD_PRELOAD=${wemeet-wayland-screenshare}/lib/wemeet/libhook.so\${LD_PRELOAD:+:$LD_PRELOAD}; fi'"
-      ];
-      xwaylandWrapperArgs = baseWrapperArgs ++ [
-        "--set XDG_SESSION_TYPE x11"
-        "--set QT_QPA_PLATFORM xcb"
-        "--unset WAYLAND_DISPLAY"
-        "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so"
-      ];
-    in
-    ''
+      commonWrapperArgs =
+        baseWrapperArgs
+        ++ [
+          "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so:${wemeet-x11-fix}/lib/libwemeet-x11-fix.so"
+          "--run 'if [[ $XDG_SESSION_TYPE == \"wayland\" ]]; then export LD_PRELOAD=${wemeet-wayland-screenshare}/lib/wemeet/libhook.so\${LD_PRELOAD:+:$LD_PRELOAD}; fi'"
+        ];
+      xwaylandWrapperArgs =
+        baseWrapperArgs
+        ++ [
+          "--set XDG_SESSION_TYPE x11"
+          "--set QT_QPA_PLATFORM xcb"
+          "--unset WAYLAND_DISPLAY"
+          "--prefix LD_PRELOAD : ${libwemeetwrap}/lib/libwemeetwrap.so"
+        ];
+    in ''
       makeWrapper $out/app/wemeet/bin/wemeetapp $out/bin/wemeet \
         ${lib.concatStringsSep " " commonWrapperArgs}
       makeWrapper $out/app/wemeet/bin/wemeetapp $out/bin/wemeet-xwayland \
         ${lib.concatStringsSep " " xwaylandWrapperArgs}
     '';
 
-  meta = with lib; {
-    description = "Tencent Video Conferencing";
-    homepage = "https://wemeet.qq.com";
-    license = licenses.unfree;
-    mainProgram = "wemeet";
-    platforms = [ "x86_64-linux" "aarch64-linux" ];
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-  };
-}
+    meta = with lib; {
+      description = "Tencent Video Conferencing";
+      homepage = "https://wemeet.qq.com";
+      license = licenses.unfree;
+      mainProgram = "wemeet";
+      platforms = ["x86_64-linux" "aarch64-linux"];
+      sourceProvenance = with sourceTypes; [binaryNativeCode];
+    };
+  }

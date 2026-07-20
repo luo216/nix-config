@@ -4,13 +4,9 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customRainbarf;
-in
-{
+in {
   options.programs.customRainbarf = {
     enable = mkEnableOption "rainbarf CPU load monitor for tmux";
 
@@ -22,30 +18,31 @@ in
     };
 
     settings = mkOption {
-      type =
-        with types;
+      type = with types;
         attrsOf (oneOf [
           bool
           str
           int
         ]);
-      default = { };
+      default = {};
       description = "Configuration for rainbarf.";
     };
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home.packages = [cfg.package];
 
-    xdg.configFile."rainbarf/rainbarf.conf".text =
-      let
-        formatSetting = name: value:
-          if builtins.isBool value then
-            (if value then name else "no${name}")
-          else
-            "${name}=${toString value}";
-      in
+    xdg.configFile."rainbarf/rainbarf.conf".text = let
+      formatSetting = name: value:
+        if builtins.isBool value
+        then
+          (
+            if value
+            then name
+            else "no${name}"
+          )
+        else "${name}=${toString value}";
+    in
       concatStringsSep "\n" (mapAttrsToList formatSetting cfg.settings);
   };
 }
-

@@ -193,7 +193,7 @@ in {
               fg = "#fabd2f";
             }
           ];
-          prepend_dirs = map (icon: icon // { fg = "#fabd2f"; }) [
+          prepend_dirs = map (icon: icon // {fg = "#fabd2f";}) [
             {
               name = "Desktop";
               text = "";

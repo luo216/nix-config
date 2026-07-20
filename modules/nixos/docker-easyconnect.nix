@@ -2,9 +2,7 @@
   config,
   lib,
   ...
-}:
-
-let
+}: let
   cfg = config.services.docker-easyconnect;
 
   mkPort = host: container: "${cfg.bindAddress}:${toString host}:${toString container}";
@@ -14,8 +12,7 @@ let
     (mkPort cfg.httpPort 8888)
     (mkPort cfg.vncPort 5901)
   ];
-in
-{
+in {
   options.services.docker-easyconnect = {
     enable = lib.mkEnableOption "docker-easyconnect proxy container";
 
@@ -77,16 +74,20 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    warnings = lib.optionals (
-      cfg.mode == "gateway" && (
-        cfg.bindAddress != "127.0.0.1" ||
-        cfg.socksPort != 21080 ||
-        cfg.httpPort != 28888 ||
-        cfg.vncPort != 25901
-      )
-    ) [
-      "services.docker-easyconnect.mode = \"gateway\" uses Docker host networking; bindAddress/socksPort/httpPort/vncPort are ignored. Connect VNC to 127.0.0.1:5901, SOCKS5 to 127.0.0.1:1080, and HTTP proxy to 127.0.0.1:8888."
-    ];
+    warnings =
+      lib.optionals (
+        cfg.mode
+        == "gateway"
+        && (
+          cfg.bindAddress
+          != "127.0.0.1"
+          || cfg.socksPort != 21080
+          || cfg.httpPort != 28888
+          || cfg.vncPort != 25901
+        )
+      ) [
+        "services.docker-easyconnect.mode = \"gateway\" uses Docker host networking; bindAddress/socksPort/httpPort/vncPort are ignored. Connect VNC to 127.0.0.1:5901, SOCKS5 to 127.0.0.1:1080, and HTTP proxy to 127.0.0.1:8888."
+      ];
 
     virtualisation.oci-containers.backend = "docker";
 
@@ -95,7 +96,7 @@ in
     ];
 
     virtualisation.oci-containers.containers.docker-easyconnect = {
-      image = cfg.image;
+      inherit (cfg) image;
       autoStart = true;
       # proxy mode:
       # 127.0.0.1:${toString cfg.socksPort} SOCKS5 proxy
@@ -114,12 +115,14 @@ in
         PASSWORD = cfg.vncPassword;
         URLWIN = "1";
       };
-      extraOptions = [
-        "--device=/dev/net/tun"
-        "--cap-add=NET_ADMIN"
-      ] ++ lib.optionals (cfg.mode == "gateway") [
-        "--network=host"
-      ];
+      extraOptions =
+        [
+          "--device=/dev/net/tun"
+          "--cap-add=NET_ADMIN"
+        ]
+        ++ lib.optionals (cfg.mode == "gateway") [
+          "--network=host"
+        ];
     };
   };
 }

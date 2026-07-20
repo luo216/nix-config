@@ -2,9 +2,7 @@
   lib,
   appimageTools,
   fetchurl,
-}:
-
-let
+}: let
   pname = "wechat";
   version = "4.1.1.4";
 
@@ -20,26 +18,26 @@ let
     '';
   };
 in
-appimageTools.wrapAppImage {
-  inherit pname version;
+  appimageTools.wrapAppImage {
+    inherit pname version;
 
-  src = appimageContents;
+    src = appimageContents;
 
-  extraInstallCommands = ''
-    mkdir -p $out/share/applications
-    cp ${appimageContents}/wechat.desktop $out/share/applications/
-    mkdir -p $out/share/icons/hicolor/256x256/apps
-    cp ${appimageContents}/wechat.png $out/share/icons/hicolor/256x256/apps/
+    extraInstallCommands = ''
+      mkdir -p $out/share/applications
+      cp ${appimageContents}/wechat.desktop $out/share/applications/
+      mkdir -p $out/share/icons/hicolor/256x256/apps
+      cp ${appimageContents}/wechat.png $out/share/icons/hicolor/256x256/apps/
 
-    substituteInPlace $out/share/applications/wechat.desktop --replace-fail AppRun wechat
-  '';
+      substituteInPlace $out/share/applications/wechat.desktop --replace-fail AppRun wechat
+    '';
 
-  meta = with lib; {
-    description = "WeChat desktop client packaged from the upstream AppImage";
-    homepage = "https://linux.weixin.qq.com/";
-    license = licenses.unfreeRedistributable;
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    platforms = [ "x86_64-linux" ];
-    mainProgram = "wechat";
-  };
-}
+    meta = with lib; {
+      description = "WeChat desktop client packaged from the upstream AppImage";
+      homepage = "https://linux.weixin.qq.com/";
+      license = licenses.unfreeRedistributable;
+      sourceProvenance = with sourceTypes; [binaryNativeCode];
+      platforms = ["x86_64-linux"];
+      mainProgram = "wechat";
+    };
+  }

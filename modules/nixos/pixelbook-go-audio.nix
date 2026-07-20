@@ -17,10 +17,7 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.hardware.pixelbook-go-audio;
 
   # AVS topology from local archive (only needed for AVS driver path)
@@ -37,14 +34,12 @@ let
       cp -r source/avs-topology/lib/firmware/intel/avs/* $out/lib/firmware/intel/avs/
     '';
   };
-
-in
-{
+in {
   options.hardware.pixelbook-go-audio = {
     enable = mkEnableOption "Pixelbook Go audio support";
 
     driver = mkOption {
-      type = types.enum [ "sof" "avs" ];
+      type = types.enum ["sof" "avs"];
       default = "sof";
       description = "Audio DSP driver: 'sof' (upstream, recommended) or 'avs' (legacy, requires custom topology)";
     };
@@ -101,7 +96,7 @@ in
 
     # AVS driver path (legacy)
     (mkIf (cfg.driver == "avs") {
-      hardware.firmware = [ avs-topology ];
+      hardware.firmware = [avs-topology];
 
       boot = {
         kernelModules = [

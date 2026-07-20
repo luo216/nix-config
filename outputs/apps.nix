@@ -1,21 +1,15 @@
 # Convenience apps: home-manager CLI and deploy-rs CLI.
 {
   forAllSystems,
-  pkgsFor,
-  self,
   inputs,
-}:
-let
+}: let
   inherit (inputs) home-manager deploy-rs;
-in
-{
+in {
   apps = forAllSystems (
-    system:
-    let
+    system: let
       hm = home-manager.packages.${system}.default;
       deploy = deploy-rs.packages.${system}.default;
-    in
-    {
+    in {
       home-manager = {
         type = "app";
         program = "${hm}/bin/home-manager";

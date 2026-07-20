@@ -3,13 +3,9 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.services.dnsmasq-dhcp;
-in
-{
+in {
   options.services.dnsmasq-dhcp = {
     enable = mkEnableOption "dnsmasq DHCP server for device provisioning";
 
@@ -52,13 +48,13 @@ in
       type = types.listOf (
         types.submodule {
           options = {
-            name = mkOption { type = types.str; };
-            mac = mkOption { type = types.str; };
-            ip = mkOption { type = types.str; };
+            name = mkOption {type = types.str;};
+            mac = mkOption {type = types.str;};
+            ip = mkOption {type = types.str;};
           };
         }
       );
-      default = [ ];
+      default = [];
       description = "Static MAC→IP bindings";
     };
   };
@@ -71,16 +67,16 @@ in
       }
     ];
 
-    networking.networkmanager.unmanaged = [ cfg.interface ];
+    networking.networkmanager.unmanaged = [cfg.interface];
 
     services.dnsmasq = {
       enable = true;
       alwaysKeepRunning = true;
       resolveLocalQueries = false;
       settings = {
-        interface = cfg.interface;
+        inherit (cfg) interface;
         bind-interfaces = true;
-        dhcp-range = [ "${cfg.subnet}.${toString cfg.poolStart},${cfg.subnet}.${toString cfg.poolEnd},24h" ];
+        dhcp-range = ["${cfg.subnet}.${toString cfg.poolStart},${cfg.subnet}.${toString cfg.poolEnd},24h"];
         dhcp-option = [
           "option:router,${cfg.subnet}.${toString cfg.hostIP}"
           "option:dns-server,${cfg.dns}"

@@ -37,9 +37,7 @@
   wrapGAppsHook3,
   xorg,
   xdg-utils,
-}:
-
-let
+}: let
   pname = "cisco-packettracer";
   version = "9.0.0";
 
@@ -48,7 +46,7 @@ let
     hash = "sha256-3ZrA1Mf8N9y2j2J/18fm+m1CAMFEklJuVhi5vRcu2SA=";
   };
 
-  appImageSrc = runCommand "${pname}-${version}.AppImage" { nativeBuildInputs = [ dpkg ]; } ''
+  appImageSrc = runCommand "${pname}-${version}.AppImage" {nativeBuildInputs = [dpkg];} ''
     mkdir -p unpacked
     dpkg-deb -x ${debSrc} unpacked
     cp unpacked/opt/pt/packettracer.AppImage $out
@@ -102,69 +100,69 @@ let
     xorg.libXtst
   ];
 in
-stdenv.mkDerivation {
-  inherit pname version;
+  stdenv.mkDerivation {
+    inherit pname version;
 
-  src = appimageContents;
-  dontUnpack = true;
+    src = appimageContents;
+    dontUnpack = true;
 
-  nativeBuildInputs = [
-    autoPatchelfHook
-    makeWrapper
-    wrapGAppsHook3
-  ];
+    nativeBuildInputs = [
+      autoPatchelfHook
+      makeWrapper
+      wrapGAppsHook3
+    ];
 
-  buildInputs = libs;
+    buildInputs = libs;
 
-  autoPatchelfIgnoreMissingDeps = [
-    "libinput.so.10"
-    "libts.so.0"
-  ];
+    autoPatchelfIgnoreMissingDeps = [
+      "libinput.so.10"
+      "libts.so.0"
+    ];
 
-  dontWrapGApps = true;
-  dontWrapQtApps = true;
+    dontWrapGApps = true;
+    dontWrapQtApps = true;
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir -p $out/bin
-    mkdir -p $out/share/packettracer
-    mkdir -p $out/share/applications
-    mkdir -p $out/share/icons/hicolor/512x512/apps
+      mkdir -p $out/bin
+      mkdir -p $out/share/packettracer
+      mkdir -p $out/share/applications
+      mkdir -p $out/share/icons/hicolor/512x512/apps
 
-    cp -r ${appimageContents}/* $out/share/packettracer/
+      cp -r ${appimageContents}/* $out/share/packettracer/
 
-    cat > $out/share/packettracer/packettracer-launcher <<EOF
-    #!${runtimeShell}
-    export PT9HOME="$out/share/packettracer"
-    export QT_QPA_PLATFORM="xcb"
-    export LD_LIBRARY_PATH="$out/share/packettracer/opt/pt/bin:$out/share/packettracer/usr/lib:${lib.makeLibraryPath libs}"
-    cd "$out/share/packettracer/opt/pt/bin"
-    exec ./PacketTracer "\$@"
-    EOF
-    chmod +x $out/share/packettracer/packettracer-launcher
+      cat > $out/share/packettracer/packettracer-launcher <<EOF
+      #!${runtimeShell}
+      export PT9HOME="$out/share/packettracer"
+      export QT_QPA_PLATFORM="xcb"
+      export LD_LIBRARY_PATH="$out/share/packettracer/opt/pt/bin:$out/share/packettracer/usr/lib:${lib.makeLibraryPath libs}"
+      cd "$out/share/packettracer/opt/pt/bin"
+      exec ./PacketTracer "\$@"
+      EOF
+      chmod +x $out/share/packettracer/packettracer-launcher
 
-    makeWrapper $out/share/packettracer/packettracer-launcher $out/bin/packettracer \
-      --prefix PATH : "${lib.makeBinPath [ coreutils glib.bin xdg-utils ]}" \
-      "''${gappsWrapperArgs[@]}"
+      makeWrapper $out/share/packettracer/packettracer-launcher $out/bin/packettracer \
+        --prefix PATH : "${lib.makeBinPath [coreutils glib.bin xdg-utils]}" \
+        "''${gappsWrapperArgs[@]}"
 
-    cp ${appimageContents}/CiscoPacketTracer-9.0.0.desktop \
-      $out/share/applications/cisco-packet-tracer.desktop
-    substituteInPlace $out/share/applications/cisco-packet-tracer.desktop \
-      --replace-fail '@EXEC_PATH@' "$out/bin/packettracer" \
-      --replace-fail 'Icon=app' 'Icon=cisco-packet-tracer'
+      cp ${appimageContents}/CiscoPacketTracer-9.0.0.desktop \
+        $out/share/applications/cisco-packet-tracer.desktop
+      substituteInPlace $out/share/applications/cisco-packet-tracer.desktop \
+        --replace-fail '@EXEC_PATH@' "$out/bin/packettracer" \
+        --replace-fail 'Icon=app' 'Icon=cisco-packet-tracer'
 
-    cp ${appimageContents}/app.png $out/share/icons/hicolor/512x512/apps/cisco-packet-tracer.png
+      cp ${appimageContents}/app.png $out/share/icons/hicolor/512x512/apps/cisco-packet-tracer.png
 
-    runHook postInstall
-  '';
+      runHook postInstall
+    '';
 
-  meta = with lib; {
-    description = "Cisco Packet Tracer packaged from the upstream AppImage";
-    homepage = "https://www.netacad.com/courses/packet-tracer";
-    license = licenses.unfree;
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    platforms = [ "x86_64-linux" ];
-    mainProgram = "packettracer";
-  };
-}
+    meta = with lib; {
+      description = "Cisco Packet Tracer packaged from the upstream AppImage";
+      homepage = "https://www.netacad.com/courses/packet-tracer";
+      license = licenses.unfree;
+      sourceProvenance = with sourceTypes; [binaryNativeCode];
+      platforms = ["x86_64-linux"];
+      mainProgram = "packettracer";
+    };
+  }

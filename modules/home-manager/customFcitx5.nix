@@ -4,14 +4,9 @@
   pkgs,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customFcitx5;
-
-in
-{
+in {
   options = {
     programs.customFcitx5 = {
       enable = mkEnableOption "Enable Fcitx5 Chinese input method";
@@ -116,7 +111,6 @@ in
             };
           };
         };
-
       };
     };
 
@@ -125,6 +119,5 @@ in
       source = ../templates/fcitx5-themes/${cfg.theme};
       recursive = true;
     };
-
   };
 }

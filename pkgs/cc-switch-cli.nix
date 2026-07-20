@@ -1,5 +1,8 @@
-{ lib, fetchurl, stdenvNoCC }:
-
+{
+  lib,
+  fetchurl,
+  stdenvNoCC,
+}:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "cc-switch-cli";
   version = "5.9.0";
@@ -23,8 +26,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "CLI management tool for Claude Code, Codex, Gemini, OpenCode and OpenClaw";
     homepage = "https://github.com/SaladDay/cc-switch-cli";
     license = licenses.mit;
-    platforms = [ "x86_64-linux" ];
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
+    platforms = ["x86_64-linux"];
+    sourceProvenance = with sourceTypes; [binaryNativeCode];
     mainProgram = "cc-switch";
   };
 })

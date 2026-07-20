@@ -1,20 +1,32 @@
-# Host definitions.  Add / remove machines by editing this list.
-# Each entry is threaded into nixosConfigurations, homeConfigurations, deploy nodes, and VM apps.
+# Host definitions. Each entry is threaded into NixOS, Home Manager, and deploy outputs.
 [
-  {
-    hostname = "pixelbook";
-    system = "x86_64-linux";
-    deploy = true;
-    withHomeManager = true;
-    ip = "192.168.31.76";
-    users = [{ username = "steve"; }];
-  }
   {
     hostname = "hasee";
     system = "x86_64-linux";
-    deploy = true;
+    nixos = true;
+    deploy = false;
     withHomeManager = true;
     ip = "192.168.31.129";
-    users = [{ username = "steve"; }];
+    primaryUser = "steve";
+    users = [ "steve" ];
+  }
+  {
+    hostname = "pixelbook";
+    system = "x86_64-linux";
+    nixos = true;
+    deploy = true;
+    withHomeManager = true;
+    ip = "192.168.31.76";
+    primaryUser = "steve";
+    users = [ "steve" ];
+  }
+  {
+    hostname = "kali";
+    system = "x86_64-linux";
+    nixos = false;
+    deploy = false;
+    withHomeManager = false;
+    ip = "192.168.122.117";
+    users = [ "test" ];
   }
 ]

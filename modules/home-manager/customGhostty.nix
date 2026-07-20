@@ -4,13 +4,9 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customGhostty;
-in
-{
+in {
   options.programs.customGhostty = {
     enable = mkEnableOption "Ghostty terminal";
 
@@ -51,7 +47,7 @@ in
         font-size = cfg.fontSize;
 
         # 主题与外观
-        theme = cfg.theme;
+        inherit (cfg) theme;
         cursor-style = "block";
         window-padding-x = 4;
         window-padding-y = 4;

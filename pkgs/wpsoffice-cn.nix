@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  fetchurl,
   autoPatchelfHook,
   runCommandLocal,
   curl,
@@ -11,7 +10,6 @@
   libjpeg,
   libtool,
   libxkbcommon,
-  nss,
   nspr,
   udev,
   gtk3,
@@ -24,21 +22,20 @@
   cups,
   dbus,
   pango,
-}:
-
-let
+}: let
   pname = "wpsoffice-cn";
   version = "12.1.2.26885";
 
   wpsUrl = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/26885/wps-office_12.1.2.26885.AK.preread.sw.Personal_715971_amd64.deb";
   wpsHash = "sha256-VdpRSUZ6FYS0ttEoDLWrBMBhRTl0gQ+slnmzO9hmTlE=";
 
-  src = runCommandLocal "wpsoffice-cn-${version}.deb"
+  src =
+    runCommandLocal "wpsoffice-cn-${version}.deb"
     {
       outputHashAlgo = "sha256";
       outputHash = wpsHash;
 
-      nativeBuildInputs = [ curl coreutils ];
+      nativeBuildInputs = [curl coreutils];
 
       impureEnvVars = lib.fetchers.proxyImpureEnvVars;
       SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
@@ -52,79 +49,79 @@ let
       curl --retry 3 --retry-delay 3 "${wpsUrl}?t=$timestamp10&k=$md5hash" > $out
     '';
 in
-stdenv.mkDerivation {
-  inherit pname version src;
+  stdenv.mkDerivation {
+    inherit pname version src;
 
-  nativeBuildInputs = [ autoPatchelfHook ];
+    nativeBuildInputs = [autoPatchelfHook];
 
-  buildInputs = [
-    alsa-lib
-    libjpeg
-    libtool
-    libxkbcommon
-    nspr
-    udev
-    gtk3
-    libgbm
-    libusb1
-    unixODBC
-    libsForQt5.qtbase
-    xorg.libXdamage
-    xorg.libXtst
-    xorg.libXv
-  ];
+    buildInputs = [
+      alsa-lib
+      libjpeg
+      libtool
+      libxkbcommon
+      nspr
+      udev
+      gtk3
+      libgbm
+      libusb1
+      unixODBC
+      libsForQt5.qtbase
+      xorg.libXdamage
+      xorg.libXtst
+      xorg.libXv
+    ];
 
-  dontWrapQtApps = true;
+    dontWrapQtApps = true;
 
-  stripAllList = [ "opt" ];
+    stripAllList = ["opt"];
 
-  runtimeDependencies = map lib.getLib [ cups dbus pango ];
+    runtimeDependencies = map lib.getLib [cups dbus pango];
 
-  unpackPhase = ''
-    ar x $src
-    tar -xf data.tar.xz
+    unpackPhase = ''
+      ar x $src
+      tar -xf data.tar.xz
 
-    rm -rf usr/share/{fonts,locale}
-    rm -f usr/bin/misc
-    rm -rf opt/kingsoft/wps-office/{desktops,INSTALL}
-    rm -f opt/kingsoft/wps-office/office6/lib{peony-wpsprint-menu-plugin,bz2,jpeg,stdc++,gcc_s,odbc*,dbus-1}.so*
-  '';
+      rm -rf usr/share/{fonts,locale}
+      rm -f usr/bin/misc
+      rm -rf opt/kingsoft/wps-office/{desktops,INSTALL}
+      rm -f opt/kingsoft/wps-office/office6/lib{peony-wpsprint-menu-plugin,bz2,jpeg,stdc++,gcc_s,odbc*,dbus-1}.so*
+    '';
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir -p $out
+      mkdir -p $out
 
-    cp -r opt $out
-    cp -r usr/{bin,share} $out
+      cp -r opt $out
+      cp -r usr/{bin,share} $out
 
-    for i in $out/bin/*; do
-      substituteInPlace $i \
-        --replace-fail /opt/kingsoft/wps-office $out/opt/kingsoft/wps-office
-    done
+      for i in $out/bin/*; do
+        substituteInPlace $i \
+          --replace-fail /opt/kingsoft/wps-office $out/opt/kingsoft/wps-office
+      done
 
-    for i in $out/share/applications/*; do
-      substituteInPlace $i \
-        --replace-fail /usr/bin $out/bin
-    done
+      for i in $out/share/applications/*; do
+        substituteInPlace $i \
+          --replace-fail /usr/bin $out/bin
+      done
 
-    runHook postInstall
-  '';
+      runHook postInstall
+    '';
 
-  preFixup = ''
-    patchelf --add-needed libudev.so.1 $out/opt/kingsoft/wps-office/office6/addons/cef/libcef.so
-    patchelf --replace-needed libmysqlclient.so.18 libmysqlclient.so $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
-    patchelf --add-rpath ${libmysqlclient}/lib/mariadb $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
-  '';
+    preFixup = ''
+      patchelf --add-needed libudev.so.1 $out/opt/kingsoft/wps-office/office6/addons/cef/libcef.so
+      patchelf --replace-needed libmysqlclient.so.18 libmysqlclient.so $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
+      patchelf --add-rpath ${libmysqlclient}/lib/mariadb $out/opt/kingsoft/wps-office/office6/libFontWatermark.so
+    '';
 
-  meta = with lib; {
-    description = "Office suite, formerly Kingsoft Office";
-    homepage = "https://www.wps.cn";
-    changelog = "https://linux.wps.cn/wpslinuxlog";
-    platforms = [ "x86_64-linux" ];
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    hydraPlatforms = [ ];
-    license = licenses.unfree;
-    mainProgram = "wps";
-  };
-}
+    meta = with lib; {
+      description = "Office suite, formerly Kingsoft Office";
+      homepage = "https://www.wps.cn";
+      changelog = "https://linux.wps.cn/wpslinuxlog";
+      platforms = ["x86_64-linux"];
+      sourceProvenance = with sourceTypes; [binaryNativeCode];
+      hydraPlatforms = [];
+      license = licenses.unfree;
+      mainProgram = "wps";
+    };
+  }

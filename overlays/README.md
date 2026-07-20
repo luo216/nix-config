@@ -1,22 +1,24 @@
 # Nixpkgs Overlays
 
-Defined in `outputs/modules.nix`, imported here from `overlays/default.nix`.
+`overlays/default.nix` exports three overlays through `outputs/modules.nix`:
 
-- **additions** — Custom packages from `../pkgs/` directory
-- **unstable-packages** — Unstable nixpkgs accessible via `pkgs.unstable`
+| Overlay | Purpose |
+|---------|---------|
+| `additions` | Adds every package registered in `pkgs/default.nix` |
+| `modifications` | Patches nixpkgs; currently adjusts `stegsolve` |
+| `unstable-packages` | Exposes unstable nixpkgs as `pkgs.unstable` |
 
-To override or patch an existing package, add a `modifications` overlay:
+NixOS applies all three overlays from `nixos/configuration.nix`. Standalone Home
+Manager applies them through `home-manager/configuration.nix`; integrated HM
+reuses the NixOS package set.
+
+Add a custom package to `pkgs/default.nix` rather than editing `additions`
+directly. Package overrides belong in `modifications`:
 
 ```nix
 modifications = final: prev: {
-  example = prev.example.overrideAttrs (old: rec {
-    version = "1.2.3";
-    src = prev.fetchFromGitHub {
-      owner = "example";
-      repo = "example";
-      rev = version;
-      hash = "sha256-...";
-    };
+  example = prev.example.overrideAttrs (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or []) ++ [final.makeWrapper];
   });
 };
 ```

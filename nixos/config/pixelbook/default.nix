@@ -1,7 +1,8 @@
-# Pixelbook Go — Chromebook 刷 NixOS
+# Pixelbook Go — Chromebook running NixOS
 {
-  pkgs,
   outputs,
+  pkgs,
+  primaryUser,
   ...
 }: {
   imports = [
@@ -12,7 +13,6 @@
     outputs.nixosModules.ventoy-insecure
   ];
 
-  # ── 引导 ──────────────────────────────────────────────
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -23,8 +23,8 @@
     };
     kernelPackages = pkgs.unstable.linuxPackages_latest;
     plymouth.enable = true;
-    kernelModules = ["i2c-dev"];
     initrd.systemd.enable = true;
+    kernelModules = ["i2c-dev"];
     kernelParams = [
       "quiet"
       "splash"
@@ -36,10 +36,8 @@
     resumeDevice = "/dev/mmcblk0p2";
   };
 
-  # ── 电源管理 ──────────────────────────────────────────
   powerManagement.enable = true;
 
-  # ── 网络 ──────────────────────────────────────────────
   networking = {
     firewall.enable = false;
     networkmanager = {
@@ -50,7 +48,6 @@
     dhcpcd.enable = false;
   };
 
-  # ── 时区与语言 ────────────────────────────────────────
   time.timeZone = "Asia/Shanghai";
 
   i18n = {
@@ -66,7 +63,6 @@
     keyMap = "us";
   };
 
-  # ── 硬件 ──────────────────────────────────────────────
   hardware = {
     pixelbook-go-audio = {
       enable = true;
@@ -79,29 +75,10 @@
     };
   };
 
-  # ── 用户 ──────────────────────────────────────────────
-  users.users.steve = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "docker"
-      "networkmanager"
-      "video"
-      "adbusers"
-    ];
-    shell = pkgs.zsh;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHKEBaHem+gU3ZFXceYBSXi6tdiQ6B6fkMo2dAy3R3rQ hjzhang216@gmail.com"
-    ];
-  };
-
-  # ── 安全 ──────────────────────────────────────────────
   security = {
     pki.certificateFiles = [
       ../../../modules/templates/certs/mitmproxy-ca-cert.pem
     ];
-
     wrappers.sparkle = {
       owner = "root";
       group = "root";
@@ -110,7 +87,6 @@
     };
   };
 
-  # ── 系统包 ────────────────────────────────────────────
   environment = {
     systemPackages = with pkgs; [
       sparkle
@@ -129,7 +105,6 @@
       tigervnc
       cisco-packettracer
     ];
-
     sessionVariables = {
       LIBVA_DRIVER_NAME = "iHD";
       LIBVA_DRIVERS_PATH = "/run/current-system/sw/lib/dri";
@@ -140,7 +115,6 @@
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
   ];
 
-  # ── 字体 ──────────────────────────────────────────────
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack
@@ -174,22 +148,19 @@
           "Noto Sans Mono"
           "Noto Color Emoji"
         ];
-        emoji = [ "Noto Color Emoji" ];
+        emoji = ["Noto Color Emoji"];
       };
     };
   };
 
-  # ── 程序 ──────────────────────────────────────────────
   programs = {
     zsh.enable = true;
     dconf.enable = true;
     adb.enable = true;
-
     git = {
       enable = true;
       lfs.enable = true;
     };
-
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
@@ -219,16 +190,29 @@
     };
   };
 
-  # ── 服务 ──────────────────────────────────────────────
   services = {
     dbus.enable = true;
     udisks2.enable = true;
-
+    libinput.enable = false;
+    gnome.gnome-remote-desktop.enable = true;
+    logind.settings.Login.HandlePowerKey = "ignore";
+    todesk.enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager = {
+      gdm = {
+        enable = true;
+        wayland = true;
+      };
+      defaultSession = "gnome";
+      autoLogin = {
+        enable = true;
+        user = primaryUser;
+      };
+    };
     printing = {
       enable = true;
       drivers = with pkgs; [brlaser];
     };
-
     network-printers = {
       enable = true;
       printers = [
@@ -246,36 +230,6 @@
         }
       ];
     };
-
-    gnome.gnome-remote-desktop.enable = true;
-    logind.settings.Login.HandlePowerKey = "ignore";
-    todesk.enable = true;
-
-    desktopManager.gnome = {
-      enable = true;
-    };
-
-    displayManager = {
-      gdm = {
-        enable = true;
-        wayland = true;
-      };
-      defaultSession = "gnome";
-      autoLogin = {
-        enable = true;
-        user = "steve";
-      };
-    };
-
-    libinput = {
-      enable = true;
-      touchpad = {
-        naturalScrolling = false;
-        tapping = false;
-        clickMethod = "clickfinger";
-      };
-    };
-
     docker-easyconnect = {
       enable = false;
       socksPort = 1080;
@@ -284,7 +238,6 @@
       mode = "proxy";
       vncPassword = "passwd";
     };
-
     dnsmasq-dhcp = {
       enable = false;
       interface = "enp0s20f0u2u4c2";
@@ -297,13 +250,11 @@
     };
   };
 
-  # ── 虚拟化 ────────────────────────────────────────────
   virtualisation.docker = {
     enable = true;
     package = pkgs.docker_29;
   };
 
-  # ── 主题 ──────────────────────────────────────────────
   stylix = {
     enable = true;
     autoEnable = false;

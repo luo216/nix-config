@@ -3,9 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-
-let
+}: let
   cfg = config.services.network-printers;
 
   printerModule = lib.types.submodule {
@@ -40,13 +38,13 @@ let
 
       ppdOptions = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
-        default = { };
+        default = {};
         description = "PPD options applied with lpadmin -o.";
       };
 
       testHosts = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        default = [ ];
+        default = [];
         description = ''
           Reachability probes for this printer. If any host responds to ping,
           the printer will be configured.
@@ -55,62 +53,56 @@ let
     };
   };
 
-  ensurePrinterScript =
-    printer:
-    let
-      escapedName = lib.escapeShellArg printer.name;
-      escapedUri = lib.escapeShellArg printer.deviceUri;
-      escapedModel = lib.escapeShellArg printer.model;
-      descriptionArg = lib.optionalString (printer.description != null) ''
-        -D ${lib.escapeShellArg printer.description} \
-      '';
-      locationArg = lib.optionalString (printer.location != null) ''
-        -L ${lib.escapeShellArg printer.location} \
-      '';
-      ppdArgs = lib.concatStringsSep " \\\n  " (
-        map (name: "-o ${lib.escapeShellArg "${name}=${printer.ppdOptions.${name}}"}")
-          (builtins.attrNames printer.ppdOptions)
-      );
-      ppdArgBlock = lib.optionalString (ppdArgs != "") ''
-        ${ppdArgs} \
-      '';
-      probeBlock =
-        if printer.testHosts == [ ] then
-          ''
-            should_configure=1
-          ''
-        else
-          ''
-            should_configure=0
-            for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
-              if ${pkgs.iputils}/bin/ping -c 1 -W 1 "$host" >/dev/null 2>&1; then
-                should_configure=1
-                break
-              fi
-            done
-          '';
-    in
-    ''
-      ${probeBlock}
-      if [ "$should_configure" -ne 1 ]; then
-        echo "Printer ${printer.name} is not reachable, skipping."
-      else
-        ${pkgs.cups}/bin/lpadmin \
-          -p ${escapedName} \
-          ${descriptionArg}${locationArg}  -v ${escapedUri} \
-          -m ${escapedModel} \
-          ${ppdArgBlock}  -E
-      fi
+  ensurePrinterScript = printer: let
+    escapedName = lib.escapeShellArg printer.name;
+    escapedUri = lib.escapeShellArg printer.deviceUri;
+    escapedModel = lib.escapeShellArg printer.model;
+    descriptionArg = lib.optionalString (printer.description != null) ''
+      -D ${lib.escapeShellArg printer.description} \
     '';
-
-in
-{
+    locationArg = lib.optionalString (printer.location != null) ''
+      -L ${lib.escapeShellArg printer.location} \
+    '';
+    ppdArgs = lib.concatStringsSep " \\\n  " (
+      map (name: "-o ${lib.escapeShellArg "${name}=${printer.ppdOptions.${name}}"}")
+      (builtins.attrNames printer.ppdOptions)
+    );
+    ppdArgBlock = lib.optionalString (ppdArgs != "") ''
+      ${ppdArgs} \
+    '';
+    probeBlock =
+      if printer.testHosts == []
+      then ''
+        should_configure=1
+      ''
+      else ''
+        should_configure=0
+        for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
+          if ${pkgs.iputils}/bin/ping -c 1 -W 1 "$host" >/dev/null 2>&1; then
+            should_configure=1
+            break
+          fi
+        done
+      '';
+  in ''
+    ${probeBlock}
+    if [ "$should_configure" -ne 1 ]; then
+      echo "Printer ${printer.name} is not reachable, skipping."
+    else
+      ${pkgs.cups}/bin/lpadmin \
+        -p ${escapedName} \
+        ${descriptionArg}${locationArg}  -v ${escapedUri} \
+        -m ${escapedModel} \
+        ${ppdArgBlock}  -E
+    fi
+  '';
+in {
   options.services.network-printers = {
     enable = lib.mkEnableOption "event-driven network printer configuration";
 
     printers = lib.mkOption {
       type = lib.types.listOf printerModule;
-      default = [ ];
+      default = [];
       description = "Network printers to configure when reachable.";
     };
 
@@ -129,10 +121,10 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.printers != [ ]) {
+  config = lib.mkIf (cfg.enable && cfg.printers != []) {
     systemd.services.ensure-network-printers = {
       description = "Ensure network printers are configured when reachable";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       wants = [
         "cups.service"
         "network-online.target"

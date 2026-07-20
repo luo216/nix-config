@@ -4,40 +4,37 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customCtfMsf;
 
   exploitDbRoot = "${cfg.exploitdbPackage}/share/exploitdb";
 
   msfdbInit = pkgs.writeShellScriptBin "msfdb-init-local" ''
-    set -euo pipefail
+        set -euo pipefail
 
-    export PGDATA="''${PGDATA:-$HOME/.local/share/msf/pgdata}"
-    export MSF_DB="''${MSF_DB:-$HOME/.msf4/database.yml}"
+        export PGDATA="''${PGDATA:-$HOME/.local/share/msf/pgdata}"
+        export MSF_DB="''${MSF_DB:-$HOME/.msf4/database.yml}"
 
-    mkdir -p "$PGDATA" "$(dirname "$MSF_DB")" "$HOME/.msf4"
+        mkdir -p "$PGDATA" "$(dirname "$MSF_DB")" "$HOME/.msf4"
 
-    if [ ! -f "$PGDATA/PG_VERSION" ]; then
-      ${pkgs.postgresql}/bin/initdb -D "$PGDATA"
-    fi
+        if [ ! -f "$PGDATA/PG_VERSION" ]; then
+          ${pkgs.postgresql}/bin/initdb -D "$PGDATA"
+        fi
 
-    cat > "$MSF_DB" <<EOF
-production:
-  adapter: postgresql
-  database: msf
-  username: $USER
-  password:
-  host: 127.0.0.1
-  port: 5432
-  pool: 200
-  timeout: 5
-EOF
+        cat > "$MSF_DB" <<EOF
+    production:
+      adapter: postgresql
+      database: msf
+      username: $USER
+      password:
+      host: 127.0.0.1
+      port: 5432
+      pool: 200
+      timeout: 5
+    EOF
 
-    echo "Initialized local Metasploit database at $PGDATA"
-    echo "Database config written to $MSF_DB"
+        echo "Initialized local Metasploit database at $PGDATA"
+        echo "Database config written to $MSF_DB"
   '';
 
   msfdbStart = pkgs.writeShellScriptBin "msfdb-start-local" ''
@@ -88,8 +85,7 @@ EOF
     echo "msfmcpd is not present in the current metasploit package." >&2
     exit 1
   '';
-in
-{
+in {
   options.programs.customCtfMsf = {
     enable = mkEnableOption "Metasploit + exploit database toolkit";
 

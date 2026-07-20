@@ -5,7 +5,6 @@
   stdenv,
   patchelf,
   makeWrapper,
-
   # Linked dynamic libraries.
   glib,
   fontconfig,
@@ -45,21 +44,16 @@
   libxkbcommon,
   pipewire,
   wayland, # ozone/wayland
-
   # Command line programs
   coreutils,
-
   # command line arguments which are always set e.g. "--disable-gpu"
   # Enable VerticalTabs: --enable-features=VerticalTabs
   commandLineArgs ? "--enable-features=VerticalTabs",
-
   # Will crash without.
   systemd,
-
   # Loaded at runtime.
   libexif,
   pciutils,
-
   # Additional dependencies according to other distros.
   ## Ubuntu
   liberation_ttf,
@@ -78,24 +72,18 @@
   ## Gentoo
   bzip2,
   libcap,
-
   # Necessary for USB audio devices.
   pulseSupport ? true,
   libpulseaudio,
-
   gsettings-desktop-schemas,
   adwaita-icon-theme,
-
   # For video acceleration via VA-API (--enable-features=VaapiVideoDecoder)
   libvaSupport ? true,
   libva,
-
   # For Vulkan support (--enable-features=Vulkan)
   addDriverRunpath,
-}:
-
-let
-  opusWithCustomModes = libopus.override { withCustomModes = true; };
+}: let
+  opusWithCustomModes = libopus.override {withCustomModes = true;};
 
   version = "150.0.7871.100";
   hash_deb_amd64 = "sha256-SbV/ACzm31CA1fglQtxc8RdBuTeal/HXXXtUFa0IYHk=";
@@ -165,102 +153,102 @@ let
 
   pkgName = "google-chrome-stable";
 in
-stdenv.mkDerivation {
-  inherit version;
+  stdenv.mkDerivation {
+    inherit version;
 
-  name = "google-chrome-stable-${version}";
+    name = "google-chrome-stable-${version}";
 
-  src = fetchurl {
-    url = "https://dl.google.com/linux/chrome/deb/pool/main/g/${pkgName}/${pkgName}_${version}-1_amd64.deb";
-    hash = hash_deb_amd64;
-  };
+    src = fetchurl {
+      url = "https://dl.google.com/linux/chrome/deb/pool/main/g/${pkgName}/${pkgName}_${version}-1_amd64.deb";
+      hash = hash_deb_amd64;
+    };
 
-  nativeBuildInputs = [
-    patchelf
-    makeWrapper
-  ];
-  buildInputs = [
-    # needed for GSETTINGS_SCHEMAS_PATH
-    gsettings-desktop-schemas
-    glib
-    gtk3
+    nativeBuildInputs = [
+      patchelf
+      makeWrapper
+    ];
+    buildInputs = [
+      # needed for GSETTINGS_SCHEMAS_PATH
+      gsettings-desktop-schemas
+      glib
+      gtk3
 
-    # needed for XDG_ICON_DIRS
-    adwaita-icon-theme
-  ];
+      # needed for XDG_ICON_DIRS
+      adwaita-icon-theme
+    ];
 
-  unpackPhase = ''
-    ar x $src
-    tar xf data.tar.xz
-  '';
+    unpackPhase = ''
+      ar x $src
+      tar xf data.tar.xz
+    '';
 
-  rpath = lib.makeLibraryPath deps + ":" + lib.makeSearchPathOutput "lib" "lib64" deps;
-  binpath = lib.makeBinPath deps;
+    rpath = lib.makeLibraryPath deps + ":" + lib.makeSearchPathOutput "lib" "lib64" deps;
+    binpath = lib.makeBinPath deps;
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    appname=chrome
-    dist=stable
+      appname=chrome
+      dist=stable
 
-    exe=$out/bin/google-chrome-$dist
+      exe=$out/bin/google-chrome-$dist
 
-    mkdir -p $out/bin $out/share
+      mkdir -p $out/bin $out/share
 
-    cp -a opt/* $out/share
-    cp -a usr/share/* $out/share
+      cp -a opt/* $out/share
+      cp -a usr/share/* $out/share
 
 
-    substituteInPlace $out/share/google/$appname/google-$appname \
-      --replace-fail 'CHROME_WRAPPER' 'WRAPPER'
-    substituteInPlace $out/share/applications/google-$appname.desktop \
-      --replace-fail /usr/bin/google-chrome-$dist $exe
-    substituteInPlace $out/share/gnome-control-center/default-apps/google-$appname.xml \
-      --replace-fail /opt/google/$appname/google-$appname $exe
-    if [[ -f $out/share/menu/google-$appname.menu ]]; then
-      substituteInPlace $out/share/menu/google-$appname.menu \
-        --replace-fail /opt $out/share \
-        --replace-fail $out/share/google/$appname/google-$appname $exe
-    else
-        echo "share/menu file missing; paths not replaced."
-    fi;
-
-    for icon_file in $out/share/google/chrome*/product_logo_[0-9]*.png; do
-      num_and_suffix="''${icon_file##*logo_}"
-      if [ $dist = "stable" ]; then
-        icon_size="''${num_and_suffix%.*}"
+      substituteInPlace $out/share/google/$appname/google-$appname \
+        --replace-fail 'CHROME_WRAPPER' 'WRAPPER'
+      substituteInPlace $out/share/applications/google-$appname.desktop \
+        --replace-fail /usr/bin/google-chrome-$dist $exe
+      substituteInPlace $out/share/gnome-control-center/default-apps/google-$appname.xml \
+        --replace-fail /opt/google/$appname/google-$appname $exe
+      if [[ -f $out/share/menu/google-$appname.menu ]]; then
+        substituteInPlace $out/share/menu/google-$appname.menu \
+          --replace-fail /opt $out/share \
+          --replace-fail $out/share/google/$appname/google-$appname $exe
       else
-        icon_size="''${num_and_suffix%_*}"
-      fi
-      logo_output_prefix="$out/share/icons/hicolor"
-      logo_output_path="$logo_output_prefix/''${icon_size}x''${icon_size}/apps"
-      mkdir -p "$logo_output_path"
-      mv "$icon_file" "$logo_output_path/google-$appname.png"
-    done
+          echo "share/menu file missing; paths not replaced."
+      fi;
 
-    makeWrapper "$out/share/google/$appname/google-$appname" "$exe" \
-      --prefix LD_LIBRARY_PATH : "$rpath" \
-      --prefix PATH            : "$binpath" \
-      --suffix PATH            : "${lib.makeBinPath [ xdg-utils ]}" \
-      --prefix XDG_DATA_DIRS   : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH:${addDriverRunpath.driverLink}/share" \
-      --set CHROME_WRAPPER  "google-chrome-$dist" \
-      --add-flags "''${NIXOS_OZONE_WL:+''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
-      --add-flags ${lib.escapeShellArg commandLineArgs}
+      for icon_file in $out/share/google/chrome*/product_logo_[0-9]*.png; do
+        num_and_suffix="''${icon_file##*logo_}"
+        if [ $dist = "stable" ]; then
+          icon_size="''${num_and_suffix%.*}"
+        else
+          icon_size="''${num_and_suffix%_*}"
+        fi
+        logo_output_prefix="$out/share/icons/hicolor"
+        logo_output_path="$logo_output_prefix/''${icon_size}x''${icon_size}/apps"
+        mkdir -p "$logo_output_path"
+        mv "$icon_file" "$logo_output_path/google-$appname.png"
+      done
 
-    for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
-      patchelf --set-rpath $rpath $elf
-      patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
-    done
+      makeWrapper "$out/share/google/$appname/google-$appname" "$exe" \
+        --prefix LD_LIBRARY_PATH : "$rpath" \
+        --prefix PATH            : "$binpath" \
+        --suffix PATH            : "${lib.makeBinPath [xdg-utils]}" \
+        --prefix XDG_DATA_DIRS   : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH:${addDriverRunpath.driverLink}/share" \
+        --set CHROME_WRAPPER  "google-chrome-$dist" \
+        --add-flags "''${NIXOS_OZONE_WL:+''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
+        --add-flags ${lib.escapeShellArg commandLineArgs}
 
-    runHook postInstall
-  '';
+      for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
+        patchelf --set-rpath $rpath $elf
+        patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
+      done
 
-  meta = {
-    description = "Google Chrome Stable web browser";
-    homepage = "https://www.google.com/chrome/";
-    license = lib.licenses.unfree;
-    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
-    platforms = [ "x86_64-linux" ];
-    mainProgram = "google-chrome-stable";
-  };
-}
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "Google Chrome Stable web browser";
+      homepage = "https://www.google.com/chrome/";
+      license = lib.licenses.unfree;
+      sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
+      platforms = ["x86_64-linux"];
+      mainProgram = "google-chrome-stable";
+    };
+  }

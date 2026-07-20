@@ -189,7 +189,7 @@ in {
     users.users = mkIf (cfg.user == "nps") {
       nps = {
         isSystemUser = true;
-        group = cfg.group;
+        inherit (cfg) group;
         home = cfg.dataDir;
         createHome = true;
       };

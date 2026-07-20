@@ -29,52 +29,49 @@
   wrapGAppsHook3,
   commandLineArgs ? "",
   disableAutoUpdate ? true,
-}:
-
-let
+}: let
   version = "3.2.29-2026-05-28";
   src = fetchurl {
     url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.31/release/00e6a3e7/QQ_3.2.29_260528_amd64_01.deb";
     hash = "sha256-HjgoB5ZzyUmUvA9HgNXYUoZHY5kgZZhi1J0cLyoZjiU=";
   };
 in
-stdenv.mkDerivation {
-  pname = "qq";
-  inherit version src;
+  stdenv.mkDerivation {
+    pname = "qq";
+    inherit version src;
 
-  nativeBuildInputs = [
-    autoPatchelfHook
-    makeShellWrapper
-    wrapGAppsHook3
-    dpkg
-    patchelf
-  ];
+    nativeBuildInputs = [
+      autoPatchelfHook
+      makeShellWrapper
+      wrapGAppsHook3
+      dpkg
+      patchelf
+    ];
 
-  buildInputs = [
-    alsa-lib
-    at-spi2-core
-    cups
-    glib
-    gtk3
-    libdrm
-    libpulseaudio
-    libgcrypt
-    libkrb5
-    libgbm
-    nss
-    vips
-    xorg.libXdamage
-  ];
+    buildInputs = [
+      alsa-lib
+      at-spi2-core
+      cups
+      glib
+      gtk3
+      libdrm
+      libpulseaudio
+      libgcrypt
+      libkrb5
+      libgbm
+      nss
+      vips
+      xorg.libXdamage
+    ];
 
-  dontWrapGApps = true;
+    dontWrapGApps = true;
 
-  runtimeDependencies = map lib.getLib [
-    systemd
-    libkrb5
-  ];
+    runtimeDependencies = map lib.getLib [
+      systemd
+      libkrb5
+    ];
 
-  installPhase =
-    let
+    installPhase = let
       versionConfigScript = writeShellScript "qq-version-config.sh" ''
         set -e
 
@@ -123,8 +120,7 @@ stdenv.mkDerivation {
 
         chmod u-w "$CONFIG_PATH"
       '';
-    in
-    ''
+    in ''
       runHook preInstall
 
       mkdir -p $out/bin
@@ -135,20 +131,20 @@ stdenv.mkDerivation {
         --replace-fail "/usr/share" "$out/share"
       makeShellWrapper $out/opt/QQ/qq $out/bin/qq \
         --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
-        --prefix LD_PRELOAD : "${lib.makeLibraryPath [ libssh2 ]}/libssh2.so.1" \
+        --prefix LD_PRELOAD : "${lib.makeLibraryPath [libssh2]}/libssh2.so.1" \
         --prefix LD_LIBRARY_PATH : "${
-          lib.makeLibraryPath [
-            libGL
-            libuuid
-          ]
-        }" \
+        lib.makeLibraryPath [
+          libGL
+          libuuid
+        ]
+      }" \
         --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true --wayland-text-input-version=3}}" \
         --add-flags ${lib.escapeShellArg commandLineArgs} \
         "''${gappsWrapperArgs[@]}" ${lib.optionalString disableAutoUpdate ''
-          \
-          --set INTERNAL_VERSION "$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' $out/opt/QQ/resources/app/package.json)" \
-          --run '${versionConfigScript} || true'
-        ''}
+        \
+        --set INTERNAL_VERSION "$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' $out/opt/QQ/resources/app/package.json)" \
+        --run '${versionConfigScript} || true'
+      ''}
 
       # Remove bundled libraries
       rm -r $out/opt/QQ/resources/app/libssh2.so.1
@@ -166,12 +162,12 @@ stdenv.mkDerivation {
       runHook postInstall
     '';
 
-  meta = with lib; {
-    homepage = "https://im.qq.com/index/";
-    description = "Messaging app";
-    platforms = [ "x86_64-linux" ];
-    license = licenses.unfree;
-    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    mainProgram = "qq";
-  };
-}
+    meta = with lib; {
+      homepage = "https://im.qq.com/index/";
+      description = "Messaging app";
+      platforms = ["x86_64-linux"];
+      license = licenses.unfree;
+      sourceProvenance = with sourceTypes; [binaryNativeCode];
+      mainProgram = "qq";
+    };
+  }

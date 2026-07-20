@@ -1,27 +1,32 @@
-# Per-Host NixOS Configurations
+# Per-Host NixOS Configuration
 
-Each subdirectory is a NixOS host, loaded by `configuration.nix` via:
+Each host has:
 
-```nix
-imports = [ ./config/${host.hostname}/default.nix ];
+```text
+nixos/config/<hostname>/default.nix
 ```
 
-## Structure
+`nixos/configuration.nix` imports it dynamically from `host.hostname`.
+The output layer checks that the path exists and reports what to create; it does
+not generate or overwrite a host configuration.
 
-Each host config should include its own:
-- Boot/loader settings
-- Networking (firewall, NetworkManager, DHCP)
-- Timezone, locale, console
-- Users and groups
-- System packages
-- Programs and services
-- Virtualization settings
+Host files are intentionally self-contained. They include boot settings,
+hardware, GNOME/GDM Wayland, fonts, packages, services, containers, and any
+host-specific defaults.
 
-Only `networking.hostName` is set in the shared `configuration.nix` (derived from `host.hostname`).
+`nixos/configuration.nix` only performs global wiring such as dynamic imports,
+nixpkgs overlays, Nix settings, SSH defaults, and `system.stateVersion`. It is
+not the place for desktop, workstation, or host policy.
 
-## Adding a New Host
+Hasee additionally contains NVIDIA PRIME render offload, Steam NVIDIA defaults,
+virtualization, Sunshine, and the data disk. Pixelbook contains its boot,
+resume, audio, printer, and optional service settings.
 
-1. Create `./your-hostname/default.nix`
-2. Add corresponding `nixos/disko/your-hostname.nix`
-3. Add placeholder `nixos/factors/your-hostname.json`
-4. Register the host in `flake.nix` hosts list
+## Adding a Host
+
+1. Add the record to `outputs/hosts.nix`.
+2. Create `nixos/config/<hostname>/default.nix`.
+3. Create `nixos/disko/<hostname>.nix`.
+4. Add `nixos/factors/<hostname>.json`.
+5. Add every configured user under `nixos/users/<hostname>/`.
+6. Add HM entries under `home-manager/<hostname>/` where required.

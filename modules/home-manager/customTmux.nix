@@ -4,13 +4,9 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customTmux;
-in
-{
+in {
   options.programs.customTmux = {
     enable = mkEnableOption "tmux terminal multiplexer";
 
@@ -31,17 +27,16 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = [ cfg.package ];
+      packages = [cfg.package];
 
       # Copy tmux configuration from templates and replace shell
-      file.".config/tmux/tmux.conf".text =
-        let
-          tmuxConf = builtins.readFile ../templates/tmux/tmux.conf;
-        in
+      file.".config/tmux/tmux.conf".text = let
+        tmuxConf = builtins.readFile ../templates/tmux/tmux.conf;
+      in
         builtins.replaceStrings
-          [ "set -g default-command /bin/zsh" ]
-          [ "set -g default-command ${cfg.shell}" ]
-          tmuxConf;
+        ["set -g default-command /bin/zsh"]
+        ["set -g default-command ${cfg.shell}"]
+        tmuxConf;
 
       # Copy plugins from templates
       file.".config/tmux/plugins" = {

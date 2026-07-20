@@ -1,18 +1,17 @@
 # Hasee — Intel/NVIDIA laptop migrated from Arch Linux
 {
-  pkgs,
   outputs,
+  pkgs,
+  primaryUser,
   ...
-}:
-let
+}: let
   nvidiaPrimeEnv = {
     __NV_PRIME_RENDER_OFFLOAD = "1";
     __NV_PRIME_RENDER_OFFLOAD_PROVIDER = "NVIDIA-G0";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     __VK_LAYER_NV_optimus = "NVIDIA_only";
   };
-in
-{
+in {
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
@@ -22,7 +21,6 @@ in
     outputs.nixosModules.virtualizationHost
   ];
 
-  # ── 引导 ──────────────────────────────────────────────
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -33,7 +31,14 @@ in
     };
     kernelPackages = pkgs.unstable.linuxPackages_latest;
     plymouth.enable = true;
-    initrd.systemd.enable = true;
+    initrd = {
+      systemd.enable = true;
+      kernelModules = [
+        "i915"
+        "vfio"
+        "vfio_pci"
+      ];
+    };
     kernelParams = [
       "quiet"
       "splash"
@@ -46,11 +51,6 @@ in
       "kvm.ignore_msrs=1"
       "vfio-pci.ids=15b7:5002"
     ];
-    initrd.kernelModules = [
-      "i915"
-      "vfio"
-      "vfio_pci"
-    ];
     kernelModules = [
       "kvm-intel"
       "vfio"
@@ -61,9 +61,7 @@ in
       "nvidia_modeset"
       "nvidia_drm"
     ];
-    blacklistedKernelModules = [
-      "nouveau"
-    ];
+    blacklistedKernelModules = ["nouveau"];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
       options vfio-pci ids=15b7:5002
@@ -72,8 +70,6 @@ in
     '';
   };
 
-  # Existing data SSD. The NixOS install target is /dev/sda only; keep this
-  # mount explicit so disko never manages the data disk.
   fileSystems."/data" = {
     device = "/dev/disk/by-uuid/9647d1d7-540b-4fdf-ac99-61f64ae84568";
     fsType = "ext4";
@@ -88,9 +84,8 @@ in
     memoryPercent = 50;
   };
 
-  # ── 电源管理 ──────────────────────────────────────────
   powerManagement.enable = true;
-  # ── 网络 ──────────────────────────────────────────────
+
   networking = {
     firewall.enable = false;
     networkmanager = {
@@ -101,7 +96,6 @@ in
     dhcpcd.enable = false;
   };
 
-  # ── 时区与语言 ────────────────────────────────────────
   time.timeZone = "Asia/Shanghai";
 
   i18n = {
@@ -117,7 +111,6 @@ in
     keyMap = "us";
   };
 
-  # ── 硬件 ──────────────────────────────────────────────
   hardware = {
     enableRedistributableFirmware = true;
     cpu.intel.updateMicrocode = true;
@@ -135,7 +128,6 @@ in
     };
 
     nvidia = {
-      # RTX 3050 Mobile (Ampere) supports NVIDIA's open kernel modules.
       open = true;
       modesetting.enable = true;
 
@@ -145,13 +137,9 @@ in
       };
 
       prime = {
-        # lspci: Intel 0000:00:02.0, NVIDIA 0000:01:00.0.
         intelBusId = "PCI:0@0:2:0";
         nvidiaBusId = "PCI:1@0:0:0";
 
-        # Keep Intel as the desktop GPU and offload only selected applications.
-        sync.enable = false;
-        reverseSync.enable = false;
         offload = {
           enable = true;
           enableOffloadCmd = true;
@@ -166,35 +154,11 @@ in
     };
   };
 
-  # ── 用户 ──────────────────────────────────────────────
-  users.users.steve = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "docker"
-      "kvm"
-      "networkmanager"
-      "video"
-      "input"
-      "uinput"
-      "adbusers"
-      "wireshark"
-      "libvirtd"
-    ];
-    shell = pkgs.zsh;
-    initialPassword = "passwd";
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnNd0LwwqP2zdbaY9F4SjYX4Wmjkvo1aCJ0EOh37CFt hjzhang216@gmail.com"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHKEBaHem+gU3ZFXceYBSXi6tdiQ6B6fkMo2dAy3R3rQ hjzhang216@gmail.com"
-    ];
-  };
-
   security = {
     sudo.wheelNeedsPassword = false;
     pki.certificateFiles = [
       ../../../modules/templates/certs/mitmproxy-ca-cert.pem
     ];
-
     wrappers.sparkle = {
       owner = "root";
       group = "root";
@@ -203,7 +167,6 @@ in
     };
   };
 
-  # ── 系统包 ────────────────────────────────────────────
   environment = {
     systemPackages = with pkgs; [
       sparkle
@@ -231,7 +194,6 @@ in
       tigervnc
       cisco-packettracer
     ];
-
     sessionVariables = {
       LIBVA_DRIVER_NAME = "iHD";
       LIBVA_DRIVERS_PATH = "/run/current-system/sw/lib/dri";
@@ -240,10 +202,8 @@ in
 
   systemd.tmpfiles.rules = [
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
-    "d /data/share 0775 steve users - -"
   ];
 
-  # ── 字体 ──────────────────────────────────────────────
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack
@@ -282,29 +242,24 @@ in
     };
   };
 
-  # ── 程序 ──────────────────────────────────────────────
   programs = {
     zsh.enable = true;
     dconf.enable = true;
     adb.enable = true;
-    wireshark = {
-      enable = true;
-      package = pkgs.wireshark;
-    };
-
     git = {
       enable = true;
       lfs.enable = true;
     };
-
+    wireshark = {
+      enable = true;
+      package = pkgs.wireshark;
+    };
     steam = {
       enable = true;
-      # Steam and games launched by it inherit PRIME render-offload variables.
       package = pkgs.steam.override {
         extraEnv = nvidiaPrimeEnv;
       };
     };
-
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
@@ -334,35 +289,16 @@ in
     };
   };
 
-  # ── 服务 ──────────────────────────────────────────────
   services = {
     thermald.enable = true;
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
-    xserver = {
-      # Keep the desktop Wayland-only. videoDrivers is still the NixOS switch
-      # that enables the NVIDIA driver module for PRIME render offload.
-      enable = false;
-      videoDrivers = ["nvidia"];
-    };
-    switcherooControl.enable = true;
-
-    fwupd.enable = true;
+    libinput.enable = false;
     gnome.gnome-remote-desktop.enable = true;
     logind.settings.Login.HandlePowerKey = "ignore";
-    sunshine = {
-      enable = true;
-      package = pkgs.sunshine;
-      openFirewall = true;
-      capSysAdmin = true;
-    };
     todesk.enable = true;
-
-    desktopManager.gnome = {
-      enable = true;
-    };
-
+    desktopManager.gnome.enable = true;
     displayManager = {
       gdm = {
         enable = true;
@@ -371,19 +307,21 @@ in
       defaultSession = "gnome";
       autoLogin = {
         enable = true;
-        user = "steve";
+        user = primaryUser;
       };
     };
-
-    libinput = {
+    xserver = {
+      enable = false;
+      videoDrivers = ["nvidia"];
+    };
+    switcherooControl.enable = true;
+    fwupd.enable = true;
+    sunshine = {
       enable = true;
-      touchpad = {
-        naturalScrolling = false;
-        tapping = false;
-        clickMethod = "clickfinger";
-      };
+      package = pkgs.sunshine;
+      openFirewall = true;
+      capSysAdmin = true;
     };
-
     docker-easyconnect = {
       enable = true;
       socksPort = 1080;
@@ -392,7 +330,6 @@ in
       mode = "proxy";
       vncPassword = "passwd";
     };
-
     dnsmasq-dhcp = {
       enable = false;
       interface = "enp3s0";
@@ -403,23 +340,18 @@ in
       dns = "8.8.8.8";
       staticBindings = [];
     };
-
     nps-ehang = {
       enable = true;
       webIp = "127.0.0.1";
       webPort = 18080;
       bridgePort = 18024;
       adminPassword = "passwd";
-      allowPorts = [
-        "20000-20100"
-      ];
+      allowPorts = ["20000-20100"];
     };
-
     virtualizationHost.enable = true;
     wine-gui-tools.enable = true;
   };
 
-  # ── 虚拟化 ────────────────────────────────────────────
   virtualisation = {
     docker = {
       enable = true;
@@ -427,25 +359,23 @@ in
     };
     oci-containers = {
       backend = "docker";
-      containers.vm-filedrop = {
-        image = "awkto/filedrop:latest";
+      containers.pairdrop = {
+        image = "lscr.io/linuxserver/pairdrop:latest";
         autoStart = true;
-        ports = [
-          "0.0.0.0:8088:3000"
-        ];
-        volumes = [
-          "/data/share:/data"
-        ];
+        ports = ["0.0.0.0:8090:3000"];
         environment = {
-          PORT = "3000";
-          UPLOAD_DIR = "/data";
-          MAX_FILE_SIZE = "8192";
+          PUID = "1000";
+          PGID = "100";
+          WS_FALLBACK = "true";
+          RATE_LIMIT = "false";
+          RTC_CONFIG = "false";
+          DEBUG_MODE = "false";
+          TZ = "Asia/Shanghai";
         };
       };
     };
   };
 
-  # ── 主题 ──────────────────────────────────────────────
   stylix = {
     enable = true;
     autoEnable = false;

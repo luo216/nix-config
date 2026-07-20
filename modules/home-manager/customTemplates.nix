@@ -3,38 +3,32 @@
   lib,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   cfg = config.programs.customTemplates;
 
   # Function to create file mappings from templates directory
-  createFileMappings =
-    mappings:
+  createFileMappings = mappings:
     lib.listToAttrs (
       map (
         mapping:
-        if mapping.recursive then
-          {
+          if mapping.recursive
+          then {
             name = mapping.target;
             value = {
               source = ../templates + "/${mapping.source}";
               recursive = true;
             };
           }
-        else
-          {
+          else {
             name = mapping.target;
             value = {
               source = ../templates + "/${mapping.source}";
             };
           }
-      ) mappings
+      )
+      mappings
     );
-
-in
-{
+in {
   options = {
     programs.customTemplates = {
       enable = mkEnableOption "Enable template files mapping";
@@ -63,7 +57,7 @@ in
             };
           }
         );
-        default = [ ];
+        default = [];
         description = ''
           List of file/directory mappings from templates directory to home directory.
           Source paths are relative to modules/templates directory.

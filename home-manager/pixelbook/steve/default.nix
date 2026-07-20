@@ -5,11 +5,9 @@
   pkgs,
   user,
   ...
-}:
-{
+}: {
   # Import modular configurations
   imports = [
-    outputs.homeManagerModules.customBase
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
@@ -286,10 +284,4 @@
       ];
     };
   };
-
-  # Nicely reload system units when changing configs
-  systemd.user.startServices = "sd-switch";
-
-  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "25.11";
 }
