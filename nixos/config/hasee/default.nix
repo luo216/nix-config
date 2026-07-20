@@ -3,7 +3,16 @@
   pkgs,
   outputs,
   ...
-}: {
+}:
+let
+  nvidiaPrimeEnv = {
+    __NV_PRIME_RENDER_OFFLOAD = "1";
+    __NV_PRIME_RENDER_OFFLOAD_PROVIDER = "NVIDIA-G0";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    __VK_LAYER_NV_optimus = "NVIDIA_only";
+  };
+in
+{
   imports = [
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
@@ -46,6 +55,11 @@
       "kvm-intel"
       "vfio"
       "vfio_pci"
+      # services.xserver remains disabled for the Wayland-only desktop, so load
+      # the NVIDIA DRM stack explicitly instead of relying on the X11 module.
+      "nvidia"
+      "nvidia_modeset"
+      "nvidia_drm"
     ];
     blacklistedKernelModules = [
       "nouveau"
@@ -111,12 +125,38 @@
 
     graphics = {
       enable = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [
         intel-media-driver
         intel-vaapi-driver
         libva-vdpau-driver
         libvdpau-va-gl
       ];
+    };
+
+    nvidia = {
+      # RTX 3050 Mobile (Ampere) supports NVIDIA's open kernel modules.
+      open = true;
+      modesetting.enable = true;
+
+      powerManagement = {
+        enable = true;
+        finegrained = true;
+      };
+
+      prime = {
+        # lspci: Intel 0000:00:02.0, NVIDIA 0000:01:00.0.
+        intelBusId = "PCI:0@0:2:0";
+        nvidiaBusId = "PCI:1@0:0:0";
+
+        # Keep Intel as the desktop GPU and offload only selected applications.
+        sync.enable = false;
+        reverseSync.enable = false;
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+      };
     };
 
     bluetooth = {
@@ -257,6 +297,14 @@
       lfs.enable = true;
     };
 
+    steam = {
+      enable = true;
+      # Steam and games launched by it inherit PRIME render-offload variables.
+      package = pkgs.steam.override {
+        extraEnv = nvidiaPrimeEnv;
+      };
+    };
+
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
@@ -292,7 +340,13 @@
     dbus.enable = true;
     udisks2.enable = true;
     fstrim.enable = true;
-    xserver.videoDrivers = ["modesetting"];
+    xserver = {
+      # Keep the desktop Wayland-only. videoDrivers is still the NixOS switch
+      # that enables the NVIDIA driver module for PRIME render offload.
+      enable = false;
+      videoDrivers = ["nvidia"];
+    };
+    switcherooControl.enable = true;
 
     fwupd.enable = true;
     gnome.gnome-remote-desktop.enable = true;

@@ -17,6 +17,10 @@ A modular NixOS configuration system using Nix Flakes, supporting `nixos-anywher
 | pixelbook | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `.#deploy` |
 | hasee | x86_64-linux | NixOS (GNOME/Wayland) | Integrated | `192.168.31.129` |
 
+`hasee` keeps GNOME Wayland and display output on the Intel GPU. NVIDIA PRIME
+render offload is available through `nvidia-offload`; HMCL and Steam default to
+the RTX 3050 while ordinary desktop applications continue to use Intel.
+
 ## Directory Structure
 
 ```

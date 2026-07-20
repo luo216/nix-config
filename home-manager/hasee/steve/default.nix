@@ -1,6 +1,7 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
+  lib,
   outputs,
   pkgs,
   user,
@@ -118,6 +119,17 @@
     videos = "$HOME/Videos";
   };
 
+  xdg.desktopEntries.HMCL = {
+    name = "HMCL";
+    genericName = "Minecraft Launcher";
+    comment = "Minecraft Launcher (NVIDIA PRIME Offload)";
+    exec = lib.getExe pkgs.hmcl-nvidia;
+    icon = "hmcl";
+    terminal = false;
+    categories = ["Game"];
+    prefersNonDefaultGPU = true;
+  };
+
   # User packages
   home.packages = with pkgs; [
     # === 编辑器 ===
@@ -223,6 +235,7 @@
     qq # QQ
     wechat # 微信
     wemeet # 腾讯会议
+    hmcl-nvidia # Minecraft launcher（默认使用 NVIDIA PRIME offload）
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
     codex-desktop # Codex Desktop（Electron GUI）
 

@@ -6,6 +6,7 @@ pkgs: {
   cisco-packettracer = pkgs.callPackage ./cisco-packettracer.nix {};
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix {};
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix {};
+  hmcl-nvidia = pkgs.callPackage ./hmcl-nvidia.nix {};
   nps-ehang = pkgs.callPackage ./nps-ehang.nix {};
   qq = pkgs.callPackage ./qq.nix {};
   sunshine = pkgs.callPackage ./sunshine.nix {};

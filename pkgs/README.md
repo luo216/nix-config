@@ -17,6 +17,7 @@ nix build .#wechat
 | cc-switch-cli | CLI tool for switching Claude Code sessions |
 | codex-desktop | Codex Desktop (ilysenko Linux build) |
 | google-chrome-stable | Google Chrome Stable from Google's current deb |
+| hmcl-nvidia | HMCL wrapped to default to NVIDIA PRIME render offload |
 | qq | QQ (Linux) |
 | wechat | WeChat (Linux AppImage) |
 | wemeet | Tencent WeMeet with Wayland screenshare support |
