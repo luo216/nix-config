@@ -17,6 +17,7 @@
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
+    outputs.homeManagerModules.customPiWebLauncher # Pi Coding Agent Web UI launcher
     outputs.homeManagerModules.customCtfMsf # Metasploit toolkit
   ];
 
@@ -252,6 +253,8 @@
   ];
 
   services = {
+    customPiWebLauncher.enable = true;
+
     udiskie = {
       enable = true;
       automount = true;

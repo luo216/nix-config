@@ -11,6 +11,7 @@
 | `customFcitx5` | `programs.customFcitx5` | Chinese input method |
 | `customFonts` | `programs.customFonts` | User fonts and fontconfig |
 | `customGhostty` | `programs.customGhostty` | Ghostty terminal |
+| `customPiWebLauncher` | `services.customPiWebLauncher` | External pi-web systemd user launcher |
 | `customRainbarf` | `programs.customRainbarf` | tmux resource monitor |
 | `customTemplates` | `programs.customTemplates` | Static file mappings |
 | `customTmux` | `programs.customTmux` | tmux configuration |
