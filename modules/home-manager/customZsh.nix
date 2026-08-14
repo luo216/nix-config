@@ -46,6 +46,14 @@ in {
           export RAINBARF="$HOME/.config/rainbarf/rainbarf.conf"
           export NPM_CONFIG_PREFIX="$HOME/.npm-global"
           export PATH="$HOME/.npm-global/bin:$PATH"
+
+          # fnm: opt-in Node version manager for projects with special requirements.
+          # Run `fnm-use` inside a project (reads .nvmrc/.node-version) to switch this shell.
+          fnm-use() {
+            eval "$(${pkgs.fnm}/bin/fnm env)"
+            ${pkgs.fnm}/bin/fnm use "$@"
+          }
+
           export FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf"
           KEYTIMEOUT=25
         '';

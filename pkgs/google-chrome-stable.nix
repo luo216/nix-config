@@ -85,8 +85,8 @@
 }: let
   opusWithCustomModes = libopus.override {withCustomModes = true;};
 
-  version = "150.0.7871.100";
-  hash_deb_amd64 = "sha256-SbV/ACzm31CA1fglQtxc8RdBuTeal/HXXXtUFa0IYHk=";
+  version = "150.0.7871.186";
+  hash_deb_amd64 = "sha256-QZPgC21dWWnuY/emlZaGj1RqoOjLB3s+C/nMHixxnQA=";
 
   deps =
     [

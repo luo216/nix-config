@@ -18,6 +18,7 @@
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
     outputs.homeManagerModules.customPiWebLauncher # Pi Coding Agent Web UI launcher
+    outputs.homeManagerModules.customDshLauncher # DeepSeek Harness (dsh web) launcher
     outputs.homeManagerModules.customCtfMsf # Metasploit toolkit
   ];
 
@@ -151,8 +152,8 @@
     cargo # Rust package manager and build tool
     gcc # C compiler
     gnumake # Build automation tool
-    nodejs_24 # Node.js 24
-    bun # Fast JavaScript runtime and package manager
+    nodejs_24 # Node.js 24 (global default; fnm below is for per-project overrides)
+    fnm # Fast Node version manager (per-project Node versions)
     tree-sitter # Tree-sitter CLI
     uv # Python package installer (uvx for running tools)
 
@@ -254,6 +255,7 @@
 
   services = {
     customPiWebLauncher.enable = true;
+    customDshLauncher.enable = true;
 
     udiskie = {
       enable = true;

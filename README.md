@@ -130,6 +130,39 @@ Deploy a configured host:
 nix run .#deploy -- .#hasee
 ```
 
+## Externally Managed Software
+
+A handful of tools are intentionally kept outside the Nix store. They live in
+`~/.npm-global` (the prefix set by `NPM_CONFIG_PREFIX` in
+`modules/home-manager/customZsh.nix`) and are installed/updated with `npm`, not
+Nix. The Home Manager modules below only **launch** them; they do not install
+them, so a missing install shows up as a failed service rather than a failed
+build.
+
+| Tool | npm package | Launched by | Install |
+|------|-------------|-------------|---------|
+| pi-web | `@agegr/pi-web` | `services.customPiWebLauncher` | `npm i -g @agegr/pi-web` |
+| dsh (DeepSeek Harness) | `@deepseek-ai/dsh` | `services.customDshLauncher` | `npm i -g @deepseek-ai/dsh` |
+| Codex CLI | `@openai/codex` | `codex-desktop` wrapper | `npm i -g @openai/codex` |
+
+`codex-desktop` (`pkgs/codex-desktop-linux.nix`) resolves its CLI through, in
+order: `CODEX_CLI_PATH`, `~/.npm-global/bin/codex`, `~/.local/bin/codex`,
+`~/.bun/bin/codex`, `~/.local/share/pnpm/codex`, then the system `codex`.
+
+`cc-switch` (`pkgs/cc-switch-cli.nix`) switches provider profiles for Claude
+Code, Codex, Gemini, OpenCode, and OpenClaw. Install whichever of those CLIs
+you use:
+
+```bash
+npm i -g @anthropic-ai/claude-code   # Claude Code → `claude`
+npm i -g @openai/codex               # Codex → `codex`
+npm i -g @google/gemini-cli          # Gemini CLI
+npm i -g opencode-ai                 # OpenCode → `opencode`
+```
+
+When a new launcher module or wrapper expects an npm-installed binary, add it
+to this list.
+
 ## Adding a Host
 
 Add the host record to `outputs/hosts.nix`. No template files are generated.
