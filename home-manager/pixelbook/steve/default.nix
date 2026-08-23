@@ -178,6 +178,7 @@
     # === 桌面应用 ===
     moonlight-qt # Video player
     google-chrome-stable # Web browser
+    obsidian # Markdown knowledge base
     wpsoffice-cn # WPS Office 中文版（官方）
     qq # QQ
     wechat # 微信
