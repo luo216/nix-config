@@ -10,6 +10,7 @@ pkgs: {
   nps-ehang = pkgs.callPackage ./nps-ehang.nix {};
   qq = pkgs.callPackage ./qq.nix {};
   sunshine = pkgs.callPackage ./sunshine.nix {};
+  todesk = pkgs.callPackage ./todesk.nix {};
   wechat = pkgs.callPackage ./wechat.nix {};
   wemeet = pkgs.callPackage ./wemeet {};
   wpsoffice-cn = pkgs.callPackage ./wpsoffice-cn.nix {};

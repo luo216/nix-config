@@ -202,6 +202,11 @@ in {
 
   systemd.tmpfiles.rules = [
     "L+ /usr/bin/bwrap - - - - ${pkgs.bubblewrap}/bin/bwrap"
+    "d /var/log/todesk 0755 root root -"
+  ];
+
+  systemd.services.todeskd.serviceConfig.ReadWritePaths = [
+    "/var/log/todesk"
   ];
 
   fonts = {
