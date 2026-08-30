@@ -24,10 +24,10 @@
   pango,
 }: let
   pname = "wpsoffice-cn";
-  version = "12.1.2.26885";
+  version = "12.1.2.28080";
 
-  wpsUrl = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/26885/wps-office_12.1.2.26885.AK.preread.sw.Personal_715971_amd64.deb";
-  wpsHash = "sha256-VdpRSUZ6FYS0ttEoDLWrBMBhRTl0gQ+slnmzO9hmTlE=";
+  wpsUrl = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/28080/wps-office_12.1.2.28080.AK.preread.sw.Personal_765474_amd64.deb";
+  wpsHash = "sha256-L6mZ9gpx4hCTq0nvbX9h12aMhEv+vzCQfSwpDkYPm+A=";
 
   src =
     runCommandLocal "wpsoffice-cn-${version}.deb"

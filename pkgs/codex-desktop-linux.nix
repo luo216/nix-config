@@ -5,27 +5,26 @@
   fetchurl,
   asar,
   bash,
-  cacert,
-  cargo,
   coreutils,
   curl,
-  findutils,
+  dpkg,
   gawk,
-  gcc,
   glib,
   gnugrep,
-  gnumake,
+  gnupg,
   gnused,
+  gsettings-desktop-schemas,
   gtk3,
   makeWrapper,
   nodejs,
-  _7zz,
   patchelf,
+  pipewire,
   procps,
   python3,
   systemd,
-  unzip,
+  util-linux,
   xdg-utils,
+  findutils,
   alsa-lib,
   at-spi2-atk,
   at-spi2-core,
@@ -35,75 +34,88 @@
   dbus,
   expat,
   gdk-pixbuf,
+  graphite2,
   libdrm,
   libgbm,
   libglvnd,
-  libxcrypt-legacy,
+  libnotify,
+  libusb1,
   libxkbcommon,
   mesa,
   nspr,
   nss,
+  openssl,
   pango,
   wayland,
+  xz,
+  zstd,
   xorg,
   zlib,
+  libxcrypt-legacy,
 }: let
   pname = "codex-desktop";
-  version = "0-unstable-2026-07-08";
+  upstreamVersion = "26.825.51511";
+  version = upstreamVersion;
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "90ea76122401255d74a28a2420d5d9e6c59aa72f";
-    hash = "sha256-kn5zXKpFzb563gS6vqTDrJXdwtRc9Y37PUJqQLRcXNM=";
+    rev = "e021215ca0743dd1403bb4c76765e4316d9eea4a";
+    hash = "sha256-mPKeLdRwZHWBLQ6uGULDaRgehdW0OSokNi64yXhbIrY=";
   };
 
-  codexDmg = fetchurl {
-    url = "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg";
-    hash = "sha256-b2evfi+TQJOriv687BE3TUDI24+RAPtmIPJBVUAdgxk=";
+  # OpenAI's official Linux package (amd64), pinned by the upstream repo:
+  # https://github.com/ilysenko/codex-desktop-linux/blob/main/nix/upstream-linux-packages.json
+  upstreamDeb = fetchurl {
+    url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/pool/main/c/chatgpt/chatgpt_${upstreamVersion}_amd64.deb";
+    hash = "sha256-NVSwAixs+1EzJvQ/0R9xiDWncIasTXyi/z67ui1Mf0U=";
   };
 
-  electronLibs = [
-    glib
-    gtk3
-    pango
-    cairo
-    gdk-pixbuf
+  runtimeLibraries = [
+    alsa-lib
     atk
     at-spi2-atk
     at-spi2-core
-    nss
-    nspr
-    dbus
+    cairo
     cups
+    dbus
     expat
+    gdk-pixbuf
+    glib
+    graphite2
+    gtk3
     libdrm
-    mesa
     libgbm
-    alsa-lib
+    libglvnd
+    libnotify
+    libusb1
+    libxkbcommon
+    mesa
+    nspr
+    nss
+    openssl
+    pango
+    pipewire
+    systemd
+    stdenv.cc.cc.lib
+    wayland
+    xz
+    zstd
     xorg.libX11
     xorg.libXcomposite
+    xorg.libXcursor
     xorg.libXdamage
     xorg.libXext
     xorg.libXfixes
-    xorg.libXrandr
-    xorg.libxcb
-    libxkbcommon
-    xorg.libXcursor
     xorg.libXi
-    xorg.libXtst
+    xorg.libXrandr
     xorg.libXScrnSaver
-    libglvnd
-    systemd
-    wayland
-  ];
-
-  electronLibPath = lib.makeLibraryPath electronLibs;
-  runtimeLibPath = lib.makeLibraryPath [
+    xorg.libXtst
+    xorg.libxcb
     libxcrypt-legacy
-    stdenv.cc.cc.lib
     zlib
   ];
+  runtimeLibraryPath = lib.makeLibraryPath runtimeLibraries;
   launcherPath = lib.makeBinPath [
     bash
     coreutils
@@ -112,172 +124,35 @@
     gawk
     gnugrep
     gnused
+    libnotify
     nodejs
     procps
     python3
     systemd
+    util-linux
     xdg-utils
   ];
-
-  patchNixGeneratedScripts = installDir: ''
-    if [ -f "${installDir}/start.sh" ]; then
-      ${gnused}/bin/sed -i '1s|^#!/bin/bash$|#!${bash}/bin/bash|' "${installDir}/start.sh"
-    fi
-  '';
-
-  patchNixInstalledApp = installDir: ''
-        if [ -f "${installDir}/start.sh" ]; then
-          ${gnused}/bin/sed -i '1s|^#!/bin/bash$|#!${bash}/bin/bash|' "${installDir}/start.sh"
-          if ! grep -q "NixOS Electron library path" "${installDir}/start.sh"; then
-            ${gnused}/bin/sed -i '2i# NixOS Electron library path for dlopen()ed GL/EGL libraries.\nexport LD_LIBRARY_PATH="${electronLibPath}:${runtimeLibPath}:''${LD_LIBRARY_PATH:-}"' "${installDir}/start.sh"
-          fi
-          if ! grep -q "codex_nixos_add_runtime_library_dirs" "${installDir}/start.sh"; then
-            ${gnused}/bin/sed -i '/^set -euo pipefail$/a\
-    \
-    codex_nixos_add_runtime_library_dirs() {\
-        local cache_home="''${XDG_CACHE_HOME:-''${HOME:-}/.cache}"\
-        local runtime_root="''${CODEX_PRIMARY_RUNTIME_ROOT:-''${CODEX_RUNTIME_ROOT:-$cache_home/codex-runtimes/codex-primary-runtime}}"\
-        local dir\
-    \
-        for dir in \\\
-            "$runtime_root/dependencies/python/lib" \\\
-            "$runtime_root/dependencies/python/lib/python3.12/site-packages/pillow.libs" \\\
-            "$runtime_root/dependencies/python/lib/python3.12/site-packages/numpy.libs" \\\
-            "$runtime_root/dependencies/node/node_modules/@img/sharp-libvips-linux-x64/lib" \\\
-            "$runtime_root/dependencies/node/node_modules/@img/sharp-linux-x64/lib" \\\
-            "$runtime_root/dependencies/node/node_modules/@napi-rs/canvas-linux-x64-gnu"; do\
-            if [ -d "$dir" ]; then\
-                LD_LIBRARY_PATH="$dir:''${LD_LIBRARY_PATH:-}"\
-            fi\
-        done\
-    \
-        export LD_LIBRARY_PATH\
-    }\
-    \
-    codex_nixos_add_runtime_library_dirs' "${installDir}/start.sh"
-          fi
-
-          if ! grep -q "\$HOME/.npm-global/bin/codex" "${installDir}/start.sh"; then
-            ${gnused}/bin/sed -i '/"\$HOME\/.local\/bin\/codex" \\/a\
-        "$HOME/.npm-global/bin/codex" \\' "${installDir}/start.sh"
-          fi
-        fi
-
-        if [ -f "${installDir}/electron" ]; then
-          patchelf --set-interpreter "$(cat ${stdenv.cc}/nix-support/dynamic-linker)" \
-            --set-rpath "${installDir}:${electronLibPath}" \
-            "${installDir}/electron"
-
-          if [ -f "${installDir}/chrome_crashpad_handler" ]; then
-            patchelf --set-interpreter "$(cat ${stdenv.cc}/nix-support/dynamic-linker)" \
-              "${installDir}/chrome_crashpad_handler" || true
-          fi
-
-          if [ -f "${installDir}/chrome-sandbox" ]; then
-            patchelf --set-interpreter "$(cat ${stdenv.cc}/nix-support/dynamic-linker)" \
-              "${installDir}/chrome-sandbox" || true
-          fi
-
-          find "${installDir}" -maxdepth 1 -name "*.so*" -type f | while read -r so; do
-            patchelf --set-rpath "${electronLibPath}" "$so" 2>/dev/null || true
-          done
-        fi
-  '';
-
-  payload = stdenv.mkDerivation {
-    pname = "codex-desktop-payload";
-    inherit version src;
-    __structuredAttrs = true;
-
-    nativeBuildInputs = [
-      bash
-      cargo
-      curl
-      gcc
-      gnumake
-      gnused
-      makeWrapper
-      nodejs
-      _7zz
-      patchelf
-      python3
-      unzip
-    ];
-
-    outputHashAlgo = "sha256";
-    outputHashMode = "recursive";
-    outputHash = "sha256-O3eYBHK+6zdExfViQ7c11tvofIy0q5uGkEpVfGCHAFo=";
-    unsafeDiscardReferences.out = true;
-
-    dontConfigure = true;
-    dontBuild = true;
-
-    installPhase = ''
-            runHook preInstall
-
-            export HOME="$TMPDIR/home"
-            export npm_config_cache="$TMPDIR/npm-cache"
-            export SSL_CERT_FILE="${cacert}/etc/ssl/certs/ca-bundle.crt"
-      export NIX_SSL_CERT_FILE="$SSL_CERT_FILE"
-      export npm_config_cafile="$SSL_CERT_FILE"
-      export CARGO_HOME="$TMPDIR/cargo-home"
-      export CODEX_MANAGED_NODE_SOURCE="${nodejs}"
-      mkdir -p "$HOME" "$npm_config_cache" "$CARGO_HOME"
-
-            source_dir="$TMPDIR/codex-source"
-            mkdir -p "$source_dir"
-            cp -R ./. "$source_dir/"
-            chmod -R u+w "$source_dir"
-            cp ${codexDmg} "$source_dir/Codex.dmg"
-
-            npm_tools="$TMPDIR/npm-tools"
-            npm install --prefix "$npm_tools" --ignore-scripts asar @electron/rebuild
-            patchShebangs "$npm_tools"
-            export PATH="$npm_tools/node_modules/.bin:$PATH"
-            substituteInPlace "$source_dir/scripts/lib/asar-patch.sh" \
-              --replace-fail "npx --yes asar" "asar" \
-              --replace-fail "npx asar" "asar"
-      substituteInPlace "$source_dir/scripts/lib/dmg.sh" \
-        --replace-fail "npx --yes asar" "asar"
-      if [ -f "$source_dir/scripts/patches/computer-use.js" ]; then
-        substituteInPlace "$source_dir/scripts/patches/computer-use.js" \
-          --replace-fail 'throw new Error("Required Linux Computer Use plugin gate patch failed: could not enable bundled Computer Use on Linux");' \
-          'console.warn("WARN: Could not enable bundled Computer Use on Linux - skipping Computer Use plugin gate patch"); return currentSource;'
-      fi
-
-      export CODEX_INSTALL_DIR="$out/opt/codex-desktop"
-            ${bash}/bin/bash "$source_dir/install.sh" "$source_dir/Codex.dmg"
-
-            rm -rf "$CODEX_INSTALL_DIR/resources/plugins/openai-bundled/plugins/computer-use"
-            marketplace="$CODEX_INSTALL_DIR/resources/plugins/openai-bundled/.agents/plugins/marketplace.json"
-            if [ -f "$marketplace" ]; then
-              node - "$marketplace" <<'NODE'
-            const fs = require("fs");
-            const marketplacePath = process.argv[2];
-            const marketplace = JSON.parse(fs.readFileSync(marketplacePath, "utf8"));
-            marketplace.plugins = (marketplace.plugins || []).filter((plugin) => plugin.name !== "computer-use");
-            fs.writeFileSync(marketplacePath, JSON.stringify(marketplace, null, 2) + "\n");
-      NODE
-            fi
-
-            asar extract "$CODEX_INSTALL_DIR/resources/app.asar" "$CODEX_INSTALL_DIR/resources/app-extracted"
-            rm -f "$CODEX_INSTALL_DIR/resources/app.asar"
-            rm -rf "$CODEX_INSTALL_DIR/resources/app.asar.unpacked"
-
-            ${patchNixGeneratedScripts "$out/opt/codex-desktop"}
-
-            runHook postInstall
-    '';
-  };
+  gsettingsSchemaDataDirs = lib.concatStringsSep ":" (map (pkg:
+    lib.removeSuffix "/glib-2.0/schemas" (glib.getSchemaPath pkg))
+  [gsettings-desktop-schemas gtk3]);
 in
   stdenv.mkDerivation {
-    inherit pname version;
-    src = payload;
+    inherit pname version src;
 
     nativeBuildInputs = [
       asar
+      bash
+      coreutils
+      curl
+      dpkg
+      gawk
+      gnugrep
+      gnupg
+      gnused
       makeWrapper
+      nodejs
       patchelf
+      util-linux
     ];
 
     dontConfigure = true;
@@ -286,62 +161,71 @@ in
     installPhase = ''
       runHook preInstall
 
-      mkdir -p "$out/opt"
-      cp -aT "$src/opt/codex-desktop" "$out/opt/codex-desktop"
-      chmod -R u+w "$out/opt/codex-desktop"
+      export HOME="$TMPDIR/home"
+      mkdir -p "$HOME"
 
-      resources_dir="$out/opt/codex-desktop/resources"
-      install -Dm0755 /dev/stdin "$resources_dir/bin/codex" <<'SH'
-      #!${bash}/bin/bash
-      set -euo pipefail
+      source_dir="$TMPDIR/source"
+      cp -R "$src" "$source_dir"
+      chmod -R u+w "$source_dir"
 
-      if [ -n "''${CODEX_CLI_PATH:-}" ] && [ "''${CODEX_CLI_PATH:-}" != "$0" ] && [ -x "$CODEX_CLI_PATH" ]; then
-        exec "$CODEX_CLI_PATH" "$@"
-      fi
+      # Install.sh applies ASAR feature patches via npx; point it at the
+      # packaged asar binary instead.
+      substituteInPlace "$source_dir/scripts/lib/asar-patch.sh" \
+        --replace-fail "npx --yes @electron/asar" "${asar}/bin/asar"
 
-      for candidate in \
-        "$HOME/.npm-global/bin/codex" \
-        "$HOME/.local/bin/codex" \
-        "$HOME/.bun/bin/codex" \
-        "$HOME/.local/share/pnpm/codex" \
-        "/run/current-system/sw/bin/codex" \
-        "/usr/local/bin/codex" \
-        "/usr/bin/codex"
-      do
-        if [ "$candidate" != "$0" ] && [ -x "$candidate" ]; then
-          exec "$candidate" "$@"
-        fi
-      done
+      export CODEX_INSTALL_TRANSACTION_ACTIVE=1
+      export CODEX_INSTALL_DIR="$out/opt/codex-desktop"
+      bash "$source_dir/install.sh" "${upstreamDeb}"
 
-      echo "Codex CLI is required but was not found. Set CODEX_CLI_PATH or install @openai/codex." >&2
-      exit 127
-      SH
-      ln -sfn bin/codex "$resources_dir/codex"
+      app="$out/opt/codex-desktop"
+      test -d "$app"
 
-      (cd "$resources_dir/app-extracted" && find . -type f | LC_ALL=C sort | sed 's#^\./##') > "$TMPDIR/app.asar.ordering"
-      asar pack "$resources_dir/app-extracted" "$resources_dir/app.asar" \
-        --ordering "$TMPDIR/app.asar.ordering" \
-        --unpack "{*.node,*.so,*.dylib}"
-      rm -rf "$resources_dir/app-extracted"
+      # Repoint ELF interpreters / RUNPATHs at the Nix store (same audit as upstream).
+      dynamic_linker="$(cat ${stdenv.cc}/nix-support/dynamic-linker)"
+      node "$source_dir/nix/elf-runtime.cjs" fix \
+        --root "$app" \
+        --arch amd64 \
+        --dynamic-linker "$dynamic_linker" \
+        --runtime-library-path "${runtimeLibraryPath}" \
+        --patchelf "${patchelf}/bin/patchelf" \
+        --chatgpt-relocator "$source_dir/nix/relocate-elf-interpreter.cjs"
+      patchShebangs --build "$app"
 
-      ${patchNixInstalledApp "$out/opt/codex-desktop"}
-
-      install -Dm0644 "$out/opt/codex-desktop/.codex-linux/codex-desktop.png" \
+      install -Dm0644 "$app/.codex-linux/codex-desktop.png" \
         "$out/share/icons/hicolor/256x256/apps/codex-desktop.png"
 
-      install -Dm0644 ${src}/packaging/linux/codex-desktop.desktop \
-        "$out/share/applications/codex-desktop.desktop"
+      mkdir -p "$out/share/applications"
+      awk '
+        /^\[Desktop Action CheckForUpdates\]$/ { skip = 1; next }
+        /^\[Desktop Action InstallReadyUpdate\]$/ { skip = 1; next }
+        /^\[/ { skip = 0 }
+        skip { next }
+        /^Actions=/ { print "Actions=new-window;"; next }
+        { print }
+      ' "$source_dir/packaging/linux/codex-desktop.desktop" \
+        > "$out/share/applications/codex-desktop.desktop"
       substituteInPlace "$out/share/applications/codex-desktop.desktop" \
         --replace-fail "/usr/bin/codex-desktop" "$out/bin/codex-desktop" \
         --replace-fail "/usr/share/applications/codex-desktop.desktop" "$out/share/applications/codex-desktop.desktop"
 
-      makeWrapper "$out/opt/codex-desktop/start.sh" "$out/bin/codex-desktop" \
-        --run 'if [ -n "''${HOME:-}" ]; then export PATH="$HOME/.npm-global/bin:$HOME/.local/bin:$PATH"; fi' \
-        --run 'user_name="''${USER:-$(id -un 2>/dev/null || true)}"; if [ -n "$user_name" ]; then export PATH="/etc/profiles/per-user/$user_name/bin:$PATH"; fi' \
+      makeWrapper "$app/start.sh" "$out/bin/codex-desktop" \
         --prefix PATH : "${launcherPath}" \
-        --prefix LD_LIBRARY_PATH : "${electronLibPath}" \
-        --prefix LD_LIBRARY_PATH : "${runtimeLibPath}" \
-        --prefix PATH : "/run/current-system/sw/bin"
+        --prefix PATH : "/run/current-system/sw/bin" \
+        --set-default ALSA_PLUGIN_DIR "${pipewire}/lib/alsa-lib" \
+        --run 'export XDG_DATA_DIRS="''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"' \
+        --prefix XDG_DATA_DIRS : "${gsettingsSchemaDataDirs}" \
+        --set-default BAMF_DESKTOP_FILE_HINT "$out/share/applications/codex-desktop.desktop" \
+        --set-default CODEX_CLI_PATH "$app/resources/codex" \
+        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform=wayland --enable-wayland-ime=true --wayland-text-input-version=3}}"
+
+      node "$source_dir/nix/elf-runtime.cjs" audit \
+        --root "$app" \
+        --arch amd64 \
+        --dynamic-linker "$dynamic_linker" \
+        --runtime-library-path "${runtimeLibraryPath}" \
+        --patchelf "${patchelf}/bin/patchelf"
+      node "$source_dir/nix/relocate-elf-interpreter.cjs" check \
+        "$app/ChatGPT" "$dynamic_linker"
 
       runHook postInstall
     '';
@@ -349,7 +233,7 @@ in
     meta = {
       description = "Codex Desktop for Linux";
       homepage = "https://github.com/ilysenko/codex-desktop-linux";
-      license = lib.licenses.mit;
+      license = lib.licenses.unfree;
       platforms = lib.platforms.linux;
       mainProgram = "codex-desktop";
     };
