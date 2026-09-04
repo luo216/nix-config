@@ -16,8 +16,6 @@
     outputs.homeManagerModules.customYazi # File manager (yazi)
     outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
-    outputs.homeManagerModules.customPiWebLauncher # Pi Coding Agent Web UI launcher
-    outputs.homeManagerModules.customDshLauncher # DeepSeek Harness (dsh web) launcher
   ];
 
   # Set your username and home directory from the flake
@@ -200,9 +198,6 @@
   ];
 
   services = {
-    customPiWebLauncher.enable = true;
-    customDshLauncher.enable = true;
-
     udiskie = {
       enable = true;
       automount = true;

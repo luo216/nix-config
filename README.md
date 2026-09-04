@@ -135,14 +135,12 @@ nix run .#deploy -- .#hasee
 A handful of tools are intentionally kept outside the Nix store. They live in
 `~/.npm-global` (the prefix set by `NPM_CONFIG_PREFIX` in
 `modules/home-manager/customZsh.nix`) and are installed/updated with `npm`, not
-Nix. The Home Manager modules below only **launch** them; they do not install
+Nix. Launchers and wrappers below only **launch** them; they do not install
 them, so a missing install shows up as a failed service rather than a failed
 build.
 
 | Tool | npm package | Launched by | Install |
 |------|-------------|-------------|---------|
-| pi-web | `@agegr/pi-web` | `services.customPiWebLauncher` | `npm i -g @agegr/pi-web` |
-| dsh (DeepSeek Harness) | `@deepseek-ai/dsh` | `services.customDshLauncher` | `npm i -g @deepseek-ai/dsh` |
 | Codex CLI | `@openai/codex` | `codex-desktop` wrapper | `npm i -g @openai/codex` |
 
 `codex-desktop` (`pkgs/codex-desktop-linux.nix`) resolves its CLI through, in
