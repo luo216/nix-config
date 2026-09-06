@@ -54,21 +54,21 @@
   libxcrypt-legacy,
 }: let
   pname = "codex-desktop";
-  upstreamVersion = "26.825.51511";
+  upstreamVersion = "26.901.51231";
   version = upstreamVersion;
 
   src = fetchFromGitHub {
     owner = "ilysenko";
     repo = "codex-desktop-linux";
-    rev = "e021215ca0743dd1403bb4c76765e4316d9eea4a";
-    hash = "sha256-mPKeLdRwZHWBLQ6uGULDaRgehdW0OSokNi64yXhbIrY=";
+    rev = "80366e51b5d7068951017a30f07a3499758fb2ac";
+    hash = "sha256-wLX35/1cbmg79G+z9Yi6hjqXVn+vfUNwdnVBIjaBcTQ=";
   };
 
   # OpenAI's official Linux package (amd64), pinned by the upstream repo:
   # https://github.com/ilysenko/codex-desktop-linux/blob/main/nix/upstream-linux-packages.json
   upstreamDeb = fetchurl {
     url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/pool/main/c/chatgpt/chatgpt_${upstreamVersion}_amd64.deb";
-    hash = "sha256-NVSwAixs+1EzJvQ/0R9xiDWncIasTXyi/z67ui1Mf0U=";
+    hash = "sha256-YlgBiNh8PTqTadq3xztCqKMlGNTfii1brmRm3erFwF4=";
   };
 
   runtimeLibraries = [
