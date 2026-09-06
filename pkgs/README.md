@@ -9,6 +9,8 @@ both as Flake packages and through the `additions` overlay.
 |---------|---------|
 | `cc-switch-cli` | CLI configuration switcher for AI coding tools |
 | `cisco-packettracer` | Cisco Packet Tracer |
+| `claude-desktop` | Claude Desktop (unpacked official .deb) |
+| `claude-desktop-fhs` | Claude Desktop inside a buildFHSEnv (MCP servers + Cowork VM stack) |
 | `codex-desktop` | Codex Desktop Linux package |
 | `google-chrome-stable` | Google Chrome Stable |
 | `hmcl-nvidia` | HMCL wrapped with NVIDIA PRIME offload variables |

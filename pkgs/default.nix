@@ -1,9 +1,15 @@
 # Custom packages, that can be defined similarly to ones from nixpkgs
 # You can build them using 'nix build .#example'
-pkgs: {
+# claude-desktop-fhs wraps the local claude-desktop, so build it here via
+# callPackage's override set instead of relying on name-based auto-injection.
+pkgs: let
+  claude-desktop = pkgs.callPackage ./claude-desktop.nix {};
+in {
   # example = pkgs.callPackage ./example { };
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix {};
   cisco-packettracer = pkgs.callPackage ./cisco-packettracer.nix {};
+  inherit claude-desktop;
+  claude-desktop-fhs = pkgs.callPackage ./claude-desktop-fhs.nix {inherit claude-desktop;};
   codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix {};
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix {};
   hmcl-nvidia = pkgs.callPackage ./hmcl-nvidia.nix {};
