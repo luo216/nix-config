@@ -182,6 +182,7 @@
     wechat # 微信
     wemeet # 腾讯会议
     cc-switch-cli # Claude Code / Codex / Gemini CLI 配置切换器（CLI）
+    claude-desktop # Claude Desktop（Electron GUI，不含 Cowork VM 栈）
     codex-desktop # Codex Desktop（Electron GUI）
 
     # === 系统工具 ===
