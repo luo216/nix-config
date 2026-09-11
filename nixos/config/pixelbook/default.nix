@@ -76,6 +76,7 @@
   };
 
   security = {
+    sudo.wheelNeedsPassword = false;
     pki.certificateFiles = [
       ../../../modules/templates/certs/mitmproxy-ca-cert.pem
     ];
