@@ -15,6 +15,11 @@ with lib; let
     installPhase = ''
       runHook preInstall
 
+      # Required by the teaching-plan template, including legacy FangSong_GB2312.
+      for font in lisu.ttf fs_GB2312.ttf simhei.ttf times.ttf; do
+        test -s "$font" || { echo "Missing teaching-plan font: $font" >&2; exit 1; }
+      done
+
       mkdir -p $out/share/fonts/truetype/windows
       find . -type f \( -iname '*.ttf' -o -iname '*.ttc' -o -iname '*.otf' \) \
         -exec cp -v {} $out/share/fonts/truetype/windows/ \;
