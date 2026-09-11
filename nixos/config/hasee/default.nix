@@ -13,7 +13,6 @@
   };
 in {
   imports = [
-    outputs.nixosModules.claude-desktop
     outputs.nixosModules.docker-easyconnect
     outputs.nixosModules.dnsmasq-dhcp
     outputs.nixosModules.nps-ehang
@@ -296,10 +295,6 @@ in {
   };
 
   services = {
-    claude-desktop = {
-      enable = true;
-      user = primaryUser;
-    };
     thermald.enable = true;
     dbus.enable = true;
     udisks2.enable = true;
