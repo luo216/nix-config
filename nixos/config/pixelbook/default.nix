@@ -166,6 +166,10 @@
       enable = true;
       lfs.enable = true;
     };
+    wireshark = {
+      enable = true;
+      package = pkgs.wireshark;
+    };
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
