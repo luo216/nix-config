@@ -134,6 +134,7 @@
     # === 开发工具 ===
     lazygit # Git GUI
     gh # GitHub CLI
+    gcc # C compiler（nvim-treesitter 编译 parser 所需，提供 cc）
     nodejs_24 # Node.js 24 (global default; fnm below is for per-project overrides)
     fnm # Fast Node version manager (per-project Node versions)
     tree-sitter # Tree-sitter CLI
