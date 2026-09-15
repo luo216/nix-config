@@ -154,6 +154,7 @@
     mkcert # Local certificate manager for HTTPS development
     nssTools # certutil for managing browser certificate databases
     freerdp # xfreerdp CLI client for RDP
+    mitmproxy # 拦截/修改/重放 HTTP(S) 流量（系统已信任其 CA 证书）
 
     # === 媒体工具 ===
     ffmpeg
