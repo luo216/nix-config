@@ -70,12 +70,21 @@
     ppdArgBlock = lib.optionalString (ppdArgs != "") ''
       ${ppdArgs} \
     '';
+    isIpp = lib.hasPrefix "ipp://" printer.deviceUri || lib.hasPrefix "ipps://" printer.deviceUri;
     probeBlock =
       if printer.testHosts == []
       then ''
         should_configure=1
       ''
-      else ''
+      else if isIpp then ''
+        should_configure=0
+        for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
+          if ${pkgs.curl}/bin/curl -s --connect-timeout 2 --max-time 3 -o /dev/null "http://$host:631/" 2>/dev/null; then
+            should_configure=1
+            break
+          fi
+        done
+      '' else ''
         should_configure=0
         for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
           if ${pkgs.iputils}/bin/ping -c 1 -W 1 "$host" >/dev/null 2>&1; then
