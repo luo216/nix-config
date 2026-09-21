@@ -232,7 +232,7 @@
       lfs.enable = true;
       settings = {
         user = {
-          name = "hjzhang";
+          name = "HJ-Zhang";
           email = "hjzhang216@gmail.com";
         };
       };
