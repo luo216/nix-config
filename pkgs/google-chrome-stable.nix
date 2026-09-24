@@ -47,8 +47,8 @@
   # Command line programs
   coreutils,
   # command line arguments which are always set e.g. "--disable-gpu"
-  # Enable VerticalTabs: --enable-features=VerticalTabs
-  commandLineArgs ? "--enable-features=VerticalTabs",
+  # Enable VerticalTabs and ForceDark: --enable-features=VerticalTabs,ForceDark
+  commandLineArgs ? "--enable-features=VerticalTabs,ForceDark",
   # Will crash without.
   systemd,
   # Loaded at runtime.
@@ -85,8 +85,8 @@
 }: let
   opusWithCustomModes = libopus.override {withCustomModes = true;};
 
-  version = "150.0.7871.186";
-  hash_deb_amd64 = "sha256-QZPgC21dWWnuY/emlZaGj1RqoOjLB3s+C/nMHixxnQA=";
+  version = "154.0.8037.57";
+  hash_deb_amd64 = "sha256-ZsBkX2oZhxurKES4U3wRoNsufTvqjvhaHHy1KlTmWj4=";
 
   deps =
     [
