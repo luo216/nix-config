@@ -92,6 +92,8 @@
     yazi = {
       enable = true;
       enableZshIntegration = true;
+      enableBashIntegration = true;
+      shellWrapperName = "ya";
       settings.mgr = {
         show_hidden = false;
         show_symlink = true;
