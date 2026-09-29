@@ -62,15 +62,6 @@ in {
           bindkey '^[[A' history-beginning-search-backward
           bindkey '^[[B' history-beginning-search-forward
 
-          # Yazi: change shell cwd on exit
-          ya() {
-            local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-            command yazi "$@" --cwd-file="$tmp"
-            IFS= read -r -d $'\0' cwd < "$tmp"
-            [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-            rm -f -- "$tmp"
-          }
-
           # Ctrl-n accepts autosuggestion
           bindkey '^n' autosuggest-accept
 

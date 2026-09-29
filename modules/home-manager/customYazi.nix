@@ -80,9 +80,9 @@ in {
   config = mkIf cfg.enable {
     programs.yazi = {
       enable = true;
-      enableZshIntegration = false;
-      enableBashIntegration = false;
-      shellWrapperName = "yy";
+      enableZshIntegration = true;
+      enableBashIntegration = true;
+      shellWrapperName = "ya";
       inherit (cfg) package;
       extraPackages = with pkgs; [
         file
