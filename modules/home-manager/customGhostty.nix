@@ -52,6 +52,9 @@ in {
         window-padding-x = 4;
         window-padding-y = 4;
 
+        # 启动即以最大化打开（对所有新窗口生效，不影响 tab/split）
+        maximize = true;
+
         # 滚动
         scrollback-limit = 10000;
 
