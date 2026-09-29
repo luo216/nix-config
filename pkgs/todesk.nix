@@ -43,15 +43,15 @@
   libpng,
   libayatana-appindicator,
 }: let
-  version = "4.8.6.2";
+  version = "4.9.6.0";
   todesk-unwrapped = stdenv.mkDerivation (finalAttrs: {
     pname = "todesk-unwrapped";
     version = version;
     src = fetchurl {
       url = "https://dl.todesk.com/linux/todesk-v${version}-amd64.deb";
-      hash = "sha256-s/Kvf8EglIkD3zqkVZVctYI/tcH17H3KF6yKTLpTyAg=";
-      # dl.todesk.com is behind Tencent EdgeOne WAF; a browser UA is required
-      curlOptsList = ["--user-agent" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"];
+      hash = "sha256-t+KgiUmW7k40/LPd+zlpLHKUPAWxM6c69J9IBD19rBY=";
+      # dl.todesk.com is behind Tencent EdgeOne WAF; 'Mozilla' UA is required
+      curlOptsList = ["--user-agent" "Mozilla"];
     };
     nativeBuildInputs = [dpkg];
 
