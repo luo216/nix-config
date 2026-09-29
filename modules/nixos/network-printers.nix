@@ -76,7 +76,8 @@
       then ''
         should_configure=1
       ''
-      else if isIpp then ''
+      else if isIpp
+      then ''
         should_configure=0
         for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
           if ${pkgs.curl}/bin/curl -s --connect-timeout 2 --max-time 3 -o /dev/null "http://$host:631/" 2>/dev/null; then
@@ -84,7 +85,8 @@
             break
           fi
         done
-      '' else ''
+      ''
+      else ''
         should_configure=0
         for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
           if ${pkgs.iputils}/bin/ping -c 1 -W 1 "$host" >/dev/null 2>&1; then

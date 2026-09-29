@@ -12,8 +12,8 @@ in {
 
     package = mkOption {
       type = types.package;
-      default = pkgs.perl540Packages.Apprainbarf;
-      defaultText = "pkgs.perl540Packages.Apprainbarf";
+      default = pkgs.perlPackages.Apprainbarf;
+      defaultText = "pkgs.perlPackages.Apprainbarf";
       description = "The rainbarf package to use.";
     };
 

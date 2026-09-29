@@ -6,7 +6,13 @@
   autoPatchelfHook,
   makeWrapper,
   nss,
-  xorg,
+  libx11,
+  libxdamage,
+  libxrandr,
+  libxext,
+  libsm,
+  libice,
+  libxtst,
   desktop-file-utils,
   libpulseaudio,
   libgcrypt,
@@ -63,9 +69,9 @@
       libsForQt5.qtwayland
       opencv4WithoutCuda
       pipewire
-      xorg.libXdamage
-      xorg.libXrandr
-      xorg.libX11
+      libxdamage
+      libxrandr
+      libx11
     ];
 
     dontWrapQtApps = true;
@@ -91,7 +97,7 @@
 
     nativeBuildInputs = [pkg-config];
 
-    buildInputs = [openssl libpulseaudio xorg.libX11];
+    buildInputs = [openssl libpulseaudio libx11];
 
     buildPhase = ''
       runHook preBuild
@@ -127,7 +133,7 @@
 
     nativeBuildInputs = [pkg-config];
 
-    buildInputs = [xorg.libX11];
+    buildInputs = [libx11];
 
     buildPhase = ''
       runHook preBuild
@@ -180,10 +186,10 @@ in
 
     buildInputs = [
       nss
-      xorg.libX11
-      xorg.libSM
-      xorg.libICE
-      xorg.libXtst
+      libx11
+      libsm
+      libice
+      libxtst
       desktop-file-utils
       libpulseaudio
       libgcrypt
@@ -245,7 +251,7 @@ in
         "--set QT_STYLE_OVERRIDE fusion"
         "--set IBUS_USE_PORTAL 1"
         "--set XKB_CONFIG_ROOT ${xkeyboard_config}/share/X11/xkb"
-        "--prefix LD_LIBRARY_PATH : $out/app/wemeet/lib:$out/translations:${xorg.libXext}/lib:${xorg.libXdamage}/lib:${opencv4WithoutCuda}/lib:${xorg.libXrandr}/lib"
+        "--prefix LD_LIBRARY_PATH : $out/app/wemeet/lib:$out/translations:${libxext}/lib:${libxdamage}/lib:${opencv4WithoutCuda}/lib:${libxrandr}/lib"
         "--prefix PATH : $out/app/wemeet/bin"
         "--prefix QT_PLUGIN_PATH : $out/app/wemeet/plugins"
       ];

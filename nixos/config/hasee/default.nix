@@ -160,17 +160,11 @@ in {
     pki.certificateFiles = [
       ../../../modules/templates/certs/mitmproxy-ca-cert.pem
     ];
-    wrappers.sparkle = {
-      owner = "root";
-      group = "root";
-      capabilities = "cap_net_admin,cap_net_raw+ep";
-      source = "${pkgs.sparkle}/bin/sparkle";
-    };
   };
 
   environment = {
     systemPackages = with pkgs; [
-      sparkle
+      android-tools
       vim
       wget
       curl
@@ -251,7 +245,10 @@ in {
   programs = {
     zsh.enable = true;
     dconf.enable = true;
-    adb.enable = true;
+    clash-verge = {
+      enable = true;
+      tunMode = true;
+    };
 
     # 奎享雕刻写字机器人上位机。串口走内核自带的 ch341 驱动，
     # 用户侧的 dialout 组归属见 nixos/users/hasee/steve。
@@ -311,10 +308,7 @@ in {
     todesk.enable = true;
     desktopManager.gnome.enable = true;
     displayManager = {
-      gdm = {
-        enable = true;
-        wayland = true;
-      };
+      gdm.enable = true;
       defaultSession = "gnome";
       autoLogin = {
         enable = true;

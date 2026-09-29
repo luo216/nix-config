@@ -15,10 +15,12 @@
   gtk3,
   libgbm,
   libusb1,
-  unixODBC,
+  unixodbc,
   libmysqlclient,
   libsForQt5,
-  xorg,
+  libxdamage,
+  libxtst,
+  libxv,
   cups,
   dbus,
   pango,
@@ -64,11 +66,11 @@ in
       gtk3
       libgbm
       libusb1
-      unixODBC
+      unixodbc
       libsForQt5.qtbase
-      xorg.libXdamage
-      xorg.libXtst
-      xorg.libXv
+      libxdamage
+      libxtst
+      libxv
     ];
 
     dontWrapQtApps = true;

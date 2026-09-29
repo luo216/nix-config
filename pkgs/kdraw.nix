@@ -21,7 +21,14 @@
   freetype,
   libpng,
   zlib,
-  xorg,
+  libx11,
+  libxau,
+  libxcb,
+  libxdmcp,
+  libxext,
+  libxi,
+  libxrender,
+  libxtst,
   xdg-utils,
 }: let
   pname = "kdraw";
@@ -68,14 +75,14 @@ in
       freetype
       libpng
       zlib
-      xorg.libX11
-      xorg.libXau
-      xorg.libxcb
-      xorg.libXdmcp
-      xorg.libXext
-      xorg.libXi
-      xorg.libXrender
-      xorg.libXtst
+      libx11
+      libxau
+      libxcb
+      libxdmcp
+      libxext
+      libxi
+      libxrender
+      libxtst
     ];
 
     # 只在运行时才 dlopen，构建期看不到引用，需要显式声明。

@@ -11,8 +11,8 @@ in {
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.wineWowPackages.stableFull;
-      defaultText = lib.literalExpression "pkgs.wineWowPackages.stableFull";
+      default = pkgs.wineWow64Packages.stableFull;
+      defaultText = lib.literalExpression "pkgs.wineWow64Packages.stableFull";
       description = ''
         Wine package used to run Windows GUI tools. The default keeps both
         32-bit and 64-bit support and enables the broader compatibility set.

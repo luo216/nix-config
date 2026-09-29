@@ -29,6 +29,6 @@ stdenvNoCC.mkDerivation rec {
     homepage = "https://github.com/router-for-me/CLIProxyAPI";
     license = licenses.mit;
     mainProgram = "cpa";
-    platforms = [ "x86_64-linux" ];
+    platforms = ["x86_64-linux"];
   };
 }

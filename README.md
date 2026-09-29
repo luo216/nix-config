@@ -1,6 +1,6 @@
 # NixOS Configuration
 
-Multi-host NixOS 25.11 configuration for x86_64 Linux desktops. The flake
+Multi-host NixOS 26.05 configuration for x86_64 Linux desktops. The flake
 manages NixOS systems, per-host users, integrated Home Manager, custom packages,
 disk layouts, hardware reports, and deploy-rs nodes.
 

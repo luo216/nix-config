@@ -36,6 +36,8 @@
 
   programs.home-manager.enable = true;
 
+  xdg.userDirs.setSessionVariables = true;
+
   systemd.user.startServices = "sd-switch";
 
   home.stateVersion = "25.11";

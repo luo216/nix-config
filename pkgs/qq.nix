@@ -17,7 +17,7 @@
   libpulseaudio,
   libGL,
   nss,
-  xorg,
+  libxdamage,
   systemd,
   stdenv,
   vips,
@@ -61,7 +61,7 @@ in
       libgbm
       nss
       vips
-      xorg.libXdamage
+      libxdamage
     ];
 
     dontWrapGApps = true;

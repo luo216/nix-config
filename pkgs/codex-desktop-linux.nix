@@ -49,7 +49,17 @@
   wayland,
   xz,
   zstd,
-  xorg,
+  libx11,
+  libxcomposite,
+  libxcursor,
+  libxdamage,
+  libxext,
+  libxfixes,
+  libxi,
+  libxrandr,
+  libxscrnsaver,
+  libxtst,
+  libxcb,
   zlib,
   libxcrypt-legacy,
 }: let
@@ -101,17 +111,17 @@
     wayland
     xz
     zstd
-    xorg.libX11
-    xorg.libXcomposite
-    xorg.libXcursor
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXi
-    xorg.libXrandr
-    xorg.libXScrnSaver
-    xorg.libXtst
-    xorg.libxcb
+    libx11
+    libxcomposite
+    libxcursor
+    libxdamage
+    libxext
+    libxfixes
+    libxi
+    libxrandr
+    libxscrnsaver
+    libxtst
+    libxcb
     libxcrypt-legacy
     zlib
   ];

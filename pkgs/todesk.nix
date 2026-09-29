@@ -30,16 +30,19 @@
   nss,
   libXxf86vm,
   libxcb,
-  xorg,
+  libxcb-util,
+  libxcb-wm,
+  libxcb-image,
+  libxcb-keysyms,
+  libxcb-render-util,
+  libxcb-cursor,
   gtk3,
   gdk-pixbuf,
   pango,
   libz,
   libpng,
   libayatana-appindicator,
-}:
-
-let
+}: let
   version = "4.8.6.2";
   todesk-unwrapped = stdenv.mkDerivation (finalAttrs: {
     pname = "todesk-unwrapped";
@@ -48,9 +51,9 @@ let
       url = "https://dl.todesk.com/linux/todesk-v${version}-amd64.deb";
       hash = "sha256-s/Kvf8EglIkD3zqkVZVctYI/tcH17H3KF6yKTLpTyAg=";
       # dl.todesk.com is behind Tencent EdgeOne WAF; a browser UA is required
-      curlOptsList = [ "--user-agent" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0" ];
+      curlOptsList = ["--user-agent" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"];
     };
-    nativeBuildInputs = [ dpkg ];
+    nativeBuildInputs = [dpkg];
 
     unpackPhase = ''
       runHook preUnpack
@@ -72,85 +75,83 @@ let
       mkdir -p "$out/share/icons"
       runHook postInstall
     '';
-
   });
-
 in
-buildFHSEnv {
-  inherit version;
-  pname = "todesk";
-  targetPkgs = pkgs: [
-    todesk-unwrapped
-    pulseaudio
-    nspr
-    kmod
-    libXi
-    systemdMinimal
-    glib
-    libz
-    libpng
-    bash
-    coreutils
-    libX11
-    libXext
-    libXrandr
-    glibc
-    libdrm
-    libgbm
-    libGL
-    procps
-    cairo
-    libXcomposite
-    libXdamage
-    libXfixes
-    libXtst
-    nss
-    libXxf86vm
-    libxcb
-    xorg.xcbutil
-    xorg.xcbutilwm
-    xorg.xcbutilimage
-    xorg.xcbutilkeysyms
-    xorg.xcbutilrenderutil
-    xorg.xcbutilcursor
-    gtk3
-    gdk-pixbuf
-    pango
-    libva
-  ];
-  extraBwrapArgs = [
-    "--tmpfs /opt/todesk"
-    "--bind /var/lib/todesk /opt/todesk/config"
-    "--bind ${todesk-unwrapped}/bin /opt/todesk/bin"
-    "--bind /var/lib/todesk /etc/todesk"
-  ];
-  runScript = writeShellScript "ToDesk.sh" ''
-    export LIBVA_DRIVER_NAME=iHD
-    export LIBVA_DRIVERS_PATH=${todesk-unwrapped}/bin
-    export LD_LIBRARY_PATH=/opt/todesk/bin''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    if [ "''${1}" = 'service' ]
-    then
-        /opt/todesk/bin/ToDesk_Service
-    else
-        /opt/todesk/bin/ToDesk
-    fi
-  '';
-  extraInstallCommands = ''
-    mkdir -p "$out/share/applications"
-    mkdir -p "$out/share/icons"
-    cp ${todesk-unwrapped}/usr/share/applications/todesk.desktop $out/share/applications
-    cp -rf ${todesk-unwrapped}/usr/share/icons/* $out/share/icons
-    substituteInPlace "$out/share/applications/todesk.desktop" \
-      --replace-fail '/opt/todesk/bin/ToDesk' "$out/bin/todesk desktop"
-    substituteInPlace "$out/share/applications/todesk.desktop" \
-      --replace-fail '/opt/todesk/bin' "${todesk-unwrapped}/lib"
-  '';
-  meta = {
-    description = "Remote Desktop Application";
-    homepage = "https://www.todesk.com/linux.html";
-    license = lib.licenses.unfree;
-    platforms = [ "x86_64-linux" ];
-    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
-    mainProgram = "todesk";
-  };
-}
+  buildFHSEnv {
+    inherit version;
+    pname = "todesk";
+    targetPkgs = pkgs: [
+      todesk-unwrapped
+      pulseaudio
+      nspr
+      kmod
+      libXi
+      systemdMinimal
+      glib
+      libz
+      libpng
+      bash
+      coreutils
+      libX11
+      libXext
+      libXrandr
+      glibc
+      libdrm
+      libgbm
+      libGL
+      procps
+      cairo
+      libXcomposite
+      libXdamage
+      libXfixes
+      libXtst
+      nss
+      libXxf86vm
+      libxcb
+      libxcb-util
+      libxcb-wm
+      libxcb-image
+      libxcb-keysyms
+      libxcb-render-util
+      libxcb-cursor
+      gtk3
+      gdk-pixbuf
+      pango
+      libva
+    ];
+    extraBwrapArgs = [
+      "--tmpfs /opt/todesk"
+      "--bind /var/lib/todesk /opt/todesk/config"
+      "--bind ${todesk-unwrapped}/bin /opt/todesk/bin"
+      "--bind /var/lib/todesk /etc/todesk"
+    ];
+    runScript = writeShellScript "ToDesk.sh" ''
+      export LIBVA_DRIVER_NAME=iHD
+      export LIBVA_DRIVERS_PATH=${todesk-unwrapped}/bin
+      export LD_LIBRARY_PATH=/opt/todesk/bin''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      if [ "''${1}" = 'service' ]
+      then
+          /opt/todesk/bin/ToDesk_Service
+      else
+          /opt/todesk/bin/ToDesk
+      fi
+    '';
+    extraInstallCommands = ''
+      mkdir -p "$out/share/applications"
+      mkdir -p "$out/share/icons"
+      cp ${todesk-unwrapped}/usr/share/applications/todesk.desktop $out/share/applications
+      cp -rf ${todesk-unwrapped}/usr/share/icons/* $out/share/icons
+      substituteInPlace "$out/share/applications/todesk.desktop" \
+        --replace-fail '/opt/todesk/bin/ToDesk' "$out/bin/todesk desktop"
+      substituteInPlace "$out/share/applications/todesk.desktop" \
+        --replace-fail '/opt/todesk/bin' "${todesk-unwrapped}/lib"
+    '';
+    meta = {
+      description = "Remote Desktop Application";
+      homepage = "https://www.todesk.com/linux.html";
+      license = lib.licenses.unfree;
+      platforms = ["x86_64-linux"];
+      sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
+      mainProgram = "todesk";
+    };
+  }

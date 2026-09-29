@@ -219,7 +219,7 @@
 
     customCpa = {
       enable = true;
-      apiKeys = [ "passwd" ];
+      apiKeys = ["passwd"];
       managementSecretKey = "passwd";
     };
   };

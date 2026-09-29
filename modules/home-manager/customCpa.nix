@@ -3,30 +3,35 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   cfg = config.services.customCpa;
   configFile = "${config.xdg.configHome}/cpa/config.yaml";
-  initialConfig =
-    let
-      managementLines =
-        if cfg.managementSecretKey == null then
-          [
-            "remote-management:"
-            "  allow-remote: ${if cfg.allowRemoteManagement then "true" else "false"}"
-            "  secret-key: \"\""
-            "  disable-control-panel: false"
-            "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
-          ]
-        else
-          [
-            "remote-management:"
-            "  allow-remote: ${if cfg.allowRemoteManagement then "true" else "false"}"
-            "  secret-key: ${builtins.toJSON cfg.managementSecretKey}"
-            "  disable-control-panel: false"
-            "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
-          ];
-    in
+  initialConfig = let
+    managementLines =
+      if cfg.managementSecretKey == null
+      then [
+        "remote-management:"
+        "  allow-remote: ${
+          if cfg.allowRemoteManagement
+          then "true"
+          else "false"
+        }"
+        "  secret-key: \"\""
+        "  disable-control-panel: false"
+        "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
+      ]
+      else [
+        "remote-management:"
+        "  allow-remote: ${
+          if cfg.allowRemoteManagement
+          then "true"
+          else "false"
+        }"
+        "  secret-key: ${builtins.toJSON cfg.managementSecretKey}"
+        "  disable-control-panel: false"
+        "  panel-github-repository: \"https://github.com/router-for-me/Cli-Proxy-API-Management-Center\""
+      ];
+  in
     lib.concatStringsSep "\n" (
       [
         "host: ${builtins.toJSON cfg.host}"
@@ -40,12 +45,15 @@ let
       ++ map (key: "  - ${builtins.toJSON key}") cfg.apiKeys
       ++ [
         "debug: false"
-        "usage-statistics-enabled: ${if cfg.usageStatisticsEnabled then "true" else "false"}"
+        "usage-statistics-enabled: ${
+          if cfg.usageStatisticsEnabled
+          then "true"
+          else "false"
+        }"
         ""
       ]
     );
-in
-{
+in {
   options.services.customCpa = with lib; {
     enable = mkEnableOption "CLIProxyAPI user service";
 
@@ -70,7 +78,7 @@ in
 
     apiKeys = mkOption {
       type = types.listOf types.str;
-      default = [ "change-me" ];
+      default = ["change-me"];
       description = "Client API keys accepted by CLIProxyAPI.";
     };
 
@@ -100,24 +108,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home.packages = [cfg.package];
 
-    home.activation.cpaBootstrapConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      config_dir="${config.xdg.configHome}/cpa"
-      config_file="${configFile}"
-      mkdir -p "$config_dir"
+    home.activation.cpaBootstrapConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            config_dir="${config.xdg.configHome}/cpa"
+            config_file="${configFile}"
+            mkdir -p "$config_dir"
 
-      if [ ! -e "$config_file" ]; then
-        cat > "$config_file" <<'EOF'
-${initialConfig}
-EOF
-      fi
+            if [ ! -e "$config_file" ]; then
+              cat > "$config_file" <<'EOF'
+      ${initialConfig}
+      EOF
+            fi
     '';
 
     systemd.user.services.cpa = {
       Unit = {
         Description = "CLIProxyAPI";
-        After = [ "network.target" ];
+        After = ["network.target"];
       };
 
       Service = {
@@ -128,7 +136,7 @@ EOF
       };
 
       Install = {
-        WantedBy = [ "default.target" ];
+        WantedBy = ["default.target"];
       };
     };
   };

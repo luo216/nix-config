@@ -8,7 +8,7 @@
     withHomeManager = true;
     ip = "192.168.31.129";
     primaryUser = "steve";
-    users = [ "steve" ];
+    users = ["steve"];
   }
   {
     hostname = "pixelbook";
@@ -18,7 +18,7 @@
     withHomeManager = true;
     ip = "192.168.31.76";
     primaryUser = "steve";
-    users = [ "steve" ];
+    users = ["steve"];
   }
   {
     hostname = "kali";
@@ -27,6 +27,6 @@
     deploy = false;
     withHomeManager = false;
     ip = "192.168.122.117";
-    users = [ "test" ];
+    users = ["test"];
   }
 ]

@@ -35,7 +35,20 @@
   systemd,
   wayland,
   wrapGAppsHook3,
-  xorg,
+  libx11,
+  libxcb,
+  libxcomposite,
+  libxcursor,
+  libxdamage,
+  libxext,
+  libxfixes,
+  libxi,
+  libxrandr,
+  libxrender,
+  libxscrnsaver,
+  libxkbfile,
+  libxshmfence,
+  libxtst,
   xdg-utils,
 }: let
   pname = "cisco-packettracer";
@@ -84,20 +97,20 @@
     qt6.qttools
     systemd
     wayland
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXcomposite
-    xorg.libXcursor
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXi
-    xorg.libXrandr
-    xorg.libXrender
-    xorg.libXScrnSaver
-    xorg.libxkbfile
-    xorg.libxshmfence
-    xorg.libXtst
+    libx11
+    libxcb
+    libxcomposite
+    libxcursor
+    libxdamage
+    libxext
+    libxfixes
+    libxi
+    libxrandr
+    libxrender
+    libxscrnsaver
+    libxkbfile
+    libxshmfence
+    libxtst
   ];
 in
   stdenv.mkDerivation {
