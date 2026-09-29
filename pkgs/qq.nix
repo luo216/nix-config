@@ -30,10 +30,10 @@
   commandLineArgs ? "",
   disableAutoUpdate ? true,
 }: let
-  version = "3.2.29-2026-05-28";
+  version = "3.2.34-2026-09-24";
   src = fetchurl {
-    url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.31/release/00e6a3e7/QQ_3.2.29_260528_amd64_01.deb";
-    hash = "sha256-HjgoB5ZzyUmUvA9HgNXYUoZHY5kgZZhi1J0cLyoZjiU=";
+    url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.36/beta/9ee04bef/linuxqq_3.2.34-53644_amd64.deb";
+    hash = "sha256-Q2xl4d0oQi4SiiHL3bX+Ti5sB51/J/7CVB4BTTjMM24=";
   };
 in
   stdenv.mkDerivation {

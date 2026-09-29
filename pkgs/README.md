@@ -16,7 +16,6 @@ both as Flake packages and through the `additions` overlay.
 | `hmcl-nvidia` | HMCL wrapped with NVIDIA PRIME offload variables |
 | `nps-ehang` | Customized NPS reverse proxy package |
 | `qq` | QQ Linux client |
-| `sunshine` | Sunshine game-streaming host package |
 | `wechat` | WeChat Linux client |
 | `wemeet` | Tencent Meeting with local compatibility fixes |
 | `wpsoffice-cn` | Chinese WPS Office package |
