@@ -73,23 +73,16 @@
     "org/gnome/shell/extensions/kimpanel" = {
       font = "Sans 16";
     };
-    "org/gnome/shell" = {
-      enabled-extensions = [
-        "appindicatorsupport@rgcjonas.gmail.com"
-        "kimpanel@kde.org"
-        "gsconnect@andyholmes.github.io"
-        "syncthing-indicator@mkljczk.pl"
-        "Vitals@CoreCoding.com"
-      ];
-    };
     "org/gnome/shell/extensions/vitals" = {
       hot-sensors = [
         "_processor_usage_"
         "_memory_usage_"
-        "__network-rx_max__"
-        "__network-tx_max__"
+        "__temperature_max__"
       ];
-      show-temperature = false;
+      show-temperature = true;
+      show-memory = true;
+      show-processor = true;
+      show-network = false;
       show-voltage = false;
       show-fan = false;
       show-storage = false;
@@ -281,6 +274,9 @@
     gnome-shell = {
       enable = true;
       extensions = [
+        {
+          package = pkgs.gnomeExtensions.user-themes;
+        }
         {
           package = pkgs.gnomeExtensions.appindicator;
         }
