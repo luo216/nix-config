@@ -107,6 +107,16 @@ in
           --replace-fail /usr/bin $out/bin
       done
 
+      # 禁用 WPS 自带的默认应用检查与修复脚本
+      # 这些脚本硬编码了 /usr/bin/gio 和 gvfs-mime，在 NixOS 上必定失败并输出 needasso，
+      # 导致每次打开 WPS 都会误弹“不是系统默认办公软件”提示。
+      # 系统层面的 MIME 关联已由 Home Manager (xdg.mimeApps) 声明式管理。
+      for s in $(find $out -name "assocheck.sh" -o -name "desktopcheck.sh" -o -name "repairasso.sh" -o -name "repair.sh"); do
+        echo '#!/bin/sh' > "$s"
+        echo 'exit 0' >> "$s"
+        chmod +x "$s"
+      done
+
       runHook postInstall
     '';
 
