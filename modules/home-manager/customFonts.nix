@@ -13,7 +13,7 @@ with lib; let
     srcs = [
       (pkgs.fetchurl {
         url = "https://github.com/luo216/nix-config/releases/download/fonts-v1/fonts-cjk-zhcn.tar.gz";
-        hash = "sha256-2OhHT7kq9LQ5aar15sgVxXKs+KM9Xz2eZv+NkCknLJQ=";
+        hash = "sha256-JCPh8SDaJxmLOOA8fJckNA0+csKaNtyMx61gm0iTRVM=";
       })
       (pkgs.fetchurl {
         url = "https://github.com/luo216/nix-config/releases/download/fonts-v1/fonts-western.tar.gz";
@@ -25,8 +25,9 @@ with lib; let
     installPhase = ''
       runHook preInstall
 
-      # Required by the teaching-plan template, including legacy FangSong_GB2312.
-      for font in lisu.ttf fs_GB2312.ttf simhei.ttf times.ttf; do
+      # Required by the teaching-plan template, including legacy FangSong_GB2312
+      # and the GB/T 9704-2012 government-document fonts.
+      for font in lisu.ttf fs_GB2312.ttf simhei.ttf times.ttf 楷体_GB2312.ttf 方正小标宋简体.ttf; do
         test -s "$font" || { echo "Missing teaching-plan font: $font" >&2; exit 1; }
       done
 
