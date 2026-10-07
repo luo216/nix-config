@@ -186,7 +186,6 @@ in {
       virtio-win
       ventoy
       scrcpy
-      tigervnc
       cisco-packettracer
     ];
     sessionVariables = {

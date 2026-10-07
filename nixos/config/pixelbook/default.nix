@@ -97,7 +97,6 @@
       intel-media-driver
       ventoy
       scrcpy
-      tigervnc
       cisco-packettracer
     ];
     sessionVariables = {
