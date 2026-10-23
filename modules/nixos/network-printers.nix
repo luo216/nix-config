@@ -55,20 +55,29 @@
 
   ensurePrinterScript = printer: let
     escapedName = lib.escapeShellArg printer.name;
-    escapedUri = lib.escapeShellArg printer.deviceUri;
-    escapedModel = lib.escapeShellArg printer.model;
-    descriptionArg = lib.optionalString (printer.description != null) ''
-      -D ${lib.escapeShellArg printer.description} \
-    '';
-    locationArg = lib.optionalString (printer.location != null) ''
-      -L ${lib.escapeShellArg printer.location} \
-    '';
-    ppdArgs = lib.concatStringsSep " \\\n  " (
-      map (name: "-o ${lib.escapeShellArg "${name}=${printer.ppdOptions.${name}}"}")
-      (builtins.attrNames printer.ppdOptions)
+    lpadmin = "${pkgs.cups}/bin/lpadmin";
+    optionalArg = flag: value:
+      lib.optionalString (value != null) "-${flag} ${lib.escapeShellArg value}";
+    # One argument per line, each continuation-safe, so the generated script stays
+    # readable no matter which optional pieces are present.
+    lpadminArgs = args: lib.concatStringsSep " \\\n    " (args ++ ["-E"]);
+
+    queueArgs = lpadminArgs ([
+        "-p ${escapedName}"
+        "-v ${lib.escapeShellArg printer.deviceUri}"
+        "-m ${lib.escapeShellArg printer.model}"
+      ]
+      ++ lib.optional (printer.description != null) (optionalArg "D" printer.description)
+      ++ lib.optional (printer.location != null) (optionalArg "L" printer.location));
+
+    ppdArgs = map (name: "-o ${lib.escapeShellArg "${name}=${printer.ppdOptions.${name}}"}") (
+      builtins.attrNames printer.ppdOptions
     );
-    ppdArgBlock = lib.optionalString (ppdArgs != "") ''
-      ${ppdArgs} \
+    # A second run: with "-m everywhere" CUPS regenerates the PPD from the IPP
+    # attributes and silently drops any -o passed alongside it, so defaults such
+    # as PageSize only stick once the queue already exists.
+    ppdArgBlock = lib.optionalString (ppdArgs != []) ''
+      ${lpadmin} ${lpadminArgs (["-p ${escapedName}"] ++ ppdArgs)}
     '';
     isIpp = lib.hasPrefix "ipp://" printer.deviceUri || lib.hasPrefix "ipps://" printer.deviceUri;
     probeBlock =
@@ -100,11 +109,8 @@
     if [ "$should_configure" -ne 1 ]; then
       echo "Printer ${printer.name} is not reachable, skipping."
     else
-      ${pkgs.cups}/bin/lpadmin \
-        -p ${escapedName} \
-        ${descriptionArg}${locationArg}  -v ${escapedUri} \
-        -m ${escapedModel} \
-        ${ppdArgBlock}  -E
+      ${lpadmin} ${queueArgs}
+      ${ppdArgBlock}
     fi
   '';
 in {
