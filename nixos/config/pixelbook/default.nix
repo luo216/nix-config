@@ -155,6 +155,8 @@
   programs = {
     zsh.enable = true;
     dconf.enable = true;
+    # 25.11 起 NixOS 的 GNOME 模块不再默认启用 Geary
+    geary.enable = true;
     clash-verge = {
       enable = true;
       serviceMode = true;
