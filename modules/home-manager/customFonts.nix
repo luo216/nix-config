@@ -79,6 +79,8 @@ in {
       carlito
       caladea
       windowsFonts
+      # Broad Unicode symbol coverage: ☑ arrows, math, box drawing, etc.
+      symbola
     ];
   };
 }
