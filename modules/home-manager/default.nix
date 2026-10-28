@@ -1,0 +1,12 @@
+{
+  customCpa = import ./customCpa.nix;
+  customCtfMsf = import ./customCtfMsf.nix;
+  customFcitx5 = import ./customFcitx5.nix;
+  customGhostty = import ./customGhostty.nix;
+  customLftp = import ./customLftp.nix;
+  customRainbarf = import ./customRainbarf.nix;
+  customTemplates = import ./customTemplates.nix;
+  customTmux = import ./customTmux.nix;
+  customYazi = import ./customYazi.nix;
+  customZsh = import ./customZsh.nix;
+}

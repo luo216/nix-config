@@ -1,0 +1,176 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services.network-printers;
+
+  printerModule = lib.types.submodule {
+    options = {
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "CUPS printer queue name.";
+      };
+
+      description = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Optional human-readable description.";
+      };
+
+      location = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Optional printer location.";
+      };
+
+      deviceUri = lib.mkOption {
+        type = lib.types.str;
+        description = "Printer device URI passed to lpadmin.";
+      };
+
+      model = lib.mkOption {
+        type = lib.types.str;
+        default = "everywhere";
+        description = "Printer model passed to lpadmin.";
+      };
+
+      ppdOptions = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = {};
+        description = "PPD options applied with lpadmin -o.";
+      };
+
+      testHosts = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = ''
+          Reachability probes for this printer. If any host responds to ping,
+          the printer will be configured.
+        '';
+      };
+    };
+  };
+
+  ensurePrinterScript = printer: let
+    escapedName = lib.escapeShellArg printer.name;
+    lpadmin = "${pkgs.cups}/bin/lpadmin";
+    optionalArg = flag: value:
+      lib.optionalString (value != null) "-${flag} ${lib.escapeShellArg value}";
+    # One argument per line, each continuation-safe, so the generated script stays
+    # readable no matter which optional pieces are present.
+    lpadminArgs = args: lib.concatStringsSep " \\\n    " (args ++ ["-E"]);
+
+    queueArgs = lpadminArgs ([
+        "-p ${escapedName}"
+        "-v ${lib.escapeShellArg printer.deviceUri}"
+        "-m ${lib.escapeShellArg printer.model}"
+      ]
+      ++ lib.optional (printer.description != null) (optionalArg "D" printer.description)
+      ++ lib.optional (printer.location != null) (optionalArg "L" printer.location));
+
+    ppdArgs = map (name: "-o ${lib.escapeShellArg "${name}=${printer.ppdOptions.${name}}"}") (
+      builtins.attrNames printer.ppdOptions
+    );
+    # A second run: with "-m everywhere" CUPS regenerates the PPD from the IPP
+    # attributes and silently drops any -o passed alongside it, so defaults such
+    # as PageSize only stick once the queue already exists.
+    ppdArgBlock = lib.optionalString (ppdArgs != []) ''
+      ${lpadmin} ${lpadminArgs (["-p ${escapedName}"] ++ ppdArgs)}
+    '';
+    isIpp = lib.hasPrefix "ipp://" printer.deviceUri || lib.hasPrefix "ipps://" printer.deviceUri;
+    probeBlock =
+      if printer.testHosts == []
+      then ''
+        should_configure=1
+      ''
+      else if isIpp
+      then ''
+        should_configure=0
+        for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
+          if ${pkgs.curl}/bin/curl -s --connect-timeout 2 --max-time 3 -o /dev/null "http://$host:631/" 2>/dev/null; then
+            should_configure=1
+            break
+          fi
+        done
+      ''
+      else ''
+        should_configure=0
+        for host in ${lib.concatMapStringsSep " " lib.escapeShellArg printer.testHosts}; do
+          if ${pkgs.iputils}/bin/ping -c 1 -W 1 "$host" >/dev/null 2>&1; then
+            should_configure=1
+            break
+          fi
+        done
+      '';
+  in ''
+    ${probeBlock}
+    if [ "$should_configure" -ne 1 ]; then
+      echo "Printer ${printer.name} is not reachable, skipping."
+    else
+      ${lpadmin} ${queueArgs}
+      ${ppdArgBlock}
+    fi
+  '';
+in {
+  options.services.network-printers = {
+    enable = lib.mkEnableOption "event-driven network printer configuration";
+
+    printers = lib.mkOption {
+      type = lib.types.listOf printerModule;
+      default = [];
+      description = "Network printers to configure when reachable.";
+    };
+
+    dispatcherEvents = lib.mkOption {
+      type = lib.types.listOf (lib.types.enum [
+        "up"
+        "dhcp4-change"
+        "dhcp6-change"
+        "connectivity-change"
+      ]);
+      default = [
+        "up"
+        "dhcp4-change"
+      ];
+      description = "NetworkManager dispatcher events that trigger printer checks.";
+    };
+  };
+
+  config = lib.mkIf (cfg.enable && cfg.printers != []) {
+    systemd.services.ensure-network-printers = {
+      description = "Ensure network printers are configured when reachable";
+      wantedBy = ["multi-user.target"];
+      wants = [
+        "cups.service"
+        "network-online.target"
+      ];
+      after = [
+        "cups.service"
+        "network-online.target"
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+      };
+      script = lib.concatStringsSep "\n" (map ensurePrinterScript cfg.printers);
+    };
+
+    networking.networkmanager.dispatcherScripts = [
+      {
+        type = "basic";
+        source = pkgs.writeShellScript "ensure-network-printers-dispatcher" ''
+          case "$2" in
+            ${lib.concatMapStringsSep "|" lib.escapeShellArg cfg.dispatcherEvents})
+              ;;
+            *)
+              exit 0
+              ;;
+          esac
+
+          /run/current-system/sw/bin/systemctl start ensure-network-printers.service
+        '';
+      }
+    ];
+  };
+}

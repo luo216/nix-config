@@ -1,0 +1,38 @@
+# Nix build results
+result
+result-*
+
+# direnv
+.direnv/
+.envrc
+
+# Editor and OS noise
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+._*
+
+# Temporary and backup files
+*.tmp
+*.log
+*.bak
+
+# Vendor packages fetched by hash in pkgs/, not tracked in git
+# (GitHub rejects files over 100 MB; kdraw's deb is 255 MB)
+*.deb
+
+# Large font files hosted on GitHub Releases, not tracked in git
+modules/templates/fonts/
+
+# Local VM disk images and build output
+*.qcow2
+out/
+
+# Agent local workspace data
+.codex/
+.claude/
+.omx/
+.omo/

@@ -1,0 +1,33 @@
+# NixOS configuration git attributes
+
+# Normalize line endings to LF
+* text=auto
+*.nix       text eol=lf
+*.sh        text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+
+# Binary assets: no diffs
+*.png    binary -diff
+*.jpg    binary -diff
+*.jpeg   binary -diff
+*.gif    binary -diff
+*.webp   binary -diff
+*.ico    binary -diff
+*.pdf    binary -diff
+*.zip    binary -diff
+*.gz     binary -diff
+*.tar.gz binary -diff
+*.tar.xz binary -diff
+*.svg    -diff
+
+# Secrets: encrypted at rest by git-crypt, plaintext in the working tree
+secrets/local.nix filter=git-crypt diff=git-crypt
+
+# Generated content and language hints
+flake.lock linguist-generated
+nixos/factors/*.json linguist-generated
+modules/templates/** linguist-vendored
+modules/templates/**/* !text !filter !merge !diff
+*.nix linguist-language=Nix
