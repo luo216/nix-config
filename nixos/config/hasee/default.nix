@@ -25,6 +25,7 @@ in {
     outputs.nixosModules.ventoy-insecure
     outputs.nixosModules.wine-gui-tools
     outputs.nixosModules.virtualizationHost
+    outputs.nixosModules.workbuddy2api
   ];
 
   boot = {
@@ -380,6 +381,11 @@ in {
       bridgePort = 18024;
       adminPassword = secrets.defaultPasswd;
       allowPorts = ["20000-20100"];
+    };
+    workbuddy2api = {
+      enable = true;
+      port = 7863;
+      apiKey = secrets.workbuddyApiKey;
     };
     virtualizationHost.enable = true;
     wine-gui-tools.enable = true;

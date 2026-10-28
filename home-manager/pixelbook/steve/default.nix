@@ -5,12 +5,9 @@
   pkgs,
   user,
   ...
-}: let
-  secrets = outputs.secrets;
-in {
+}: {
   # Import modular configurations
   imports = [
-    outputs.homeManagerModules.customCpa # CLI Proxy API
     outputs.homeManagerModules.customTmux # Terminal multiplexer (tmux)
     outputs.homeManagerModules.customFcitx5 # Chinese input method (fcitx5)
     outputs.homeManagerModules.customRainbarf # CPU load monitor (rainbarf)
@@ -210,12 +207,6 @@ in {
       enable = true;
       guiAddress = "127.0.0.1:8384";
       tray.enable = false;
-    };
-
-    customCpa = {
-      enable = true;
-      apiKeys = [secrets.cpaApiKey];
-      managementSecretKey = secrets.cpaManagementKey;
     };
   };
 

@@ -12,4 +12,5 @@
   virtualizationHost = import ./virtualization-host.nix;
   ventoy-insecure = import ./ventoy-insecure.nix;
   wine-gui-tools = import ./wine-gui-tools.nix;
+  workbuddy2api = import ./workbuddy2api.nix;
 }

@@ -30,6 +30,7 @@
 | `virtualizationHost` | libvirt, QEMU, virt-manager, and TPM support |
 | `ventoy-insecure` | Ventoy insecure-package allowance |
 | `wine-gui-tools` | Wine GUI runtime support |
+| `workbuddy2api` | WorkBuddy2API OpenAI-compatible gateway |
 
 Host workstation policy is kept directly under `nixos/config/<hostname>/`.
 `modules/nixos/` is reserved for reusable option modules and small focused

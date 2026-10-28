@@ -15,5 +15,6 @@ pkgs: {
   todesk = pkgs.callPackage ./todesk.nix {};
   wechat = pkgs.callPackage ./wechat.nix {};
   wemeet = pkgs.callPackage ./wemeet {};
+  workbuddy2api = pkgs.callPackage ./workbuddy2api.nix {};
   wpsoffice-cn = pkgs.callPackage ./wpsoffice-cn.nix {};
 }
