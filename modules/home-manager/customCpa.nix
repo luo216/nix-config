@@ -105,10 +105,12 @@ in {
       config_dir="${config.xdg.configHome}/cpa"
       config_file="${configFile}"
       mkdir -p "$config_dir"
-      cat > "$config_file" <<'EOF'
+      if [ ! -e "$config_file" ]; then
+        cat > "$config_file" <<'EOF'
       ${initialConfig}
       EOF
-      chmod 600 "$config_file"
+        chmod 600 "$config_file"
+      fi
     '';
 
     systemd.user.services.cpa = {
