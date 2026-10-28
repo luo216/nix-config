@@ -180,6 +180,36 @@ For Home Manager, create
 `primaryUser` entry is required; with standalone HM every listed user needs an
 entry. Evaluation reports any missing path and never fills it automatically.
 
+## Windows Fonts
+
+Windows font files (SimHei, YaHei, Calibri, Arial, …) are **not stored in the
+git repository**. They are hosted as tarballs in the
+[`fonts-v1` GitHub Release](https://github.com/luo216/nix-config/releases/tag/fonts-v1)
+and downloaded at build time by `modules/home-manager/customFonts.nix` via
+`fetchurl`.
+
+| Tarball | Contents |
+|---------|----------|
+| `fonts-cjk-zhcn.tar.gz` | 中文核心：宋体、黑体、楷体、仿宋、微软雅黑、等线 |
+| `fonts-western.tar.gz` | 西文 + 符号：Arial、Times、Calibri、Consolas、Wingdings … |
+
+### Adding or removing fonts
+
+1. Edit the font files locally.
+2. Repack the affected tarball:
+   ```bash
+   tar czf fonts-cjk-zhcn.tar.gz <font files...>
+   ```
+3. Upload to the existing release (overwrites the old asset):
+   ```bash
+   gh release upload fonts-v1 fonts-cjk-zhcn.tar.gz --clobber
+   ```
+4. Update the `hash` in `customFonts.nix`:
+   ```bash
+   nix store prefetch-file https://github.com/luo216/nix-config/releases/download/fonts-v1/fonts-cjk-zhcn.tar.gz
+   ```
+5. Commit and rebuild.
+
 ## Secret Management
 
 Secrets are plaintext Nix values in `secrets/local.nix`, encrypted at rest in git by

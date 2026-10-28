@@ -8,6 +8,7 @@
     outputs.homeManagerModules.customTmux
     outputs.homeManagerModules.customRainbarf
     outputs.homeManagerModules.customZsh
+    outputs.homeManagerModules.customFonts
   ];
 
   targets.genericLinux.enable = true;
@@ -85,6 +86,7 @@
     };
 
     customTmux.enable = true;
+    customFonts.enable = true;
     customZsh.enable = true;
 
     yazi = {

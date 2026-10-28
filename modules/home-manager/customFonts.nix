@@ -1,0 +1,86 @@
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.programs.customFonts;
+
+  windowsFonts = pkgs.stdenvNoCC.mkDerivation {
+    pname = "custom-windows-fonts";
+    version = "1.0";
+    srcs = [
+      (pkgs.fetchurl {
+        url = "https://github.com/luo216/nix-config/releases/download/fonts-v1/fonts-cjk-zhcn.tar.gz";
+        hash = "sha256-JCPh8SDaJxmLOOA8fJckNA0+csKaNtyMx61gm0iTRVM=";
+      })
+      (pkgs.fetchurl {
+        url = "https://github.com/luo216/nix-config/releases/download/fonts-v1/fonts-western.tar.gz";
+        hash = "sha256-yfBGO6XUOtwDkhWp3IkViLP+cMKyFtXR7ocsO0Q4/ko=";
+      })
+    ];
+    sourceRoot = ".";
+
+    installPhase = ''
+      runHook preInstall
+
+      # Required by the teaching-plan template, including legacy FangSong_GB2312
+      # and the GB/T 9704-2012 government-document fonts.
+      for font in lisu.ttf fs_GB2312.ttf simhei.ttf times.ttf 楷体_GB2312.ttf 方正小标宋简体.ttf; do
+        test -s "$font" || { echo "Missing teaching-plan font: $font" >&2; exit 1; }
+      done
+
+      mkdir -p $out/share/fonts/truetype/windows
+      find . -maxdepth 1 -type f \( -iname '*.ttf' -o -iname '*.ttc' -o -iname '*.otf' \) \
+        -exec cp -v {} $out/share/fonts/truetype/windows/ \;
+
+      runHook postInstall
+    '';
+  };
+in {
+  options.programs.customFonts = {
+    enable = mkEnableOption "shared font packages and fontconfig defaults";
+  };
+
+  config = mkIf cfg.enable {
+    fonts.fontconfig = {
+      enable = true;
+      defaultFonts = {
+        serif = [
+          "Noto Serif"
+          "Source Han Serif SC"
+          "Noto Color Emoji"
+        ];
+        sansSerif = [
+          "Noto Sans"
+          "Source Han Sans SC"
+          "Noto Color Emoji"
+        ];
+        monospace = [
+          "Hack Nerd Font Mono"
+          "Noto Sans Mono"
+          "Source Han Mono SC"
+          "Noto Color Emoji"
+        ];
+        emoji = ["Noto Color Emoji"];
+      };
+    };
+
+    home.packages = with pkgs; [
+      corefonts
+      noto-fonts-color-emoji
+      noto-fonts
+      source-han-sans
+      source-han-serif
+      source-han-mono
+      nerd-fonts.hack
+      liberation_ttf
+      carlito
+      caladea
+      windowsFonts
+      # Broad Unicode symbol coverage: ☑ arrows, math, box drawing, etc.
+      symbola
+    ];
+  };
+}

@@ -18,6 +18,7 @@ in {
     outputs.homeManagerModules.customZsh # Shell (zsh)
     outputs.homeManagerModules.customTemplates # Template files mapping
     outputs.homeManagerModules.customYazi # File manager (yazi)
+    outputs.homeManagerModules.customFonts # Shared fonts and fontconfig
     outputs.homeManagerModules.customGhostty # Terminal (Ghostty)
     outputs.homeManagerModules.customCtfMsf # Metasploit toolkit
     outputs.homeManagerModules.customLftp # FTP client (GBK)
@@ -313,6 +314,9 @@ in {
 
     # Enable tmux terminal multiplexer
     customTmux.enable = true;
+
+    # Enable shared fonts
+    customFonts.enable = true;
 
     # Enable Ghostty terminal
     customGhostty.enable = true;

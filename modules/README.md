@@ -10,6 +10,7 @@
 | `customCpa` | `services.customCpa` | CPA proxy client |
 | `customCtfMsf` | `programs.customCtfMsf` | Metasploit and exploit tooling |
 | `customFcitx5` | `programs.customFcitx5` | Chinese input method |
+| `customFonts` | `programs.customFonts` | User fonts and fontconfig |
 | `customGhostty` | `programs.customGhostty` | Ghostty terminal |
 | `customRainbarf` | `programs.customRainbarf` | tmux resource monitor |
 | `customTemplates` | `programs.customTemplates` | Static file mappings |
