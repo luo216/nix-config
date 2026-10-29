@@ -73,9 +73,10 @@ in {
       natural-scroll = true;
       click-method = "fingers";
     };
+    # 服务常驻，禁止闲置自动挂起（合盖/电源键策略另见 nixos/config/hasee）
     "org/gnome/settings-daemon/plugins/power" = {
-      sleep-inactive-ac-type = "suspend";
-      sleep-inactive-battery-type = "suspend";
+      sleep-inactive-ac-type = "nothing";
+      sleep-inactive-battery-type = "nothing";
     };
     "org/gnome/shell/extensions/kimpanel" = {
       font = "Sans 16";
