@@ -30,6 +30,9 @@ in {
     homeDirectory = "/home/${user.username}";
     sessionVariables = {
       GOOGLE_CLOUD_PROJECT = "generactive-language-client";
+      GOPATH = "/home/${user.username}/.local/share/go";
+      GOMODCACHE = "/home/${user.username}/.cache/go/pkg/mod";
+      GOBIN = "/home/${user.username}/.local/bin";
     };
   };
 
