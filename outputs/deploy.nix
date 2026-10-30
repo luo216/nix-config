@@ -19,12 +19,11 @@ in {
       map (host: {
         name = host.hostname;
         value = {
+          # host.ip is an ssh-config alias; the SSH port lives in
+          # ~/.ssh/config because deploy-rs's nix copy stage ignores
+          # sshOptions and would hit port 22 on the raw address.
           hostname = host.ip;
           sshUser = "root";
-          sshOptions =
-            if host ? sshPort
-            then ["-p" (toString host.sshPort)]
-            else [];
           remoteBuild = false;
           profiles.system = {
             user = "root";

@@ -23,7 +23,7 @@ in
       inherit (lib) pkgsFor;
     })
     (import ./apps.nix {
-      inherit inputs;
+      inherit inputs nixpkgs self;
       inherit (lib) forAllSystems;
     })
     (import ./deploy.nix {inherit hosts self deploy-rs;})

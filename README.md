@@ -130,6 +130,12 @@ Deploy a configured host:
 nix run .#deploy -- .#hasee
 ```
 
+Reinstall a host from scratch (details in [Installation](#installation)):
+
+```bash
+nix run .#install -- vps
+```
+
 ## Externally Managed Software
 
 A handful of tools are intentionally kept outside the Nix store. They live in
@@ -301,8 +307,39 @@ The user descriptor must define `username` and `nixosModule`.
 
 ## Installation
 
-Disk installation is destructive. From a NixOS installer, a typical
-`nixos-anywhere` invocation is:
+Disk installation is destructive. **The flake ships a one-command installer** —
+works for any `nixos = true` host in `outputs/hosts.nix`:
+
+```bash
+nix run .#install -- <hostname>          # e.g. vps, hasee, pixelbook
+```
+
+The app is generated from the host inventory (hosts reference ssh-config
+aliases, so the installer and deploy-rs resolve addresses and ports from
+`~/.ssh/config`), runs the full `nixos-anywhere` pipeline
+(`kexec,disko,install,reboot`) in one pass, and needs **no external network
+access on the target**: the kexec tarball is uploaded from the local
+`artifacts/` copy and the closure is built locally, then both are pushed over
+SSH.
+
+Preparing the kexec tarball (450 MB, gitignored, only needed once):
+
+```bash
+nix build github:nix-community/nixos-images#packages.x86_64-linux.kexec-installer-nixos-unstable-noninteractive
+cp result/nixos-kexec-installer-*.tar.gz artifacts/
+```
+
+Bootstrap notes learned from real installs:
+
+- Fresh images often ship `PubkeyAuthentication no`; enable it and install
+  the admin public keys before running the installer.
+- The target only needs SSH + `tar`/`gzip` (and `kexec` via the distro
+  package manager for non-NixOS targets). Everything else comes from here.
+- Never reboot between the disko and install phases — the disk has no
+  bootloader until `install` completes, and a reboot there bricks the
+  machine into the provider rescue system.
+
+Manual invocation (e.g. generating a new facter report on unknown hardware):
 
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
@@ -315,3 +352,4 @@ nix run github:nix-community/nixos-anywhere -- \
 
 The user performs builds, installation, activation, reboot, and runtime
 validation.
+

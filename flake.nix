@@ -2,10 +2,12 @@
   description = "NixOS configuration deployed with deploy-rs";
 
   nixConfig = {
+    # NOTE: mirror.sjtu.edu.cn hangs behind a TLS-intercepting VPN (handshake
+    # succeeds, response never arrives — 300s stall per query). Only re-add
+    # after verifying with `curl -m 5 https://mirror.sjtu.edu.cn/nix-cache-info`.
     substituters = [
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
     ];

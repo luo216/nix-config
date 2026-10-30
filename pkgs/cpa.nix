@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchurl,
+  autoPatchelfHook,
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "cpa";
@@ -13,6 +14,8 @@ stdenvNoCC.mkDerivation rec {
   };
 
   sourceRoot = ".";
+
+  nativeBuildInputs = [autoPatchelfHook];
 
   dontConfigure = true;
   dontBuild = true;

@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "system": "x86_64-linux",
+  "virtualisation": "kvm",
+  "hardware": {
+    "bios": {
+      "apm_info": {
+        "supported": false,
+        "enabled": false,
+        "version": 0,
+        "sub_version": 0,
+        "bios_flags": 0
+      },
+      "vbe_info": {
+        "version": 0,
+        "video_memory": 0
+      },
+      "pnp": false,
+      "pnp_id": 0,
+      "lba_support": false
+    },
+    "bridge": {
+      "host_bridge": {
+        " Vendor_id": "0x1b36",
+        " Vendor_name": "Red Hat, Inc.",
+        " Device_id": "0x0001"
+      }
+    },
+    "chipset": {
+      "arbiter": {
+        " Type": "None"
+      },
+      "iso": {
+        " Vendor_id": "0x1af4",
+        " Vendor_name": "Red Hat, Inc.",
+        " Device_id": "0x1100"
+      },
+      "dma": {
+        " Vendor_id": "0x1af4",
+        " Vendor_name": "Red Hat, Inc.",
+        " Device_id": "0x1000"
+      },
+      "pic": {
+        " Vendor_id": "0x1b36",
+        " Vendor_name": "Red Hat, Inc.",
+        " Device_id": "0x0001"
+      },
+      "piix4": {
+        "power_management": {
+          "Vendor_id": "0x1af4",
+          " Vendor_name": "Red Hat, Inc.",
+          "Device_id": "0x0002"
+        }
+      }
+    }
+  }
+}
