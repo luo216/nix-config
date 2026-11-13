@@ -168,6 +168,8 @@ in
       cp -a usr/lib usr/share $out/
       makeWrapper $out/lib/claude-desktop/claude-desktop \
         $out/bin/claude-desktop \
+        --add-flags "--no-sandbox" \
+        --set ELECTRON_DISABLE_SANDBOX 1 \
         --prefix VK_ADD_DRIVER_FILES : \
           "${addDriverRunpath.driverLink}/share/vulkan/icd.d"
 
@@ -175,12 +177,19 @@ in
     '';
 
     # chrome-sandbox ships SUID in the official .deb, but the Nix store
-    # cannot carry SUID bits. On kernels with unprivileged user namespaces
-    # enabled (the NixOS default — no apparmor_restrict_unprivileged_userns,
-    # unlike Ubuntu 24.04+), Chromium prefers the namespace sandbox and
-    # never invokes the SUID helper, so we ship it 0755 and do NOT weaken
-    # sandboxing with --no-sandbox anywhere. Same stance as nixpkgs'
-    # signal-desktop/slack.
+    # cannot carry SUID bits, so Chromium falls back to the unprivileged
+    # user-namespace sandbox. That path makes the Electron *main* process
+    # set PR_SET_NO_NEW_PRIVS on itself; the flag is one-way and inherited
+    # by every descendant, so the bundled Claude Code CLI — which the main
+    # process spawns — can never run sudo ("the no new privileges flag is
+    # set"), no matter how the CLI-level Bash sandbox (bwrap/socat) or
+    # /etc/claude-code/managed-settings.json is configured. The only fix
+    # that restores in-app sudo is to stop the main process from setting
+    # no_new_privileges, i.e. disable Electron's sandbox init with
+    # --no-sandbox (plus ELECTRON_DISABLE_SANDBOX=1 as belt and braces).
+    # Chosen 2026-11-12: an unsandboxed renderer is acceptable here — Claude
+    # Desktop is not a general-purpose browser, and the user needs sudo
+    # inside the app.
     #
     # autoPatchelf resolves the bundled co-located libs (libffmpeg.so,
     # libvk_swiftshader.so, libvulkan.so.1) from the output tree itself; the
