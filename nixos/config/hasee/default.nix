@@ -40,11 +40,7 @@ in {
     plymouth.enable = true;
     initrd = {
       systemd.enable = true;
-      kernelModules = [
-        "i915"
-        "vfio"
-        "vfio_pci"
-      ];
+      kernelModules = ["i915"];
     };
     kernelParams = [
       "quiet"
@@ -56,12 +52,9 @@ in {
       "intel_iommu=on"
       "iommu=pt"
       "kvm.ignore_msrs=1"
-      "vfio-pci.ids=15b7:5002"
     ];
     kernelModules = [
       "kvm-intel"
-      "vfio"
-      "vfio_pci"
       # services.xserver remains disabled for the Wayland-only desktop, so load
       # the NVIDIA DRM stack explicitly instead of relying on the X11 module.
       "nvidia"
@@ -71,9 +64,7 @@ in {
     blacklistedKernelModules = ["nouveau"];
     extraModprobeConfig = ''
       options hid_apple fnmode=2 swap_fn_leftctrl=1 swap_opt_cmd=1
-      options vfio-pci ids=15b7:5002
       options kvm ignore_msrs=1
-      softdep nvme pre: vfio-pci
     '';
   };
 
@@ -84,6 +75,13 @@ in {
       "defaults"
       "noatime"
     ];
+  };
+
+  fileSystems."/var/lib/libvirt" = {
+    device = "/data/libvirt";
+    fsType = "none";
+    options = ["bind"];
+    depends = ["/data"];
   };
 
   zramSwap = {
@@ -206,6 +204,8 @@ in {
   ];
 
   systemd.services = {
+    virt-secret-init-encryption.unitConfig.RequiresMountsFor = "/var/lib/libvirt";
+
     todeskd.serviceConfig.ReadWritePaths = [
       "/var/log/todesk"
     ];
