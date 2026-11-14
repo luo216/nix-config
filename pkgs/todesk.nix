@@ -50,8 +50,10 @@
     src = fetchurl {
       url = "https://dl.todesk.com/linux/todesk-v${version}-amd64.deb";
       hash = "sha256-t+KgiUmW7k40/LPd+zlpLHKUPAWxM6c69J9IBD19rBY=";
-      # dl.todesk.com is behind Tencent EdgeOne WAF; 'Mozilla' UA is required
-      curlOptsList = ["--user-agent" "Mozilla"];
+      # dl.todesk.com is behind Tencent EdgeOne WAF, which fingerprints the
+      # HTTP/2 stack and serves an anti-bot captcha page instead of the .deb.
+      # Forcing HTTP/1.1 plus a browser-ish UA gets the real archive.
+      curlOptsList = ["--http1.1" "--user-agent" "Mozilla/5.0"];
     };
     nativeBuildInputs = [dpkg];
 
