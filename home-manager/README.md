@@ -133,7 +133,7 @@ rsync -a --delete \
   --exclude .git \
   --exclude .codex \
   --exclude result \
-  /home/steve/Share/nix-config/ \
+  /home/steve/WorkSpace/nix-config/ \
   test@192.168.122.117:/home/test/nix-config/
 
 ssh test@192.168.122.117
