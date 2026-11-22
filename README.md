@@ -13,7 +13,7 @@ disk layouts, hardware reports, and deploy-rs nodes.
 | `kali` | XFCE X11 | `test` | Standalone (`test@kali`) | `192.168.122.117` |
 
 Hasee uses Intel for GNOME and display output. NVIDIA PRIME render offload is
-enabled for selected applications; Steam and HMCL default to the RTX 3050.
+enabled for selected applications; Steam defaults to the RTX 3050.
 
 ## Architecture
 
@@ -136,22 +136,7 @@ Reinstall a host from scratch (details in [Installation](#installation)):
 nix run .#install -- vps
 ```
 
-## Externally Managed Software
-
-A handful of tools are intentionally kept outside the Nix store. They live in
-`~/.npm-global` (the prefix set by `NPM_CONFIG_PREFIX` in
-`modules/home-manager/customZsh.nix`) and are installed/updated with `npm`, not
-Nix. Launchers and wrappers below only **launch** them; they do not install
-them, so a missing install shows up as a failed service rather than a failed
-build.
-
-| Tool | npm package | Launched by | Install |
-|------|-------------|-------------|---------|
-| Codex CLI | `@openai/codex` | `codex-desktop` wrapper | `npm i -g @openai/codex` |
-
-`codex-desktop` (`pkgs/codex-desktop-linux.nix`) resolves its CLI through, in
-order: `CODEX_CLI_PATH`, `~/.npm-global/bin/codex`, `~/.local/bin/codex`,
-`~/.bun/bin/codex`, `~/.local/share/pnpm/codex`, then the system `codex`.
+## cc-switch
 
 `cc-switch` (`pkgs/cc-switch-cli.nix`) switches provider profiles for Claude
 Code, Codex, Gemini, OpenCode, and OpenClaw. Install whichever of those CLIs
@@ -159,13 +144,9 @@ you use:
 
 ```bash
 npm i -g @anthropic-ai/claude-code   # Claude Code → `claude`
-npm i -g @openai/codex               # Codex → `codex`
 npm i -g @google/gemini-cli          # Gemini CLI
 npm i -g opencode-ai                 # OpenCode → `opencode`
 ```
-
-When a new launcher module or wrapper expects an npm-installed binary, add it
-to this list.
 
 ## Adding a Host
 

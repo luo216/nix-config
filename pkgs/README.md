@@ -10,14 +10,15 @@ both as Flake packages and through the `additions` overlay.
 | `cc-switch-cli` | CLI configuration switcher for AI coding tools |
 | `cisco-packettracer` | Cisco Packet Tracer |
 | `claude-desktop` | Claude Desktop (unpacked official .deb; no Cowork VM stack) |
-| `codex-desktop` | Codex Desktop Linux package |
 | `cpa` | CLI Proxy API client |
 | `google-chrome-stable` | Google Chrome Stable |
-| `hmcl-nvidia` | HMCL wrapped with NVIDIA PRIME offload variables |
+| `kdraw` | 奎享雕刻 writing-robot host software (bundled JRE) |
 | `nps-ehang` | Customized NPS reverse proxy package |
 | `qq` | QQ Linux client |
+| `todesk` | ToDesk remote desktop client (FHS environment) |
 | `wechat` | WeChat Linux client |
 | `wemeet` | Tencent Meeting with local compatibility fixes |
+| `workbuddy2api` | WorkBuddy API proxy panel |
 | `wpsoffice-cn` | Chinese WPS Office package |
 
 ## Adding a Package

@@ -5,10 +5,8 @@ pkgs: {
   cc-switch-cli = pkgs.callPackage ./cc-switch-cli.nix {};
   cisco-packettracer = pkgs.callPackage ./cisco-packettracer.nix {};
   claude-desktop = pkgs.callPackage ./claude-desktop.nix {};
-  codex-desktop = pkgs.callPackage ./codex-desktop-linux.nix {};
   cpa = pkgs.callPackage ./cpa.nix {};
   google-chrome-stable = pkgs.callPackage ./google-chrome-stable.nix {};
-  hmcl-nvidia = pkgs.callPackage ./hmcl-nvidia.nix {};
   kdraw = pkgs.callPackage ./kdraw.nix {};
   nps-ehang = pkgs.callPackage ./nps-ehang.nix {};
   qq = pkgs.callPackage ./qq.nix {};
