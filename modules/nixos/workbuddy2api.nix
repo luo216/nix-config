@@ -8,57 +8,48 @@
 
   inherit
     (lib)
-    escapeShellArg
+    escapeShellArgs
+    getExe
     literalExpression
     mkEnableOption
     mkIf
     mkOption
-    optionalAttrs
-    optionalString
-    recursiveUpdate
     types
     ;
 
-  jsonFormat = pkgs.formats.json {};
+  logFile =
+    if cfg.logFile != null
+    then cfg.logFile
+    else "${cfg.dataDir}/proxy.jsonl";
 
-  seedConfig = jsonFormat.generate "workbuddy2api-config.json" (recursiveUpdate
-    {
-      listen = ":${toString cfg.port}";
-      auth_dir = "./auths";
-      state_file = "./data/state.json";
-    }
-    (optionalAttrs (cfg.apiKey != null) {api_key = cfg.apiKey;}));
-
-  initScript = pkgs.writeShellScript "workbuddy2api-init" ''
-    set -eu
-    umask 077
-    mkdir -p auths data
-    ${optionalString (cfg.apiKey != null) ''
-      if [ ! -e config.json ]; then
-        install -m 600 ${seedConfig} config.json
-      else
-        tmp="$(mktemp .config.json.XXXXXX)"
-        ${pkgs.jq}/bin/jq --arg key ${escapeShellArg cfg.apiKey} '.api_key = $key' config.json > "$tmp"
-        chmod 600 "$tmp"
-        mv "$tmp" config.json
-      fi
-    ''}
-  '';
+  startArgs =
+    [
+      "--host"
+      cfg.host
+      "--port"
+      (toString cfg.port)
+      "--accounts-dir"
+      "${cfg.dataDir}/accounts"
+      "--log-file"
+      logFile
+      "--no-browser"
+    ]
+    ++ cfg.extraArgs;
 in {
   options.services.workbuddy2api = {
-    enable = mkEnableOption "WorkBuddy2API OpenAI-compatible gateway";
+    enable = mkEnableOption "workbuddy2api OpenAI/Anthropic-compatible gateway";
 
     package = mkOption {
       type = types.package;
       default = pkgs.workbuddy2api;
       defaultText = literalExpression "pkgs.workbuddy2api";
-      description = "Package providing the wb2api binary.";
+      description = "Package providing the workbuddy2api executable.";
     };
 
     dataDir = mkOption {
       type = types.str;
       default = "/var/lib/workbuddy2api";
-      description = "Writable state directory holding config.json, auths/, and data/.";
+      description = "Writable state directory holding the account store and logs.";
     };
 
     user = mkOption {
@@ -73,28 +64,34 @@ in {
       description = "System group used by the service.";
     };
 
+    host = mkOption {
+      type = types.str;
+      default = "127.0.0.1";
+      description = "Listen address for the API and the /admin panel.";
+    };
+
     port = mkOption {
       type = types.port;
       default = 7863;
-      description = "Port opened in the firewall. The actual listen address is stored in config.json and managed from the web panel.";
+      description = "Port for the OpenAI/Anthropic API and the /admin panel.";
     };
 
     openFirewall = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Open the configured port in the NixOS firewall.";
     };
 
-    apiKey = mkOption {
+    logFile = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = ''
-        Bearer key used for both the OpenAI-compatible API and the web panel.
-        When set, it is written into config.json at every service start, so this
-        option is authoritative over changes made in the panel. The key is part
-        of the Nix store. When null, the service generates a random key on first
-        start and the panel owns it.
-      '';
+      description = "JSONL request log path. Defaults to <dataDir>/proxy.jsonl.";
+    };
+
+    extraArgs = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      description = "Extra command-line arguments passed to workbuddy2api.";
     };
   };
 
@@ -113,14 +110,13 @@ in {
 
     systemd.tmpfiles.rules = [
       "d ${cfg.dataDir} 0750 ${cfg.user} ${cfg.group} -"
-      "d ${cfg.dataDir}/auths 0700 ${cfg.user} ${cfg.group} -"
-      "d ${cfg.dataDir}/data 0700 ${cfg.user} ${cfg.group} -"
+      "d ${cfg.dataDir}/accounts 0700 ${cfg.user} ${cfg.group} -"
     ];
 
     networking.firewall.allowedTCPPorts = mkIf cfg.openFirewall [cfg.port];
 
     systemd.services.workbuddy2api = {
-      description = "WorkBuddy2API OpenAI-compatible gateway";
+      description = "workbuddy2api OpenAI/Anthropic-compatible gateway";
       wantedBy = ["multi-user.target"];
       after = ["network-online.target"];
       wants = ["network-online.target"];
@@ -130,8 +126,7 @@ in {
         User = cfg.user;
         Group = cfg.group;
         WorkingDirectory = cfg.dataDir;
-        ExecStartPre = initScript;
-        ExecStart = "${lib.getExe cfg.package} -config ${cfg.dataDir}/config.json";
+        ExecStart = "${getExe cfg.package} ${escapeShellArgs startArgs}";
         Restart = "on-failure";
         RestartSec = 5;
         UMask = "0077";
@@ -147,6 +142,14 @@ in {
         ];
         CapabilityBoundingSet = [];
         AmbientCapabilities = [];
+      };
+
+      environment = {
+        # Upstream calls use urllib; NixOS only ships the CA bundle, not the
+        # hashed certificate directory, so point Python at the bundle.
+        SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+        HOME = cfg.dataDir;
+        PYTHONUNBUFFERED = "1";
       };
     };
   };

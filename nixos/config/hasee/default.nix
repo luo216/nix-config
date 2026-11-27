@@ -385,7 +385,6 @@ in {
     workbuddy2api = {
       enable = true;
       port = 7863;
-      apiKey = secrets.workbuddyApiKey;
     };
     virtualizationHost.enable = true;
     wine-gui-tools.enable = true;
