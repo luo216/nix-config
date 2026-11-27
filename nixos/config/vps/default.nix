@@ -64,8 +64,7 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
 
   # ── Services ──────────────────────────────────────────
-  # nps is the only service hosted here; CPA and workbuddy2api run on
-  # hasee and stay there.
+  # nps is the only service hosted here.
   services.nps-ehang = {
     enable = true;
     webIp = "0.0.0.0"; # exposed through NAT mapping; protected by admin password

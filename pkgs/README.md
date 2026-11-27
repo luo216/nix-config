@@ -18,7 +18,6 @@ both as Flake packages and through the `additions` overlay.
 | `todesk` | ToDesk remote desktop client (FHS environment) |
 | `wechat` | WeChat Linux client |
 | `wemeet` | Tencent Meeting with local compatibility fixes |
-| `workbuddy2api` | WorkBuddy API proxy panel |
 | `wpsoffice-cn` | Chinese WPS Office package |
 
 ## Adding a Package
